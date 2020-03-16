@@ -1,0 +1,1 @@
+extends: "@qdev/utils-ts/.eslintrc"

@@ -1,0 +1,7 @@
+{
+  "name": "Main",
+  "schemaPath": "src/graphql/generated/schema.json",
+  "excludes": [
+    "src/graphql/**/*.graphql"
+  ]
+}
