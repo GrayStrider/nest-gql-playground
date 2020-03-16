@@ -1,5 +1,5 @@
 {
-  "name": "@strider/gql-server",
+  "name": "@strider/nest-gql-playground",
   "version": "0.0.1",
   "description": "GraphQL boilerplate made with Koa, type-graphql and typeORM",
   "keywords": [
