@@ -3,12 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@config": [
-        "config/export"
-      ]
+      "@/*": ["src/*"],
+      "@M/*": ["src/modules/*"],
+      "@config": ["config/export"]
     },
     "esModuleInterop": true
   }
