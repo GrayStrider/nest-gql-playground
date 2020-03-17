@@ -1,32 +1,35 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import { CatsController } from './cats.controller'
-import { isSE } from '@qdev/utils-ts'
-import { Request } from 'express'
+import { CatsService } from './cats.service'
+import { Cat } from './interfaces/cat.interface'
 
-describe ('Cats Controller', () => {
-	let controller: CatsController
-	const request = {
-		url: 'https://lll'
-	} as Request
+describe ('CatsController', () => {
+	let catsController: CatsController
+	let catsService: CatsService
 	
 	beforeEach (async () => {
-		const module: TestingModule = await Test.createTestingModule ({
-			controllers: [CatsController]
+		const module = await Test.createTestingModule ({
+			controllers: [CatsController],
+			providers: [CatsService]
 		}).compile ()
 		
-		controller = module.get<CatsController> (CatsController)
+		catsService = module.get<CatsService> (CatsService)
+		catsController = module.get<CatsController> (CatsController)
 	})
 	
-	it ('should be defined', () => {
-		expect (controller).toBeDefined ()
-	})
-	
-	it ('should return cats', async () => {
-		expect.assertions (1)
-		/**
-		 * You wouldn't interact with the controller normally like this,
-		 * so we have to insert the mock request manually in this case
-		 */
-    isSE(controller.findAll(request), ['cat'])
+	describe ('findAll', () => {
+		it ('should return an array of cats', async () => {
+			const result: Cat[] = [
+				{
+					id: 1,
+					age: 2,
+					breed: 'Bombay',
+					name: 'Pixel'
+				}
+			]
+			jest.spyOn (catsService, 'findAll').mockImplementation (() => result)
+			
+			expect (await catsController.findAll ()).toBe (result)
+		})
 	})
 })
