@@ -10,7 +10,6 @@ import RedisStore from 'koa-redis'
 import { redisSessionClient } from '@/DB/redis'
 import { ORMConfig, NODE_ENV } from '@config'
 import router from '@/routes'
-import { redirect, errorHandler } from '@/middlewares'
 import { sig } from '@qdev/utils-ts'
 
 if (NODE_ENV === undefined)
@@ -41,8 +40,6 @@ export default async function main () {
 	}, app)
 	
 	app
-		.use (errorHandler)
-		.use (redirect)
 		.use (sessionMW)
 		.use (helmet ())
 		.use (cors ())
