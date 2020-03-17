@@ -1,0 +1,16 @@
+GET http://{{host}}:{{port}}/cats
+Accept: application/json
+
+###
+
+POST http://{{host}}:{{port}}/cats
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Cat",
+  "age": 2,
+  "breed": "no breed"
+}
+
+###

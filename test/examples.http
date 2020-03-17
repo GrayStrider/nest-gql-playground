@@ -18,3 +18,12 @@ GET http://httpbin.org/status/301
 GET http://httpbin.org/anything?id={{$uuid}}&ts={{$timestamp}}
 
 ###
+
+### Send POST request with json body
+POST https://httpbin.org/post
+Content-Type: application/json
+
+{
+  "id": 999,
+  "value": "content"
+}

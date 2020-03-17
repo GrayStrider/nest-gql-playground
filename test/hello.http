@@ -1,9 +1,0 @@
-GET http://{{host}}:{{port}}
-Accept: application/json
-
-###
-
-GET http://{{host}}:{{port}}/cats
-Accept: application/json
-
-###
