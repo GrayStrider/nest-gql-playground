@@ -3,7 +3,10 @@ import { isEmpty } from 'fp-ts/lib/Array'
 import { all } from 'ramda'
 import { isSE } from '@qdev/utils-ts'
 
-const hasAllRoles = (a: Role[], b: Role[]) => isEmpty (a) ? true : all ((role: Role) => b.includes (role)) (a)
+export const hasAllRoles = (a: Role[], b: Role[]) =>
+	isEmpty (a)
+		? true
+		: all (role => b.includes (role), a)
 
 
 it ('should return true when all roles present', async () => {

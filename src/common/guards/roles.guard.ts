@@ -1,14 +1,12 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { Role } from '@/common/roles.type'
-import { intersection, isEmpty } from 'fp-ts/lib/Array'
+import { intersection, isNonEmpty } from 'fp-ts/lib/Array'
 import { eqString, Eq } from 'fp-ts/lib/Eq'
-import { complement, all } from 'ramda'
-import { pipe } from 'fp-ts/lib/pipeable'
 import { flow } from 'fp-ts/lib/function'
 
-const eqRole: Eq<Role> = eqString
-export const hasRole = flow (intersection (eqRole), complement (isEmpty))
+export const eqRole: Eq<Role> = eqString
+export const hasRole = flow (intersection (eqRole), isNonEmpty)
 
 @Injectable ()
 export class RolesGuard implements CanActivate {
