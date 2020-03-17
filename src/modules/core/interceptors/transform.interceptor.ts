@@ -3,7 +3,7 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 export interface Response<T> {
-	data: T;
+	data: T
 }
 
 @Injectable ()

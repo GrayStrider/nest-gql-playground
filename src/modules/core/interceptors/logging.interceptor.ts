@@ -5,6 +5,11 @@ import { Request, Response } from 'express'
 import { log } from '@/common/message'
 import { sig } from '@qdev/utils-ts'
 
+
+/**
+ * Interceptors have access to response/request
+ * before and after the route handler is called.
+ */
 @Injectable ()
 export class LoggingInterceptor implements NestInterceptor {
 	intercept (context: ExecutionContext, next: CallHandler): Observable<any> {

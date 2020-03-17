@@ -1,8 +1,12 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common'
 import { log } from '@/common/message'
 import { sig } from '@qdev/utils-ts'
-import { Request } from 'express'
 
+
+/**
+ * Exception Filters are called after the route handler and after the interceptors.
+ * They are the last place to make changes before a response goes out.
+ */
 @Catch (HttpException)
 export class HttpExceptionFilter implements ExceptionFilter<HttpException> {
 	catch (exception: HttpException, host: ArgumentsHost) {
@@ -13,7 +17,7 @@ export class HttpExceptionFilter implements ExceptionFilter<HttpException> {
 		const statusCode = exception.getStatus ()
 		
 		const msg = log (statusCode, url, method, start)
-		sig.error(msg)
+		sig.error (msg)
 		response.status (statusCode).json ({
 			kind: 'HTTP Exception',
 			statusCode,

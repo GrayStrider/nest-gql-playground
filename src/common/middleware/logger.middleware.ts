@@ -1,6 +1,12 @@
 import { Injectable, NestMiddleware } from '@nestjs/common'
 import { Handler } from 'express'
 
+/**
+ * Middleware is called only before the route handler is called.
+ * You have access to the response object, but you don't have the result
+ * of the route handler.
+ * They are basically express middleware functions.
+ */
 @Injectable ()
 export class LoggerMiddleware implements NestMiddleware{
 	/**
@@ -9,7 +15,7 @@ export class LoggerMiddleware implements NestMiddleware{
 	 * better use Handler from Express
 	 */
 	use: Handler = (req, res, next) => {
-		console.log(res.statusCode)// TODO always 200 for some reason
+		
 		next()
 	}
 }
