@@ -18,7 +18,7 @@ describe ('server', () => {
 	it ('should start the server and redirect', async () => {
 		expect.assertions (1)
 		const { status } = await request.get ('/foobar')
-		expect (status).toBe (302)
+		expect (status).toBe (404)
 	})
 	
 })
