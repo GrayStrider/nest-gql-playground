@@ -12,7 +12,7 @@ const byId: (id: number) => Predicate<Cat> =
 export class CatsService {
 	private readonly cats: Cat[] = []
 	
-	create (cat: Cat) {
+	async create (cat: Cat): Promise<void> {
 		this.cats.push (cat)
 	}
 	
