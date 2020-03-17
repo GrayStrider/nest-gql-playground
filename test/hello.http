@@ -1,13 +1,9 @@
-GET http://localhost:3000
+GET http://{{host}}:{{port}}
 Accept: application/json
 
 ###
 
-GET http://localhost:3000/cats
+GET http://{{host}}:{{port}}/cats
 Accept: application/json
-
-###
-
-GET http://localhost:3000/foobarbaz123
 
 ###
