@@ -1,10 +1,10 @@
 import request from 'supertest'
 import { Test } from '@nestjs/testing'
-import { AppModule } from 'src/app.module'
+import { AppModule } from '@/app.module'
 import { INestApplication } from '@nestjs/common'
 import sleep from 'sleep-promise'
 
-describe ('appController', () => {
+describe ('app.module', () => {
 	let app: INestApplication
 	
 	beforeAll (async () => {
