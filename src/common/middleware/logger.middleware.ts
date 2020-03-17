@@ -1,13 +1,14 @@
 import { Injectable, NestMiddleware } from '@nestjs/common'
-import { Request, Response } from 'express'
+import { Handler } from 'express'
 
 @Injectable ()
-export class LoggerMiddleware implements NestMiddleware<Request, Response> {
+export class LoggerMiddleware implements NestMiddleware{
 	/**
 	 * Does not inherit types; generic types only used when
-	 * generating implementation with IDE
+	 * generating implementation with IDE;
+	 * better use Handler from Express
 	 */
-	use (req: Request, res: Response, next: () => void): any {
+	use: Handler = (req, res, next) => {
 	
 	}
 }
