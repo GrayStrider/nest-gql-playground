@@ -7,9 +7,7 @@ import { CoreModule } from '@M/core/core.module'
 import { AuthMiddleware } from '@/common/middleware/auth.middleware'
 
 @Module ({
-	imports: [HelloModule, CoreModule, CatsModule],
-	controllers: [HelloController],
-	providers: [HelloService]
+	imports: [CoreModule, HelloModule, CatsModule],
 })
 export class AppModule implements NestModule {
 	public configure (consumer: MiddlewareConsumer): void {
