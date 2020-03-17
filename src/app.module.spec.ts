@@ -17,6 +17,7 @@ describe ('app.module', () => {
 		await app.init ()
 	})
 	afterAll (async () => {
+		await app.close()
 		await sleep (500)
 	})
 	
