@@ -15,6 +15,7 @@ export class HttpExceptionFilter implements ExceptionFilter<HttpException> {
 		const msg = log (statusCode, url, method, start)
 		sig.error(msg)
 		response.status (statusCode).json ({
+			kind: 'HTTP Exception',
 			statusCode,
 			timestamp: new Date ().toISOString (),
 			path: url
