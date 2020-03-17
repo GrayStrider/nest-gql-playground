@@ -20,13 +20,6 @@ describe ('app.module', () => {
 		await sleep (500)
 	})
 	
-	it ('/ redirects', async () => {
-		expect.assertions (2)
-		const server = app.getHttpServer ()
-		const { status, text } = await supertest (server).get ('/')
-		expect (status).toBe (302)
-		isSE (text, 'Found. Redirecting to hello')
-	})
 	
 	it ('/ hello', async () => {
 		expect.assertions (2)
