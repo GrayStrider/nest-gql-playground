@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
-import { LoggingInterceptor } from '@/core/interceptors/logging.interceptor'
-import { TransformInterceptor } from '@/core/interceptors/transform.interceptor'
+import { LoggingInterceptor } from '@M/core/interceptors/logging.interceptor'
+import { TransformInterceptor } from '@M/core/interceptors/transform.interceptor'
 
 @Module ({
 	providers: [

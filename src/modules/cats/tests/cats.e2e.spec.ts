@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import request from 'supertest'
 import { CatsModule } from '@M/cats/cats.module'
-import { CoreModule } from '@/core/core.module'
+import { CoreModule } from '@M/core/core.module'
 import { CatsService } from '@M/cats/cats.service'
 
 
