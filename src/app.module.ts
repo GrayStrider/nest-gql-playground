@@ -5,6 +5,7 @@ import { HelloService } from '@M/hello/hello.service'
 import { CatsModule } from '@M/cats/cats.module'
 import { CoreModule } from '@M/core/core.module'
 import { AuthMiddleware } from '@/common/middleware/auth.middleware'
+import { LoggerMiddleware } from '@/common/middleware/logger.middleware'
 
 @Module ({
 	imports: [CoreModule, HelloModule, CatsModule],
@@ -12,7 +13,7 @@ import { AuthMiddleware } from '@/common/middleware/auth.middleware'
 export class AppModule implements NestModule {
 	public configure (consumer: MiddlewareConsumer): void {
 		consumer
-			.apply(AuthMiddleware)
+			.apply(AuthMiddleware, LoggerMiddleware)
 			.forRoutes('*')
 	}
 }
