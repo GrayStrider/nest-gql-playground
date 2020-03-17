@@ -1,7 +1,6 @@
 import supertest from 'supertest'
 import { Test } from '@nestjs/testing'
 import { AppModule } from '@/app.module'
-import { INestApplication } from '@nestjs/common'
 import sleep from 'sleep-promise'
 import { isSE } from '@qdev/utils-ts'
 import { NestExpressApplication } from '@nestjs/platform-express'
@@ -21,11 +20,21 @@ describe ('app.module', () => {
 		await sleep (500)
 	})
 	
-	it ('/ (GET)', async () => {
+	it ('/ redirects', async () => {
 		expect.assertions (2)
 		const server = app.getHttpServer ()
 		const { status, text } = await supertest (server).get ('/')
-		expect (status).toBe (200)
-		isSE(JSON.parse(text), {data: 'Hello World!'})
+		expect (status).toBe (302)
+		isSE (text, 'Found. Redirecting to hello')
 	})
+	
+	it ('/ hello', async () => {
+		expect.assertions (2)
+		const server = app.getHttpServer ()
+		const { status, text } = await supertest (server).get ('/hello')
+		expect (status).toBe (200)
+		isSE (JSON.parse (text), { data: 'Hello World!' })
+	})
+	
+	
 })
