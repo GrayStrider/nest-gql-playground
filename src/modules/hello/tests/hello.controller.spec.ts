@@ -1,14 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { HelloService } from '@M/hello/hello.service'
 import { HelloController } from '@M/hello/hello.controller'
+import { HelloModule } from '@M/hello/hello.module'
+import { isSE } from '@qdev/utils-ts'
 
 describe ('appController', () => {
 	let app: TestingModule
 	
 	beforeAll (async () => {
 		app = await Test.createTestingModule ({
-			controllers: [HelloController],
-			providers: [HelloService]
+			imports: [HelloModule]
 		}).compile ()
 	})
 	
@@ -18,6 +19,12 @@ describe ('appController', () => {
 			const appController = app.get<HelloController> (HelloController)
 			expect (appController.getHello ())
 				.toBe ('Hello World!')
+		})
+		
+		it ('should get exported module', async () => {
+			expect.assertions(1)
+			const appController = app.get<HelloController> (HelloController)
+			isSE(appController.getExported(), [])
 		})
 	})
 })

@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common'
 
 @Module ({
 	controllers: [CatsController],
-	providers: [CatsService]
+	providers: [CatsService],
+	exports: [CatsService]
 })
 export class CatsModule {}
