@@ -3,7 +3,6 @@ import { AnyObject } from 'tsdef'
 import { ApolloError } from 'apollo-server-errors'
 
 
-// eslint-disable-next-line @typescript-eslint/interface-name-prefix
 interface IExpectedError {
 	details?: AnyObject | string
 }
