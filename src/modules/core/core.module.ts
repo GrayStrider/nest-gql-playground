@@ -14,7 +14,7 @@ import { Tokens } from '@/common/constants'
 	]
 })
 export class CoreModule {
-	constructor (@Inject (Tokens.CONNECTION) conn: typeof connection) {
-		conn.mock
+	constructor (@Inject (Tokens.CONNECTION) conn: string) {
+		conn.toUpperCase()
 	}
 }

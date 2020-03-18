@@ -1,3 +1,4 @@
 export const connection = {
-	mock: 'Implementation'
+	dev: 'Implementation',
+	prod: 'Another'
 }
