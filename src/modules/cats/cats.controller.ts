@@ -8,6 +8,11 @@ import { CatUpdateDto } from '@M/cats/dto/cat.update.dto'
 
 @UseGuards (RolesGuard)
 @Controller ('cats')
+/**
+ * 'user' as default role, but we can override it for each specific method
+ * @see RolesGuard
+ */
+@Roles ('user')
 export class CatsController {
 	constructor (private readonly service: CatsService) {}
 	
