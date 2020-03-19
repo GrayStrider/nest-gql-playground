@@ -5,13 +5,15 @@ import { CoreModule } from '@M/core/core.module'
 import { AuthMiddleware } from '@/common/middleware/auth.middleware'
 import { LoggerMiddleware } from '@/common/middleware/logger.middleware'
 import { AuthModule } from '@M/auth/auth.module'
+import { ConfigModule } from '@M/config/config.module'
 
 @Module ({
 	imports: [
 		CoreModule,
 		HelloModule,
 		CatsModule,
-		AuthModule
+		AuthModule,
+		ConfigModule.register({ folder: './../config' })
 	]
 })
 export class AppModule implements NestModule {
