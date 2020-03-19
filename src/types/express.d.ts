@@ -1,11 +1,14 @@
 declare namespace Express {
-	export interface Request {
-		user?: User
+	
+	export interface User {
+		id: string
+		name: string
+		roles: Role[]
 	}
-}
-
-interface User {
-	name: string
-	id: string
-	roles: string[]
+	
+	export type Role =
+		'admin'
+		| 'guest'
+		| 'user'
+	
 }

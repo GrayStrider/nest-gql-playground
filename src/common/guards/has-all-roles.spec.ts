@@ -1,9 +1,8 @@
-import { Role } from '@/common/roles.type'
 import { isEmpty } from 'fp-ts/lib/Array'
 import { all } from 'ramda'
 import { isSE } from '@qdev/utils-ts'
 
-export const hasAllRoles = (a: Role[], b: Role[]) =>
+export const hasAllRoles = (a: Express.Role[], b: Express.Role[]) =>
 	isEmpty (a)
 		? true
 		: all (role => b.includes (role), a)
