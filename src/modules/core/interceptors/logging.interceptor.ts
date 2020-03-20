@@ -4,7 +4,7 @@ import { tap } from 'rxjs/operators'
 import { Request, Response } from 'express'
 import { log } from '@/common/message'
 import { sig } from '@qdev/utils-ts'
-
+import chalk from 'chalk'
 
 /**
  * Interceptors have access to response/request
@@ -14,15 +14,15 @@ import { sig } from '@qdev/utils-ts'
 export class LoggingInterceptor implements NestInterceptor {
 	intercept (context: ExecutionContext, next: CallHandler): Observable<any> {
 		const start = Date.now ()
-		sig.info (`Handler: ${context.getHandler ().name}`)
-		sig.info (`Class: ${context.getClass ().name}`)
+		sig.info (`${chalk.underline(`Handler`)}: ${context.getHandler ().name}`)
+		sig.info (`${chalk.underline(`Class`)}: ${context.getClass ().name}`)
 		const ctx = context.switchToHttp ()
 		const { method, url } = ctx.getRequest<Request> ()
 		const { statusCode } = ctx.getResponse<Response> ()
 		const msg = log(statusCode, url, method, start)
 		return next
 			.handle ()
-			.pipe (tap (() => sig.info (msg)))
+			.pipe (tap (() => sig.info (msg + '\n')))
 	}
 }
 
