@@ -1,9 +1,7 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common'
-import { Request } from 'express'
+import { createParamDecorator } from '@nestjs/common'
 
 export const User = createParamDecorator (
-	(data: keyof User, ctx: ExecutionContext) => {
-		const { user } = ctx.switchToHttp ().getRequest <Request> ()
+	(data: keyof Express.User, { user }: Express.Request) => {
 		return data ? user && user[data] : user
 	}
 )
