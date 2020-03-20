@@ -4,9 +4,7 @@ import { makeSchema } from './make-schema'
 
 
 describe ('make schema', () => {
-	
 	it ('should create schema', async () => {
-		
 		expect.assertions (1)
 		const schema = `
     type Query {
@@ -19,7 +17,5 @@ describe ('make schema', () => {
 		const res = await makeSchema (path, {})
 		expect (res).toMatchSnapshot ()
 		await fs.unlink (path)
-		
 	})
-	
 })

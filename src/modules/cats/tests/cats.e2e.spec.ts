@@ -7,20 +7,18 @@ import { AppModule } from '@/app.module'
 import { CatsModule } from '@M/cats/cats.module'
 import { AuthMiddleware } from '@/common/middleware/auth.middleware'
 import { CoreModule } from '@M/core/core.module'
+import { INestApplication } from '@nestjs/common'
 
 
 describe ('Cats', () => {
 	let request: ReturnType<typeof supertest>
-	let app: NestExpressApplication
+	let app: INestApplication
 	beforeAll (async () => {
 		const moduleFixture = await Test.createTestingModule ({
 			imports: [CoreModule, CatsModule]
 		}).compile ()
-		
-		app = moduleFixture.createNestApplication ()
-		await app.init ()
+		app = await moduleFixture.createNestApplication ().init()
 		request = supertest (app.getHttpServer ())
-		
 	})
 	afterAll (async () => await app.close ())
 	

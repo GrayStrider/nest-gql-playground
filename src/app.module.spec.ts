@@ -1,20 +1,18 @@
 import supertest from 'supertest'
 import { Test } from '@nestjs/testing'
 import { AppModule } from '@/app.module'
-import sleep from 'sleep-promise'
 import { isSE } from '@qdev/utils-ts'
-import { NestExpressApplication } from '@nestjs/platform-express'
+import { INestApplication } from '@nestjs/common'
 
 describe ('app.module', () => {
-	let app: NestExpressApplication
-	
+	let app: INestApplication
+	let request: ReturnType<typeof supertest>
 	beforeAll (async () => {
 		const moduleFixture = await Test.createTestingModule ({
 			imports: [AppModule]
 		}).compile ()
-		
-		app = moduleFixture.createNestApplication ()
-		await app.init ()
+		app = await moduleFixture.createNestApplication ().init()
+		request = supertest (app.getHttpServer ())
 	})
 	afterAll (async () => await app.close ())
 	
@@ -22,7 +20,7 @@ describe ('app.module', () => {
 	it ('/ hello', async () => {
 		expect.assertions (2)
 		const server = app.getHttpServer ()
-		const { status, text } = await supertest (server).get ('/hello')
+		const { status, text } = await request.get ('/hello')
 		expect (status).toBe (200)
 		isSE (JSON.parse (text), { data: 'Hello World!' })
 	})

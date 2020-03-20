@@ -1,21 +1,17 @@
-import { NestExpressApplication } from '@nestjs/platform-express'
 import { Test } from '@nestjs/testing'
-import sleep from 'sleep-promise'
 import { AuthModule } from '@M/auth/auth.module'
 import supertest from 'supertest'
 import { isSE } from '@qdev/utils-ts'
+import { INestApplication } from '@nestjs/common'
 
 describe ('auth module', () => {
-	let app: NestExpressApplication
+	let app: INestApplication
 	let request: ReturnType<typeof supertest>
-	
 	beforeAll (async () => {
 		const moduleFixture = await Test.createTestingModule ({
 			imports: [AuthModule]
 		}).compile ()
-		
-		app = moduleFixture.createNestApplication ()
-		await app.init ()
+		app = await moduleFixture.createNestApplication ().init()
 		request = supertest (app.getHttpServer ())
 	})
 	afterAll (async () => await app.close ())
