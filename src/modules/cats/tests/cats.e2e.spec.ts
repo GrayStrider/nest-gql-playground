@@ -4,6 +4,9 @@ import { NestExpressApplication } from '@nestjs/platform-express'
 import sleep from 'sleep-promise'
 import { isSE } from '@qdev/utils-ts'
 import { AppModule } from '@/app.module'
+import { CatsModule } from '@M/cats/cats.module'
+import { AuthMiddleware } from '@/common/middleware/auth.middleware'
+import { CoreModule } from '@M/core/core.module'
 
 
 describe ('Cats', () => {
@@ -11,11 +14,12 @@ describe ('Cats', () => {
 	let app: NestExpressApplication
 	beforeAll (async () => {
 		const moduleFixture = await Test.createTestingModule ({
-			imports: [AppModule]
+			imports: [CoreModule, CatsModule]
 		}).compile ()
 		
 		app = moduleFixture.createNestApplication ()
 		await app.init ()
+		request = supertest (app.getHttpServer ())
 		
 	})
 	afterAll (async () => {
@@ -25,14 +29,12 @@ describe ('Cats', () => {
 	
 	it ('should post cats', async () => {
 		expect.assertions (2)
-		const server = app.getHttpServer ()
-		const { status } = await supertest (server).post ('/cats')
-			.set ({ user: 'Ivan' })
+
+		const { status } = await request.post ('/cats')
 			.send ({ cat: 'meow' })
-		
 		isSE (status, 201)
 		
-		const { text } = await supertest (server).get ('/cats')
-		isSE (JSON.parse (text), {data: [{ cat: 'meow' }]})
+		const { text } = await request.get ('/cats')
+		isSE (JSON.parse (text), { data: [{ cat: 'meow' }] })
 	})
 })
