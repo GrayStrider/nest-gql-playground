@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs'
 import { join } from 'path'
-import { makeSchema } from '@/graphql/utils'
+import { makeSchema } from './make-schema'
 
 
 describe ('make schema', () => {
