@@ -94,6 +94,7 @@
     "helmet": "3.21.3",
     "cors": "2.8.5",
     "csurf": "1.11.0",
+    "compression": "1.7.4",
     "cookie-parser": "1.4.5",
     "express-rate-limit": "5.1.1",
     "koa": "^2.11.0",
@@ -105,6 +106,7 @@
     "@koa/cors": "^3.0.0",
 
     "apollo-server-koa": "^2.10.0",
+    "apollo-server-express": "2.11.0",
     "apollo-datasource-rest": "^0.7.0",
     "apollo-server-errors": "^2.3.4",
 
@@ -159,6 +161,7 @@
     "@types/express-session": "1.17.0",
     "@types/helmet": "0.0.45",
     "@types/cors": "2.8.6",
+    "@types/compression": "1.7.0",
     "@types/cookie-parser": "1.4.2",
     "@types/connect-redis": "0.0.13",
     "@types/csurf": "1.9.36",
