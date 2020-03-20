@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { UsersService } from '@M/users/users.service'
 import { omit } from 'ramda'
-import { JwtService } from '@nestjs/jwt'
 
 @Injectable ()
 export class AuthService {
 	constructor (
 		private usersService: UsersService,
-		private jwtService: JwtService
 	) {}
 	
 	async validateUser (username: string, pass: string) {
@@ -19,10 +17,7 @@ export class AuthService {
 	}
 	
 	async login (user: Express.User) {
-		const payload = { username: user.name, sub: user.id }
-		return {
-			access_token: this.jwtService.sign (payload)
-		}
+		return user
 	}
 }
 
