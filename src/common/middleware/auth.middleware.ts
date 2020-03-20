@@ -5,7 +5,7 @@ import { Handler } from 'express'
 export class AuthMiddleware implements NestMiddleware {
 	use: Handler = (req, res, next) => {
 		// validation steps here
-		req.user = { name: 'Ivan', roles: ['admin'], id: '1' }
+		req.user = { name: 'Ivan', roles: ['admin', 'user'], id: '1' }
 		next ()
 	}
 }
