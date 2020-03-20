@@ -11,7 +11,9 @@ import { JwtStrategy } from '@M/auth/strategies/jwt.strategy'
 @Module ({
 	imports: [
 		UsersModule,
-		PassportModule,
+		PassportModule.register ({
+			defaultStrategy: 'jwt'
+		}),
 		JwtModule.register ({
 			secret: JWT_SECRET,
 			signOptions: { expiresIn: '60s' }
