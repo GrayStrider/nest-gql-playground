@@ -18,10 +18,7 @@ describe ('auth module', () => {
 		await app.init ()
 		request = supertest (app.getHttpServer ())
 	})
-	afterAll (async () => {
-		await app.close ()
-		await sleep (500)
-	})
+	afterAll (async () => await app.close ())
 	
 	it ('should log in', async () => {
 		expect.assertions (3)
@@ -34,3 +31,4 @@ describe ('auth module', () => {
 		
 	})
 })
+

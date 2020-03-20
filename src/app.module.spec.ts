@@ -16,10 +16,7 @@ describe ('app.module', () => {
 		app = moduleFixture.createNestApplication ()
 		await app.init ()
 	})
-	afterAll (async () => {
-		await app.close()
-		await sleep (500)
-	})
+	afterAll (async () => await app.close ())
 	
 	
 	it ('/ hello', async () => {

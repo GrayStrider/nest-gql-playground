@@ -22,10 +22,7 @@ describe ('Cats', () => {
 		request = supertest (app.getHttpServer ())
 		
 	})
-	afterAll (async () => {
-		await app.close ()
-		await sleep (500)
-	})
+	afterAll (async () => await app.close ())
 	
 	it ('should post cats', async () => {
 		expect.assertions (2)
