@@ -24,16 +24,13 @@ describe ('auth module', () => {
 	})
 	
 	it ('should log in', async () => {
-		expect.assertions (2)
-		const { status, text, body } = await request
+		expect.assertions (3)
+		const { status, text, body: { access_token } } = await request
 			.post ('/auth/login')
 			.send ({ username: 'Strider', password: '123' })
 		isSE (status, 201)
-		isSE (body, {
-			id: '1',
-			name: 'Strider',
-			roles: ['admin']
-		})
+		expect (access_token).toBeString()
+		expect (access_token).not.toBeEmpty()
 		
 	})
 })
