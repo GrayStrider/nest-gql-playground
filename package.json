@@ -74,6 +74,11 @@
     "@nestjs/common": "^6.11.7",
     "@nestjs/core": "^6.11.7",
     "@nestjs/platform-express": "^6.11.7",
+    "@nestjs/microservices": "7.0.3",
+
+    "@nestjs/websockets": "7.0.3",
+
+    "@nestjs/swagger": "4.4.0",
 
     "@nestjs/passport": "7.0.0",
     "@nestjs/jwt": "^7.0.0",
@@ -84,6 +89,13 @@
     "passport-github2": "0.1.11",
 
     "express": "4.17.1",
+    "express-session": "1.17.0",
+    "connect-redis": "4.0.4",
+    "helmet": "3.21.3",
+    "cors": "2.8.5",
+    "csurf": "1.11.0",
+    "cookie-parser": "1.4.5",
+    "express-rate-limit": "5.1.1",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
     "koa-helmet": "^5.2.0",
@@ -102,6 +114,7 @@
 
     "dataloader": "^2.0.0",
 
+    "@nestjs/graphql": "7.0.10",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
     "graphql-request": "^1.8.2",
@@ -119,9 +132,12 @@
     "nodemailer": "^6.4.2",
 
     "type-graphql": "^0.18.0-beta.10",
+
+    "typeorm-typedi-extensions": "^0.2.3",
     "typedi": "^0.8.0",
-    "typeorm": "^0.2.22",
-    "typeorm-typedi-extensions": "^0.2.3"
+
+    "@nestjs/typeorm": "7.0.0",
+    "typeorm": "^0.2.22"
   },
 
   "devDependencies": {
@@ -139,6 +155,14 @@
     "@types/bcryptjs": "^2.4.2",
     "@types/config": "^0.0.36",
     "@types/ioredis": "^4.14.4",
+    "@types/express": "4.17.3",
+    "@types/express-session": "1.17.0",
+    "@types/helmet": "0.0.45",
+    "@types/cors": "2.8.6",
+    "@types/cookie-parser": "1.4.2",
+    "@types/connect-redis": "0.0.13",
+    "@types/csurf": "1.9.36",
+    "@types/express-rate-limit": "5.0.0",
     "@types/koa": "^2.11.0",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-helmet": "^3.1.2",
