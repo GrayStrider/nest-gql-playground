@@ -7,6 +7,7 @@ import ConnectRedis from 'connect-redis'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { LoggingInterceptor } from '@M/core/interceptors/logging.interceptor'
 import cookieParser from 'cookie-parser'
+import { GqlModule } from '@M/graphql/gql.module'
 
 const RedisStore = ConnectRedis (session)
 
@@ -14,7 +15,8 @@ const Logger = { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor }
 
 @Module ({
 	imports: [
-		AuthModule
+		AuthModule,
+		GqlModule
 	],
 	providers: [
 		Logger
