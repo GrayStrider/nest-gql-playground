@@ -17,8 +17,12 @@ export class LoggingInterceptor implements NestInterceptor {
 		sig.info (`${chalk.underline(`Handler`)}: ${context.getHandler ().name}`)
 		sig.info (`${chalk.underline(`Class`)}: ${context.getClass ().name}`)
 		const ctx = context.switchToHttp ()
-		const { method, url } = ctx.getRequest<Request> ()
+		const { method, url, session, sessionID } = ctx.getRequest<Request> ()
 		const { statusCode } = ctx.getResponse<Response> ()
+		sig.info (`${chalk.underline(`sessionID`)}: ${sessionID}`)
+		sig.info (`${chalk.underline(`session`)}:`)
+		console.dir(session)
+		
 		const msg = log(statusCode, url, method, start)
 		return next
 			.handle ()
