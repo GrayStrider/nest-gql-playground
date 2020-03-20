@@ -18,6 +18,7 @@ const POSTRGRES_DATABASE: string = process.env.POSTRGRES_DATABASE ?? get ('postg
 const GQL_URL = `http://${HOST}:${PORT}/${process.env.endpoint ?? 'graphql'}`
 const SERVER_URL = `http://${HOST}:${PORT}`
 const APOLLO_ENGINE_API_KEY: string = process.env.ENGINE_API_KEY ?? get ('apollo.engine')
+const JWT_SECRET: string = get('JWT.secret')
 
 const ORMConfig: PostgresConnectionOptions = {
 	name: 'default',
@@ -44,5 +45,6 @@ export {
 	POSTRGRES_DATABASE,
 	GQL_URL,
 	SERVER_URL,
-	APOLLO_ENGINE_API_KEY
+	APOLLO_ENGINE_API_KEY,
+	JWT_SECRET
 }
