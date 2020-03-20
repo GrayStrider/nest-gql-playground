@@ -1,10 +1,17 @@
 import { CatsService } from './cats.service'
 import { CatsController } from './cats.controller'
-import { Module } from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
+import { AuthMiddleware } from '@/common/middleware/auth.middleware'
 
 @Module ({
 	controllers: [CatsController],
 	providers: [CatsService],
 	exports: [CatsService]
 })
-export class CatsModule {}
+export class CatsModule implements NestModule {
+	configure (consumer: MiddlewareConsumer): any {
+		consumer
+			.apply(AuthMiddleware)
+			.forRoutes('*')
+	}
+}
