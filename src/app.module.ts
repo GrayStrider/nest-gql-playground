@@ -1,25 +1,45 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
-import { HelloModule } from '@M/hello/hello.module'
-import { CatsModule } from '@M/cats/cats.module'
-import { CoreModule } from '@M/core/core.module'
-import { AuthMiddleware } from '@/common/middleware/auth.middleware'
-import { LoggerMiddleware } from '@/common/middleware/logger.middleware'
 import { AuthModule } from '@M/auth/auth.module'
-import { ConfigModule } from '@M/config/config.module'
+import { redisSessionClient } from '@/DB/redis'
+import { get } from 'config'
+import session from 'express-session'
+import ConnectRedis from 'connect-redis'
+import { APP_INTERCEPTOR } from '@nestjs/core'
+import { LoggingInterceptor } from '@M/core/interceptors/logging.interceptor'
+import cookieParser from 'cookie-parser'
+
+const RedisStore = ConnectRedis (session)
+
+const Logger = { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor }
 
 @Module ({
 	imports: [
-		CoreModule,
-		HelloModule,
-		CatsModule,
-		AuthModule,
-		ConfigModule.register({ folder: './../config' })
+		AuthModule
+	],
+	providers: [
+		Logger
 	]
 })
 export class AppModule implements NestModule {
 	public configure (consumer: MiddlewareConsumer): void {
 		consumer
-			.apply (AuthMiddleware, LoggerMiddleware)
-			.forRoutes ('*')
+			.apply ([
+				cookieParser (),
+				session ({
+					name: get ('cookie.name'),
+					secret: get ('session.secret'),
+					resave: false,
+					saveUninitialized: true,
+					unset: 'destroy',
+					cookie: {
+						maxAge: get ('cookie.maxAge'),
+						secure: get ('cookie.secure') // TODO https://github.com/expressjs/session
+					},
+					store: new RedisStore ({
+						client: redisSessionClient,
+						prefix: get ('redis.prefix.session')
+					})
+				})
+			]).forRoutes ('*')
 	}
 }
