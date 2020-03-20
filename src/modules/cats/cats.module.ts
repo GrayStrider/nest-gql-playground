@@ -9,7 +9,7 @@ import { AuthMiddleware } from '@/common/middleware/auth.middleware'
 	exports: [CatsService]
 })
 export class CatsModule implements NestModule {
-	configure (consumer: MiddlewareConsumer): any {
+	configure (consumer: MiddlewareConsumer): void {
 		consumer
 			.apply(AuthMiddleware)
 			.forRoutes('*')

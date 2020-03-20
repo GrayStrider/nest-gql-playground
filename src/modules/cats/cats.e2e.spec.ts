@@ -1,17 +1,14 @@
 import { Test } from '@nestjs/testing'
 import supertest from 'supertest'
-import { NestExpressApplication } from '@nestjs/platform-express'
-import sleep from 'sleep-promise'
 import { isSE } from '@qdev/utils-ts'
-import { AppModule } from '@/app.module'
 import { CatsModule } from '@M/cats/cats.module'
-import { AuthMiddleware } from '@/common/middleware/auth.middleware'
 import { CoreModule } from '@M/core/core.module'
 import { INestApplication } from '@nestjs/common'
 
 
 describe ('Cats', () => {
 	let request: ReturnType<typeof supertest>
+	let agent: ReturnType<typeof supertest>
 	let app: INestApplication
 	beforeAll (async () => {
 		const moduleFixture = await Test.createTestingModule ({
@@ -19,6 +16,7 @@ describe ('Cats', () => {
 		}).compile ()
 		app = await moduleFixture.createNestApplication ().init()
 		request = supertest (app.getHttpServer ())
+		agent = supertest.agent(app.getHttpServer())
 	})
 	afterAll (async () => await app.close ())
 	
@@ -29,7 +27,7 @@ describe ('Cats', () => {
 			.send ({ cat: 'meow' })
 		isSE (status, 201)
 		
-		const { text } = await request.get ('/cats')
-		isSE (JSON.parse (text), { data: [{ cat: 'meow' }] })
+		const { body } = await request.get ('/cats')
+		isSE (body, [{ cat: 'meow' }])
 	})
 })
