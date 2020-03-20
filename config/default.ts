@@ -7,5 +7,15 @@ export default {
 		database: 'graphql-boilerplate',
 		password: 'postgres',
 		username: 'postgres'
+	},
+	redis: {
+		prefix: {
+			session: 'session-default: '
+		}
+	},
+	cookie: {
+		name: 'my-cookie',
+		maxAge: 1000 * 60 * 10,
+		secure: false
 	}
 }

@@ -5,5 +5,11 @@ export default {
 		database: 'graphql-boilerplate-test',
 		username: 'test_runner',
 		password: 'testtest'
+	},
+	
+	redis: {
+		prefix: {
+			session: 'test-session: '
+		}
 	}
 }
