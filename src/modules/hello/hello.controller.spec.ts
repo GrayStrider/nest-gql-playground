@@ -21,10 +21,5 @@ describe ('appController', () => {
 				.toBe ('Hello World!')
 		})
 		
-		it ('should get exported module', async () => {
-			expect.assertions(1)
-			const appController = app.get<HelloController> (HelloController)
-			isSE(appController.getExported(), [])
-		})
 	})
 })
