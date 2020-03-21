@@ -2,6 +2,7 @@ import { isNil } from 'ramda'
 import { get } from 'config'
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
 import { CustomLogger } from '@/DB/typeorm'
+import { TypeOrmModuleOptions } from '@nestjs/typeorm'
 
 process.env.ALLOW_CONFIG_MUTATIONS = 'true'
 
@@ -20,7 +21,7 @@ const SERVER_URL = `http://${HOST}:${PORT}`
 const APOLLO_ENGINE_API_KEY: string = process.env.ENGINE_API_KEY ?? get ('apollo.engine')
 const JWT_SECRET: string = get('JWT.secret')
 
-const ORMConfig: PostgresConnectionOptions = {
+const TypeormConfig: TypeOrmModuleOptions = {
 	name: 'default',
 	type: 'postgres',
 	host: POSTGRES_URL,
@@ -30,11 +31,13 @@ const ORMConfig: PostgresConnectionOptions = {
 	database: POSTRGRES_DATABASE,
 	logger: new CustomLogger (),
 	logging: ['query', 'error'],
-	entities: ['src/models/**/entity/**/!(*.spec.*|*.test.*)']
+	entities: ['src/models/**/entity/**/!(*.spec.*|*.test.*)'],
+	
+	retryAttempts: 5
 }
 
 export {
-	ORMConfig,
+	TypeormConfig,
 	NODE_ENV,
 	PORT,
 	HOST,
