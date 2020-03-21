@@ -7,7 +7,6 @@ import { User } from '@/common/decorators/user.decorator'
 export class HelloController {
 	constructor (
 		private readonly helloService: HelloService,
-		private readonly catsService: CatsService
 	) {}
 	
 	
@@ -16,10 +15,6 @@ export class HelloController {
 		return this.helloService.getHello ()
 	}
 	
-	
-	getExported () {
-		return this.catsService.findAll ()
-	}
 	
 	customDecorator (@User ('id') id: string){
 	
