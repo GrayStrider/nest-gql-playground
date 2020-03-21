@@ -5,7 +5,7 @@ import { HttpExceptionFilter } from '@/common/filters/http-exception.filter'
 import { TimeoutInterceptor } from '@/common/interceptors/timeout.interceptor'
 import { PORT, HOST, NODE_ENV } from '@config'
 import { sig } from '@qdev/utils-ts'
-import { AppModule } from '@/app.module'
+import { AppModule } from '@M/app/app.module'
 
 
 async function bootstrap () {

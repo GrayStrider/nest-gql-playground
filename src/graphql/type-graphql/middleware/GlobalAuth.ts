@@ -1,7 +1,7 @@
 import { MiddlewareFn } from 'type-graphql'
 import { isNotNil } from 'ramda-adjunct'
 import { HOST, PORT } from '@config'
-import Errors from '@/utils/Errors'
+import Errors from '@/common/errors'
 
 const publicFields = ['register', 'login']
 

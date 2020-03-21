@@ -1,6 +1,6 @@
 import supertest from 'supertest'
 import { Test } from '@nestjs/testing'
-import { AppModule } from '@/app.module'
+import { AppModule } from '@M/app/app.module'
 import { isSE } from '@qdev/utils-ts'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { HttpExceptionFilter } from '@/common/filters/http-exception.filter'
