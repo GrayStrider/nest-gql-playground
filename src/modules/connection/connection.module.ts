@@ -1,5 +1,4 @@
 import { Module, ValueProvider, FactoryProvider, Injectable } from '@nestjs/common'
-import { connection } from '@M/connection/connection.provider'
 import { Tokens } from '@/common/constants'
 import { NODE_ENV } from '@config'
 import sleep from 'sleep-promise'
@@ -16,6 +15,10 @@ const AsyncConnectionFactory: FactoryProvider = {
 	inject: [OptionsProvider]
 }
 
+export const connection = {
+	dev: 'Implementation',
+	prod: 'Another'
+}
 /**
  * useValue vs useFactory
  *
