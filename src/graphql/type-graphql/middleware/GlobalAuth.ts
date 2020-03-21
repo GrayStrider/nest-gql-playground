@@ -1,12 +1,11 @@
 import { MiddlewareFn } from 'type-graphql'
 import { isNotNil } from 'ramda-adjunct'
-import { Context } from '@/graphql'
 import { HOST, PORT } from '@config'
 import { Errors } from '@/utils'
 
 const publicFields = ['register', 'login']
 
-const globalAuth: MiddlewareFn<Context> =
+const globalAuth: MiddlewareFn<any> =
 	async function ({ context, args, info, root }, next) {
 		
 		const { session, request: { headers, host } } = context

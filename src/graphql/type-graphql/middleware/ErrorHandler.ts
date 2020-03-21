@@ -1,10 +1,9 @@
 import { MiddlewareFn } from 'type-graphql'
 import _ from 'lodash'
 import { isEmpty } from 'ramda'
-import { Context } from '@/graphql'
 import { Errors } from '@/utils'
 
-const ErrorHandler: MiddlewareFn<Context> =
+const ErrorHandler: MiddlewareFn =
 	async ({ context, info, root, args }, next) => {
 		
 		try {

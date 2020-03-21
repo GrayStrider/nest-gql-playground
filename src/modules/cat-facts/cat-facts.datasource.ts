@@ -7,13 +7,11 @@ interface CatFact {
 	source: string
 	type: string
 	deleted: boolean
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	_id: string
 	updatedAt: string
 	createdAt: string
 	user: string
 	text: string
-	// eslint-disable-next-line @typescript-eslint/naming-convention
 	__v: number
 	status: {
 		verified: boolean
@@ -21,7 +19,7 @@ interface CatFact {
 	}
 }
 
-export default class CatFactsAPI extends RESTDataSource {
+export class CatFactsAPI extends RESTDataSource {
 	
 	constructor () {
 		

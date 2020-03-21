@@ -7,8 +7,6 @@ export class AuthService {
 	@Inject (UsersService)
 	protected usersService: UsersService
 	
-	constructor () {}
-	
 	async validateUser (username: string, pass: string) {
 		const user = await this.usersService.findOne (username)
 		
