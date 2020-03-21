@@ -7,7 +7,7 @@ import { IsInt, IsString, IsUUID } from 'class-validator'
  *
  * Similar to type-graphql _input_ class.
  */
-export class CatCreateDto {
+export class CatCreateInput {
 	id: number
 	
 	@IsString ()
