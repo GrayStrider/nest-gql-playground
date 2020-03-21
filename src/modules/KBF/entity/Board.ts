@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { Swimlane } from '@/models/entity/Swimlane'
-import { Color } from '@/models/entity/Color'
-import { TColumn } from '@/models/entity/TColumn'
+import { Swimlane } from '@M/KBF/entity/Swimlane'
+import { Color } from '@M/KBF/entity/Color'
+import { TColumn } from '@M/KBF/entity/TColumn'
 
 @ObjectType ()
 @Entity ()

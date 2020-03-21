@@ -1,15 +1,14 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany } from 'typeorm'
-import { Color } from '@/models/entity/Color'
-import { TColumn } from '@/models/entity/TColumn'
-import { Swimlane } from '@/models/entity/Swimlane'
-import { TaskNumber } from '@/models/entity/TaskNumber'
-import { User } from '@/models/entity/User'
-import { TDate } from '@/models/entity/TDate'
-import { Subtask } from '@/models/entity/Subtask'
-import { Label } from '@/models/entity/Label'
-import { Comment } from '@/models/entity/Comment'
-
+import { Color } from '@M/KBF/entity/Color'
+import { TColumn } from '@M/KBF/entity/TColumn'
+import { Swimlane } from '@M/KBF/entity/Swimlane'
+import { TaskNumber } from '@M/KBF/entity/TaskNumber'
+import { User } from '@M/KBF/entity/User'
+import { TDate } from '@M/KBF/entity/TDate'
+import { Subtask } from '@M/KBF/entity/Subtask'
+import { Label } from '@M/KBF/entity/Label'
+import { Comment } from '@M/KBF/entity/Comment'
 
 @ObjectType ()
 @Entity ()

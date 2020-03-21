@@ -1,23 +1,29 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { TypeormConfig } from '@config'
-import { Connection } from 'typeorm'
-import { sig } from '@qdev/utils-ts'
+import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import { CreateResolver } from '@/models/resolvers/CreateResolver'
-import { TasksResolver } from '@/models/resolvers/TasksResolver'
-import { redisSessionClient } from '@/DB/redis'
+import { KBFResolver } from '@M/KBF/KBF.resolver'
+import { CatFactsAPI } from '@M/cat-facts/cat-facts.datasource'
+import { formatError } from '@/graphql/apollo/formatError'
 
 @Module ({
 	imports: [
 		GraphQLModule.forRoot ({
-			autoSchemaFile: 'src/graphql/generated/schema.graphql'
-		}),
+			autoSchemaFile: 'src/graphql/generated/schema.graphql',
+			dataSources: () => ({
+				catFacts: new CatFactsAPI ()
+			}),
+			playground: {
+				settings: {
+					'request.credentials': 'include'
+				}
+			},
+			formatError,
+			context: (args) => ({
+			
+			})
+		})
 	],
-	providers: [CreateResolver, TasksResolver],
+	providers: [KBFResolver],
 	controllers: [],
 	exports: []
 })
-export class KBFModule {
-
-}
+export class KBFModule {}

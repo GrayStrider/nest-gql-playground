@@ -1,7 +1,7 @@
 import { PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, BaseEntity, Entity } from 'typeorm'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Task } from '@/models/entity/Task'
-import { User } from '@/models/entity/User'
+import { Task } from '@M/KBF/entity/Task'
+import { User } from '@M/KBF/entity/User'
 
 @ObjectType ()
 @Entity ()

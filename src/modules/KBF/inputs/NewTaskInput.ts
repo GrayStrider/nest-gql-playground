@@ -1,6 +1,6 @@
 import { ArgsType, Field } from '@nestjs/graphql'
-import { Priority } from '@/models/entity/Priority'
-import { Task } from '@/models/entity/Task'
+import { Priority } from '@M/KBF/entity/Priority'
+import { Task } from '@M/KBF/entity/Task'
 import { MaxLength, IsOptional } from 'class-validator'
 
 @ArgsType ()

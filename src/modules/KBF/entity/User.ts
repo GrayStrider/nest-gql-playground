@@ -1,8 +1,8 @@
 import { PrimaryGeneratedColumn, ManyToMany, OneToMany, Entity, BaseEntity } from 'typeorm'
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { Task } from '@/models/entity/Task'
-import { Subtask } from '@/models/entity/Subtask'
-import { Comment } from '@/models/entity/Comment'
+import { Task } from '@M/KBF/entity/Task'
+import { Subtask } from '@M/KBF/entity/Subtask'
+import { Comment } from '@M/KBF/entity/Comment'
 
 
 @ObjectType ()
