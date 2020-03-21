@@ -15,7 +15,6 @@ export class HelloController {
 		return this.helloService.getHello ()
 	}
 	
-	
 	customDecorator (@User ('id') id: string){
 	
 	}

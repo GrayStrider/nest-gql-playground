@@ -2,6 +2,7 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/co
 import { log } from '@/common/message'
 import { sig } from '@qdev/utils-ts'
 import { Request, Response } from 'express'
+import { GqlArgumentsHost } from '@nestjs/graphql'
 
 /**
  * Exception Filters are called after the route handler and after the interceptors.
@@ -19,21 +20,16 @@ export class HttpExceptionFilter implements ExceptionFilter<HttpException> {
 	 * On the other hand, for GraphQL applications, the host object contains the [root, args, context, info] array.
 	 */
 	catch (exception: HttpException, host: ArgumentsHost) {
-		sig.info (`Type: ${host.getType ()}`)
-		
-		const start = Date.now ()
 		const ctx = host.switchToHttp () // Or WebSockets / RPC
 		const response = ctx.getResponse <Response> ()
-		const { url, method } = ctx.getRequest <Request> ()
+		const request = ctx.getRequest <Request> ()
 		const statusCode = exception.getStatus ()
 		
-		const msg = log (statusCode, url, method, start)
-		sig.error (msg)
 		response.status (statusCode).json ({
 			kind: 'HTTP Exception',
 			statusCode,
 			timestamp: new Date ().toISOString (),
-			path: url
+			path: request.url
 		})
 	}
 }
