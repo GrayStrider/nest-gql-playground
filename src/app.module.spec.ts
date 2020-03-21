@@ -5,7 +5,7 @@ import { isSE } from '@qdev/utils-ts'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { HttpExceptionFilter } from '@/common/filters/http-exception.filter'
 import { TimeoutInterceptor } from '@/common/interceptors/timeout.interceptor'
-import { makeRedis } from '@/DB/redis'
+import { makeRedis } from '@M/redis/redis.provider'
 
 describe ('app.module', () => {
 	let app: INestApplication
