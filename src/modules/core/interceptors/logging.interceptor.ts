@@ -13,17 +13,25 @@ import chalk from 'chalk'
 @Injectable ()
 export class LoggingInterceptor implements NestInterceptor {
 	intercept (context: ExecutionContext, next: CallHandler): Observable<any> {
-		const start = Date.now ()
-		sig.info (`${chalk.underline(`Handler`)}: ${context.getHandler ().name}`)
-		sig.info (`${chalk.underline(`Class`)}: ${context.getClass ().name}`)
-		const ctx = context.switchToHttp ()
-		const { method, url, session, sessionID } = ctx.getRequest<Request> ()
-		const { statusCode } = ctx.getResponse<Response> ()
-		sig.info (`${chalk.underline(`sessionID`)}: ${sessionID}`)
-		sig.info (`${chalk.underline(`session`)}:`)
-		console.dir(session)
+		if (!(context.getType () === 'http')) return next.handle ()
 		
-		const msg = log(statusCode, url, method, start)
+		const start = Date.now ()
+		sig.info (`${chalk.underline (`Handler`)}: ${context.getHandler ().name}`)
+		sig.info (`${chalk.underline (`Class`)}: ${context.getClass ().name}`)
+		
+		
+		const ctx = context.switchToHttp ()
+		const request = ctx.getRequest<Request> ()
+		const response = ctx.getResponse<Response> ()
+		sig.info (`${chalk.underline (`sessionID`)}: ${(request.sessionID) ?? 'none found'}`)
+		
+		const msg = log (
+			response.statusCode ?? 'no status code',
+			request.url ?? 'no url',
+			request.method ?? 'no method',
+			start)
+		
+		
 		return next
 			.handle ()
 			.pipe (tap (() => sig.info (msg + '\n')))
