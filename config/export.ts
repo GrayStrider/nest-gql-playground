@@ -1,7 +1,7 @@
 import { isNil } from 'ramda'
 import { get } from 'config'
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
-import { CustomLogger } from '@/DB/typeorm'
+import { CustomLogger } from '@M/typeorm/utils/logger'
 import { TypeOrmModuleOptions } from '@nestjs/typeorm'
 
 process.env.ALLOW_CONFIG_MUTATIONS = 'true'
@@ -31,8 +31,7 @@ const TypeormConfig: TypeOrmModuleOptions = {
 	database: POSTRGRES_DATABASE,
 	logger: new CustomLogger (),
 	logging: ['query', 'error'],
-	entities: ['src/models/**/entity/**/!(*.spec.*|*.test.*)'],
-	
+	entities: ['src/**/entity/**/!(*.spec.*|*.test.*)'],
 	retryAttempts: 5
 }
 
