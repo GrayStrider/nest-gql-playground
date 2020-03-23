@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Post, UseGuards, ParseIntPipe, Delete, Put } from '@nestjs/common'
 import { CatsService } from '@M/cats/cats.service'
-import { CatCreateDto } from '@M/cats/dto/cat.create.dto'
 import { Cat } from '@M/cats/interfaces/cat.interface'
 import { RolesGuard } from '@/common/guards/roles.guard'
 import { Roles } from '@/common/decorators/roles.decorator'
-import { CatUpdateDto } from '@M/cats/dto/cat.update.dto'
+import { CatCreateInput } from '@M/cats/inputs/cat.create.input'
+import { CatUpdateInput } from '@M/cats/inputs/cat.update.input'
 
 @UseGuards (RolesGuard)
 @Controller ('cats')
@@ -18,7 +18,7 @@ export class CatsController {
 	
 	@Post ()
 	@Roles ('admin')
-	async create (@Body () catCreateDto: CatCreateDto) {
+	async create (@Body () catCreateDto: CatCreateInput) {
 		await this.service.create (catCreateDto)
 	}
 	
@@ -37,7 +37,7 @@ export class CatsController {
 	
 	
 	@Put (':id')
-	update (@Param ('id') id: number, @Body () catUpdateDto: CatUpdateDto) {
+	update (@Param ('id') id: number, @Body () catUpdateDto: CatUpdateInput) {
 		return this.service.updateById (id, catUpdateDto)
 	}
 	
