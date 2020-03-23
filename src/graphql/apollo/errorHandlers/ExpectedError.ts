@@ -1,6 +1,6 @@
 import { GraphQLError } from 'graphql'
 import { AnyObject } from 'tsdef'
-import { IExpectedError, ErrorCodes } from '@/utils'
+import { ErrorCodes, IExpectedError } from '@/common/errors'
 
 const isExpectedError = (err: AnyObject) =>
 	Object.keys (ErrorCodes).includes (err.extensions?.code)
