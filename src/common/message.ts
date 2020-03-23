@@ -5,6 +5,6 @@ import { eqNumber } from 'fp-ts/lib/Eq'
 
 const { red, green } = chalk
 const good = [200, 201]
-export const log = (status: number, url: string, method: string, startTime: number) =>
-	`${elem(eqNumber)(status, good) ? green (status) : red (status)}: ${method} ${url} ${Date.now () - startTime}ms`
+export const log = (status: string, url: string, method: string, startTime: number) =>
+	`${elem(eqNumber)(Number (status), good) ? green (status) : red (status)}: ${method} ${url} ${Date.now () - startTime}ms`
 
