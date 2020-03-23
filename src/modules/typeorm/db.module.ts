@@ -14,18 +14,14 @@ export class DBModule implements OnModuleInit, OnModuleDestroy {
 	constructor (private connection: Connection) {}
 	
 	async onModuleInit () {
-		await spinner (this.connection.synchronize (true),
-			'Resetting DB..',
-			'DB reset.'
-		)
+		const sync = this.connection.synchronize (true)
+		await spinner (sync, 'Resetting DB..', 'DB reset.')
 		
 	}
 	
 	async onModuleDestroy () {
-		await spinner (this.connection.close (),
-			'Closing DB connection..',
-			'DB connection closed.'
-		)
+		const close = this.connection.close ()
+		await spinner (close, 'Closing DB connection..', 'DB connection closed.')
 	}
 }
 
