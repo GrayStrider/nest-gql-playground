@@ -3,7 +3,7 @@ import { Cat } from '@M/cats/interfaces/cat.interface'
 import { isNone } from 'fp-ts/lib/Option'
 import { findFirst,  } from 'fp-ts/lib/Array'
 import { Predicate } from 'fp-ts/lib/function'
-import { CatUpdateDto } from '@M/cats/dto/cat.update.dto'
+import { CatUpdateInput } from '@M/cats/inputs/cat.update.input'
 
 
 const byId: (id: number) => Predicate<Cat> =
@@ -28,7 +28,7 @@ export class CatsService {
 		return cat.value
 	}
 	
-	updateById (id: number, catUpdateDto: CatUpdateDto) {
+	updateById (id: number, catUpdateDto: CatUpdateInput) {
 		const cat = findFirst (byId (id)) (this.cats)
 		if (isNone (cat)) throw  new NotFoundException ('cat not found')
 		// update logic here
