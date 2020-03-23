@@ -1,9 +1,11 @@
 import { Module, Inject, NestModule, MiddlewareConsumer } from '@nestjs/common'
 import { Tokens } from '@/common/constants'
 import { ConfigModule } from '@M/config/config.module'
+import { ConnectionModule } from '@M/connection/connection.module'
 
 @Module ({
 	imports: [
+		ConnectionModule,
 		ConfigModule.register ({ folder: './../config' })
 	],
 	providers: []

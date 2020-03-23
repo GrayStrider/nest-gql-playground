@@ -38,8 +38,6 @@ describe ('app.module', () => {
 				.post ('/auth/login')
 				.send ({ username: 'Strider', password: '123' })
 			isSE (status, 201)
-			cookie = header['set-cookie'][0]
-			console.log(cookie)
 		})
 		
 		it ('redis should have session', async () => {
