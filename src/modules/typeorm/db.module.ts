@@ -1,26 +1,31 @@
-import { FactoryProvider, Module } from '@nestjs/common'
+import { Module, OnModuleInit, OnModuleDestroy } from '@nestjs/common'
 import { Connection } from 'typeorm'
-import { sig } from '@qdev/utils-ts'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { TypeormConfig } from '@config'
+import { spinner } from '@qdev/utils-ts'
 
-const makeConnection: FactoryProvider = {
-	provide: '_PrepareDB',
-	useFactory: async (connection: Connection) => {
-		sig.warn ('resetting the DB')
-		await connection.synchronize (true)
-		// TODO Redis provider
-		return connection
-	},
-	inject: [Connection]
-}
 
 @Module ({
 	imports: [
 		TypeOrmModule.forRoot (TypeormConfig)
-	],
-	providers: [makeConnection],
-	controllers: [],
-	exports: []
+	]
 })
-export class DBModule {}
+export class DBModule implements OnModuleInit, OnModuleDestroy {
+	constructor (private connection: Connection) {}
+	
+	async onModuleInit () {
+		await spinner (this.connection.synchronize (true),
+			'Resetting DB..',
+			'DB reset.'
+		)
+		
+	}
+	
+	async onModuleDestroy () {
+		await spinner (this.connection.close (),
+			'Closing DB connection..',
+			'DB connection closed.'
+		)
+	}
+}
+
