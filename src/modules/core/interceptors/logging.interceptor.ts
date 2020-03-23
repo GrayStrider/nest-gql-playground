@@ -26,7 +26,7 @@ export class LoggingInterceptor implements NestInterceptor {
 		sig.info (`${chalk.underline (`sessionID`)}: ${(request.sessionID) ?? 'none found'}`)
 		
 		const msg = log (
-			response.statusCode ?? 'no status code',
+			response.statusCode.toString() ?? 'no status code',
 			request.url ?? 'no url',
 			request.method ?? 'no method',
 			start)
