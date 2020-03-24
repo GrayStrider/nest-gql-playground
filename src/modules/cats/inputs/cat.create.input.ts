@@ -8,8 +8,6 @@ import { IsInt, IsString, IsUUID } from 'class-validator'
  * Similar to type-graphql _input_ class.
  */
 export class CatCreateInput {
-	id: number
-	
 	@IsString ()
 	readonly name: string
 	

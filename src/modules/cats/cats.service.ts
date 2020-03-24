@@ -3,6 +3,8 @@ import { Cat } from '@M/cats/interfaces/cat.interface'
 import { isNone } from 'fp-ts/lib/Option'
 import { findFirst, isEmpty } from 'fp-ts/lib/Array'
 import { CatUpdateInput } from '@M/cats/inputs/cat.update.input'
+import { CatCreateInput } from '@M/cats/inputs/cat.create.input'
+import { mergeDeepLeft } from 'ramda'
 
 
 const byId = (id: number) =>
@@ -26,8 +28,11 @@ const byId = (id: number) =>
 export class CatsService {
 	private readonly cats: Cat[] = []
 	
-	async create (cat: Cat): Promise<void> {
-		this.cats.push (cat)
+	async create (cat: CatCreateInput) {
+		this.cats.push (mergeDeepLeft (
+			cat,
+			{ id: this.cats.length + 1 }
+		))
 	}
 	
 	findAll (): Cat[] {
