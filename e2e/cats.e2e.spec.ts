@@ -3,7 +3,7 @@ import supertest from 'supertest'
 import { isSE } from '@qdev/utils-ts'
 import { CatsModule } from '@M/cats/cats.module'
 import { INestApplication } from '@nestjs/common'
-import { repeat, isEmpty } from 'ramda'
+import { repeat } from 'ramda'
 import { plainToClass } from 'class-transformer'
 import { Cat, CatCreateInput, CatUpdateInput } from '@M/cats/interfaces/cat.interface'
 import { validate, ValidationError } from 'class-validator'
@@ -48,11 +48,11 @@ describe (path, () => {
 			isSE (p.body, {})
 			
 			const e = await req.post (path)
-				.send ([[], {foo: 1} , {}, '', 1, 2, '', {}])
+				.send ([[], { foo: 1 }, {}, '', 1, 2, '', {}])
 			isSE (p.status, 201)
 			
-			const a = await req.get(path)
-			isSE(a.body.length, 11)
+			const a = await req.get (path)
+			isSE (a.body.length, 11)
 			
 		})
 	})
@@ -75,11 +75,9 @@ describe (path, () => {
 			const catsCls = a.body.map ((cat: Cat) => plainToClass
 			(Cat, cat))
 			const res = await Promise.allSettled<ValidationError>
-				(catsCls.map (validate))
-			isSE (res.every (
-				r => r.status === 'fulfilled'
-					&& isEmpty (r.value)
-			), true)
+			(catsCls.map (validate))
+			isSE (res.reduce ((p, { value }: any) =>
+				p.concat (value), [] as any).length, 0)
 			
 		})
 	})
