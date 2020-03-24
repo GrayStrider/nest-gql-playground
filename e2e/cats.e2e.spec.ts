@@ -83,7 +83,7 @@ describe (path, () => {
 	
 	describe ('U', () => {
 		it ('should replace one PUT', async () => {
-			expect.assertions (3)
+			expect.assertions (4)
 			const cat2: CatUpdateInput = {
 				...cat,
 				name: 'cat2'
@@ -94,6 +94,9 @@ describe (path, () => {
 			
 			const { body } = await req.get (`${path}/1`)
 			isSE(body.name, 'cat2')
+			
+			const e = await req.put (`${path}/1`).send ({1: ''})
+			isSE(e.status, 400)
 			
 		})
 		it ('should update one PATCH', async () => {
