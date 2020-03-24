@@ -23,7 +23,7 @@ export class CatsService {
 	}
 	
 	findOneById (id: number) {
-		const cat = findFirst (byId (id)) (this.cats)
+		const cat = findFirst ((cat: Cat) => cat.id === id) (this.cats)
 		if (isNone (cat)) throw  new NotFoundException ('cat not found')
 		return cat.value
 	}
