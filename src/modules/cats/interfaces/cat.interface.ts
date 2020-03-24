@@ -1,20 +1,25 @@
-import { IsString, MaxLength, MinLength, Min, Max, IsInt } from 'class-validator'
+import { IsString, MaxLength, MinLength, Min, Max } from 'class-validator'
 
-export class Cat {
-	@Min(1)
-	id: number
-	
+export class CatUpdateInput {
 	@IsString ()
 	@MaxLength (100)
 	@MinLength (1)
-	readonly name: string
+	name: string
 	
 	@Min (0)
 	@Max (30)
-	readonly age: number
+	age: number
+}
+
+export class CatCreateInput extends CatUpdateInput {
 	
 	@IsString ()
 	@MaxLength (100)
 	@MinLength (1)
 	readonly breed: string
+}
+
+export class Cat extends CatCreateInput {
+	@Min(1)
+	readonly id: number
 }

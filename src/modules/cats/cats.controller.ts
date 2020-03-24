@@ -2,8 +2,7 @@ import { Body, Controller, Get, Param, Post, UseGuards, ParseIntPipe, Put, Patch
 import { CatsService } from '@M/cats/cats.service'
 import { RolesGuard } from '@/common/guards/roles.guard'
 import { Roles } from '@/common/decorators/roles.decorator'
-import { CatCreateInput } from '@M/cats/inputs/cat.create.input'
-import { CatUpdateInput } from '@M/cats/inputs/cat.update.input'
+import { CatCreateInput, CatUpdateInput } from '@M/cats/interfaces/cat.interface'
 
 const Id = Param ('id', new ParseIntPipe)
 

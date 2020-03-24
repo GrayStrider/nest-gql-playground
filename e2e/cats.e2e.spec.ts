@@ -3,11 +3,9 @@ import supertest from 'supertest'
 import { isSE } from '@qdev/utils-ts'
 import { CatsModule } from '@M/cats/cats.module'
 import { INestApplication } from '@nestjs/common'
-import { CatCreateInput } from '@M/cats/inputs/cat.create.input'
-import { CatUpdateInput } from '@M/cats/inputs/cat.update.input'
 import { repeat, isEmpty } from 'ramda'
 import { plainToClass } from 'class-transformer'
-import { Cat } from '@M/cats/interfaces/cat.interface'
+import { Cat, CatCreateInput, CatUpdateInput } from '@M/cats/interfaces/cat.interface'
 import { validate, ValidationError } from 'class-validator'
 
 let request: ReturnType<typeof supertest>
@@ -54,7 +52,6 @@ describe (path, () => {
 			isSE (p.status, 201)
 			
 			const a = await request.get(path)
-			console.log(a.body)
 			isSE(a.body.length, 11)
 			
 		})
