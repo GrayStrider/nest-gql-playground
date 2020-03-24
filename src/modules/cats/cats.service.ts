@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Cat } from '@M/cats/interfaces/cat.interface'
 import { isNone } from 'fp-ts/lib/Option'
-import { findFirst,  } from 'fp-ts/lib/Array'
+import { findFirst, isEmpty } from 'fp-ts/lib/Array'
 import { Predicate } from 'fp-ts/lib/function'
 import { CatUpdateInput } from '@M/cats/inputs/cat.update.input'
 
@@ -19,6 +19,7 @@ export class CatsService {
 	}
 	
 	findAll (): Cat[] {
+		if (isEmpty (this.cats)) throw new NotFoundException ('no cats found')
 		return this.cats
 	}
 	
