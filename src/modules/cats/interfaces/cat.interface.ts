@@ -1,9 +1,8 @@
-import { IsString, MaxLength, MinLength, Min, Max } from 'class-validator'
+import { IsString, MaxLength, MinLength, Min, Max, IsNotEmpty } from 'class-validator'
 
 export class CatUpdateInput {
-	@IsString ()
 	@MaxLength (100)
-	@MinLength (1)
+	@IsNotEmpty()
 	name: string
 	
 	@Min (0)
@@ -12,10 +11,8 @@ export class CatUpdateInput {
 }
 
 export class CatCreateInput extends CatUpdateInput {
-	
-	@IsString ()
 	@MaxLength (100)
-	@MinLength (1)
+	@IsNotEmpty()
 	readonly breed: string
 }
 
