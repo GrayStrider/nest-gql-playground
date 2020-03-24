@@ -1,4 +1,4 @@
-import WrapperLike from '@M/typeorm/utils/wrapper.like'
+import WrapperLike from '@M/db/utils/wrapper.like'
 
 describe ('likeWrapper', () => {
 	it ('should wrap string in like expression', async () => {

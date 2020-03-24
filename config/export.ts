@@ -1,7 +1,7 @@
 import { isNil } from 'ramda'
 import { get } from 'config'
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
-import { CustomLogger } from '@M/typeorm/utils/logger'
+import { CustomLogger } from '@M/db/utils/logger'
 import { TypeOrmModuleOptions } from '@nestjs/typeorm'
 
 process.env.ALLOW_CONFIG_MUTATIONS = 'true'
