@@ -1,7 +1,7 @@
 import { Module, NestModule, MiddlewareConsumer, Inject, ValidationPipe } from '@nestjs/common'
 import { AuthModule } from '@M/auth/auth.module'
 import { get } from 'config'
-import session from 'express-session'
+import session, { SessionOptions } from 'express-session'
 import ConnectRedis from 'connect-redis'
 import { APP_INTERCEPTOR, APP_FILTER, APP_PIPE } from '@nestjs/core'
 import { LoggingInterceptor } from '@M/core/interceptors/logging.interceptor'
@@ -17,6 +17,10 @@ import { TimeoutInterceptor } from '@/common/interceptors/timeout.interceptor'
 
 const RedisStore = ConnectRedis (session)
 
+const redisPubSub = new RedisPubSub ({
+	publisher: makeRedis (),
+	subscriber: makeRedis ()
+})
 
 @Module ({
 	imports: [
@@ -31,37 +35,32 @@ const RedisStore = ConnectRedis (session)
 		{ provide: APP_PIPE, useClass: ValidationPipe },
 		{ provide: APP_FILTER, useClass: HttpExceptionFilter },
 		{ provide: REDIS.SESSION, useValue: makeRedis () },
-		{
-			provide: REDIS.PUBSUB, useValue: new RedisPubSub ({
-				publisher: makeRedis (),
-				subscriber: makeRedis ()
-			})
-		}
+		{ provide: REDIS.PUBSUB, useValue: redisPubSub }
 	]
 })
 export class AppModule implements NestModule {
 	@Inject (REDIS.SESSION)
 	private redis: Redis
+	private sessionOptions: SessionOptions = {
+		name: get ('cookie.name'),
+		secret: get ('session.secret'),
+		resave: false,
+		saveUninitialized: true,
+		unset: 'destroy',
+		cookie: {
+			maxAge: get ('cookie.maxAge'),
+			secure: get ('cookie.secure') // TODO https://github.com/expressjs/session
+		},
+		store: new RedisStore ({
+			client: this.redis,
+			prefix: get ('redis.prefix.session')
+		})
+	}
 	
 	public configure (consumer: MiddlewareConsumer): void {
-		consumer
-			.apply ([
-				cookieParser (),
-				session ({
-					name: get ('cookie.name'),
-					secret: get ('session.secret'),
-					resave: false,
-					saveUninitialized: true,
-					unset: 'destroy',
-					cookie: {
-						maxAge: get ('cookie.maxAge'),
-						secure: get ('cookie.secure') // TODO https://github.com/expressjs/session
-					},
-					store: new RedisStore ({
-						client: this.redis,
-						prefix: get ('redis.prefix.session')
-					})
-				})
-			]).forRoutes ('*')
+		consumer.apply ([
+			cookieParser (),
+			session (this.sessionOptions)
+		]).forRoutes ('*')
 	}
 }
