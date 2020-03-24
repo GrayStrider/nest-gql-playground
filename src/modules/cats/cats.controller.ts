@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Post, UseGuards, ParseIntPipe, Delete, Put } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards, ParseIntPipe, Put, Patch } from '@nestjs/common'
 import { CatsService } from '@M/cats/cats.service'
-import { Cat } from '@M/cats/interfaces/cat.interface'
 import { RolesGuard } from '@/common/guards/roles.guard'
 import { Roles } from '@/common/decorators/roles.decorator'
 import { CatCreateInput } from '@M/cats/inputs/cat.create.input'
 import { CatUpdateInput } from '@M/cats/inputs/cat.update.input'
+
+const Id = Param('id', new ParseIntPipe)
 
 @UseGuards (RolesGuard)
 @Controller ('cats')
@@ -21,6 +22,7 @@ export class CatsController {
 	async create (@Body () catCreateDto: CatCreateInput) {
 		await this.service.create (catCreateDto)
 	}
+	
 	//
 	// @Get ()
 	// async findAll (): Promise<Cat[]> {
@@ -28,19 +30,23 @@ export class CatsController {
 	// }
 	//
 	@Get (':id')
-	findOne (
-		@Param ('id', new ParseIntPipe ())
-			id: number
-	) {
+	findOne (@Id id: number) {
 		return this.service.findOneById (id)
 	}
-	//
-	//
-	// @Put (':id')
-	// update (@Param ('id') id: number, @Body () catUpdateDto: CatUpdateInput) {
-	// 	return this.service.updateById (id, catUpdateDto)
-	// }
-	//
+	
+	
+	@Put (':id')
+	async replace (@Id id: number,
+	               @Body () catUpdateDto: CatUpdateInput) {
+		await this.service.replace (id, catUpdateDto)
+	}
+	
+	@Patch (':id')
+	async update (@Id id: number,
+	              @Body () catUpdateDto: Partial<CatUpdateInput>) {
+		await this.service.update(id, catUpdateDto)
+	}
+	
 	// @Delete (':id')
 	// remove (@Param ('id') id: string) {
 	// 	return `This action removes a #${id} cat`

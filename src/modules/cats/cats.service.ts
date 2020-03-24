@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, Scope } from '@nestjs/common'
 import { Cat } from '@M/cats/interfaces/cat.interface'
 import { isNone } from 'fp-ts/lib/Option'
-import { findFirst, isEmpty } from 'fp-ts/lib/Array'
+import { findFirst, findIndex } from 'fp-ts/lib/Array'
 import { CatUpdateInput } from '@M/cats/inputs/cat.update.input'
 import { CatCreateInput } from '@M/cats/inputs/cat.create.input'
 import { mergeDeepLeft } from 'ramda'
@@ -9,6 +9,7 @@ import { mergeDeepLeft } from 'ramda'
 
 const byId = (id: number) =>
 	({ id: ID }: Cat) => ID === id
+
 
 /**
  * SINGLETON
@@ -39,29 +40,41 @@ export class CatsService {
 		))
 	}
 	
-	findAll (): Cat[] {
-		if (isEmpty (this.cats)) throw new NotFoundException ('no cats found')
-		return this.cats
-	}
-	
 	findOneById (id: number) {
 		const cat = findFirst ((cat: Cat) => cat.id === id) (this.cats)
 		if (isNone (cat)) throw  new NotFoundException ('cat not found')
 		return cat.value
 	}
 	
-	updateById (id: number, catUpdateDto: CatUpdateInput) {
-		const cat = findFirst (byId (id)) (this.cats)
-		if (isNone (cat)) throw  new NotFoundException ('cat not found')
-		// update logic here
-		return true
+	// findAll (): Cat[] {
+	// 	if (isEmpty (this.cats)) throw new NotFoundException ('no cats found')
+	// 	return this.cats
+	// }
+	
+	replace (id: number, catUpdateDto: CatUpdateInput) {
+		const index = this.lookup (id)
+		const cat = this.cats[index]
+		this.cats[index] = mergeDeepLeft (cat, catUpdateDto)
 	}
 	
-	deleteById (id: number) {
-		const cat = findFirst (byId (id)) (this.cats)
-		if (isNone (cat)) throw  new NotFoundException ('cat not found')
-		// delete logic here
-		return true
+	update (id: number, catUpdateDto: Partial<CatUpdateInput>) {
+		const index = this.lookup (id)
+		const cat = this.cats[index]
+		this.cats[index] = mergeDeepLeft (cat, catUpdateDto)
 	}
+	
+	private lookup (id: number) {
+		const index = findIndex (byId (id)) (this.cats)
+		if (isNone (index)) throw  new NotFoundException ('cat not found')
+		return index.value
+	}
+	
+	
+	// deleteById (id: number) {
+	// 	const cat = findFirst (byId (id)) (this.cats)
+	// 	if (isNone (cat)) throw  new NotFoundException ('cat not found')
+	// 	// delete logic here
+	// 	return true
+	// }
 	
 }
