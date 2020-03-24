@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards, ParseIntPipe, Put, Patch } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards, ParseIntPipe, Put, Patch, Delete } from '@nestjs/common'
 import { CatsService } from '@M/cats/cats.service'
 import { RolesGuard } from '@/common/guards/roles.guard'
 import { Roles } from '@/common/decorators/roles.decorator'
@@ -46,8 +46,8 @@ export class CatsController {
 		await this.svc.update (id, catUpdateDto)
 	}
 	
-	// @Delete (':id')
-	// remove (@Param ('id') id: string) {
-	// 	return `This action removes a #${id} cat`
-	// }
+	@Delete (':id')
+	async delete (@Id id: number) {
+		await this.svc.delete(id)
+	}
 }

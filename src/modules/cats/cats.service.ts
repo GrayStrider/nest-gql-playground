@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, Scope, BadRequestException } from '@nestjs/common'
 import { Cat, CatCreateInput, CatUpdateInput, CatPatchInput } from '@M/cats/interfaces/cat.interface'
 import { isNone } from 'fp-ts/lib/Option'
-import { findFirst, findIndex, isEmpty, isNonEmpty } from 'fp-ts/lib/Array'
-import { mergeDeepLeft, keys } from 'ramda'
+import { findFirst, findIndex, isEmpty, isNonEmpty , deleteAt, unsafeDeleteAt} from 'fp-ts/lib/Array'
+import { mergeDeepLeft, keys, pluck, defaultTo } from 'ramda'
 import { validate } from 'class-validator'
 import { plainToClass } from 'class-transformer'
 import { AnyClass } from 'tsdef'
@@ -36,7 +36,7 @@ const valClass = async (obj: object, cls: AnyClass) => {
  */
 @Injectable ({ scope: Scope.DEFAULT })
 export class CatsService {
-	private readonly cats: Cat[] = []
+	private cats: Cat[] = []
 	
 	async create (cat: CatCreateInput | CatCreateInput[]) {
 		const add = (cat: CatCreateInput) =>
@@ -59,7 +59,7 @@ export class CatsService {
 	}
 	
 	one (id: number) {
-		const cat = findFirst ((cat: Cat) => cat.id === id) (this.cats)
+		const cat = findFirst (byId(id)) (this.cats)
 		if (isNone (cat)) throw  new NotFoundException ('cat not found')
 		return cat.value
 	}
@@ -87,11 +87,10 @@ export class CatsService {
 	}
 	
 	
-	// deleteById (id: number) {
-	// 	const cat = findFirst (byId (id)) (this.cats)
-	// 	if (isNone (cat)) throw  new NotFoundException ('cat not found')
-	// 	// delete logic here
-	// 	return true
-	// }
+	delete (id: number) {
+		console.log(this.cats)
+		const index = this.lookup(id)
+		this.cats = unsafeDeleteAt (index, this.cats)
+	}
 	
 }
