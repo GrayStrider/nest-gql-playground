@@ -41,26 +41,25 @@ const redisPubSub = new RedisPubSub ({
 export class AppModule implements NestModule {
 	@Inject (REDIS.SESSION)
 	private redis: Redis
-	private sessionOptions: SessionOptions = {
-		name: get ('cookie.name'),
-		secret: get ('session.secret'),
-		resave: false,
-		saveUninitialized: true,
-		unset: 'destroy',
-		cookie: {
-			maxAge: get ('cookie.maxAge'),
-			secure: get ('cookie.secure') // TODO https://github.com/expressjs/session
-		},
-		store: new RedisStore ({
-			client: this.redis,
-			prefix: get ('redis.prefix.session')
-		})
-	}
 	
 	public configure (consumer: MiddlewareConsumer): void {
 		consumer.apply ([
 			cookieParser (),
-			session (this.sessionOptions)
+			session ({
+				name: get ('cookie.name'),
+				secret: get ('session.secret'),
+				resave: false,
+				saveUninitialized: true,
+				unset: 'destroy',
+				cookie: {
+					maxAge: get ('cookie.maxAge'),
+					secure: get ('cookie.secure') // TODO https://github.com/expressjs/session
+				},
+				store: new RedisStore ({
+					client: this.redis,
+					prefix: get ('redis.prefix.session')
+				})
+			})
 		]).forRoutes ('*')
 	}
 }
