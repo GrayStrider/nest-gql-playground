@@ -2,14 +2,13 @@ import { Test } from '@nestjs/testing'
 import supertest from 'supertest'
 import { isSE } from '@qdev/utils-ts'
 import { CatsModule } from '@M/cats/cats.module'
-import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { INestApplication } from '@nestjs/common'
 import { CatCreateInput } from '@M/cats/inputs/cat.create.input'
 import { CatUpdateInput } from '@M/cats/inputs/cat.update.input'
 import { repeat, isEmpty } from 'ramda'
 import { plainToClass } from 'class-transformer'
 import { Cat } from '@M/cats/interfaces/cat.interface'
 import { validate, ValidationError } from 'class-validator'
-import { ValidationPipe_ } from '@/common/pipes/validation.pipe'
 
 let request: ReturnType<typeof supertest>
 let agent: ReturnType<typeof supertest>
@@ -44,12 +43,19 @@ describe (path, () => {
 			isSE (e.status, 400)
 		})
 		it ('should add batch', async () => {
-			expect.assertions (3)
+			expect.assertions (4)
 			const p = await request.post (path)
 				.send (repeat (cat, 10))
 			isSE (p.status, 201)
 			isSE (p.body, {})
-			isSE (p.text, '')
+			
+			const e = await request.post (path)
+				.send ([[], {foo: 1} , {}, '', 1, 2, '', {}])
+			isSE (p.status, 201)
+			
+			const a = await request.get(path)
+			console.log(a.body)
+			isSE(a.body.length, 11)
 			
 		})
 	})
@@ -68,8 +74,7 @@ describe (path, () => {
 			isSE (a.status, 200)
 			const catsCls = a.body.map ((cat: Cat) => plainToClass
 			(Cat, cat))
-			const res =
-				await Promise.allSettled<ValidationError>
+			const res = await Promise.allSettled<ValidationError>
 				(catsCls.map (validate))
 			isSE (res.every (
 				r => r.status === 'fulfilled'

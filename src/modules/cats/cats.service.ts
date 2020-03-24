@@ -8,14 +8,14 @@ import { mergeDeepLeft } from 'ramda'
 import { validate } from 'class-validator'
 import { plainToClass } from 'class-transformer'
 import { AnyClass } from 'tsdef'
-
+import { validatorOptions } from '@M/cats/config/validator'
 
 const byId = (id: number) =>
 	({ id: ID }: Cat) => ID === id
 
 const valClass = async (obj: object, cls: AnyClass) => {
-	const err = await validate (plainToClass (cls, obj))
-	if (isNonEmpty(err)) throw new BadRequestException (err)
+	const err = await validate (plainToClass (cls, obj), validatorOptions)
+	if (isNonEmpty (err)) throw new BadRequestException (err)
 }
 
 /**

@@ -1,14 +1,15 @@
-import { CatsService } from './cats.service'
+import { CatsService} from './cats.service'
 import { CatsController } from './cats.controller'
 import { Module, NestModule, MiddlewareConsumer, ValidationPipe } from '@nestjs/common'
 import { AuthMiddleware } from '@/common/middleware/auth.middleware'
 import { APP_PIPE } from '@nestjs/core'
+import { validatorOptions } from '@M/cats/config/validator'
 
 @Module ({
 	controllers: [CatsController],
 	providers: [CatsService,  {
 		provide: APP_PIPE,
-		useClass: ValidationPipe,
+		useValue: new ValidationPipe(validatorOptions),
 	}],
 	exports: [CatsService]
 })
