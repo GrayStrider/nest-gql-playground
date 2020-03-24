@@ -31,7 +31,7 @@ describe (path, () => {
 	
 	describe ('C', () => {
 		it ('add one POST', async () => {
-			expect.assertions (5)
+			expect.assertions (7)
 			const p = await req.post (path).send (cat)
 			isSE (p.body, {})
 			isSE (p.status, 201)
@@ -39,6 +39,10 @@ describe (path, () => {
 			const e = await req.post (path).send ({ 1: '' })
 			isSE (e.body.message.length, 3)
 			isSE (e.status, 400)
+			const e2 = await req.post (path).send ({})
+			isSE (e2.status, 400)
+			const e3 = await req.post (path).send ('hello')
+			isSE (e3.status, 400)
 		})
 		it ('should add batch', async () => {
 			expect.assertions (4)
@@ -93,14 +97,14 @@ describe (path, () => {
 			isSE (p.body, {})
 			
 			const { body } = await req.get (`${path}/1`)
-			isSE(body.name, 'cat2')
+			isSE (body.name, 'cat2')
 			
-			const e = await req.put (`${path}/1`).send ({1: ''})
-			isSE(e.status, 400)
+			const e = await req.put (`${path}/1`).send ({ 1: '' })
+			isSE (e.status, 400)
 			
 		})
 		it ('should update one PATCH', async () => {
-			expect.assertions (4)
+			expect.assertions (6)
 			const cat2: Partial<CatUpdateInput> = {
 				name: 'cat2'
 			}
@@ -108,9 +112,17 @@ describe (path, () => {
 			isSE (p.status, 200)
 			isSE (p.body, {})
 			
-			const n = await req.get(`${path}/1`)
-			isSE(n.body.name, 'cat2')
-			isSE(keys(n.body).length, 4)
+			const n = await req.get (`${path}/1`)
+			isSE (n.body.name, 'cat2')
+			isSE (keys (n.body).length, 4)
+			
+			const e = await req.patch (`${path}/1`).send ({ name: false })
+			isSE (e.status, 400)
+			
+			const e2 = await req.patch (`${path}/1`).send ('hello')
+			isSE (e2.status, 200)
+			// TODO cannot weed out extraneous values when optional are present. Intersection of keys would solve the problem, but I can't access the properties of class-validator classes without constructor in them. GQL solves the problem
+			
 			
 		})
 	})

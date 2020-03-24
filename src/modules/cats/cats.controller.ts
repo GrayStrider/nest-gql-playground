@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, Post, UseGuards, ParseIntPipe, Put, Patch, UsePipes, ValidationPipe } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards, ParseIntPipe, Put, Patch } from '@nestjs/common'
 import { CatsService } from '@M/cats/cats.service'
 import { RolesGuard } from '@/common/guards/roles.guard'
 import { Roles } from '@/common/decorators/roles.decorator'
-import { CatCreateInput, CatUpdateInput } from '@M/cats/interfaces/cat.interface'
+import { CatCreateInput, CatUpdateInput, CatPatchInput } from '@M/cats/interfaces/cat.interface'
 
 const Id = Param ('id', new ParseIntPipe)
 
@@ -42,7 +42,7 @@ export class CatsController {
 	
 	@Patch (':id')
 	async update (@Id id: number,
-	              @Body () catUpdateDto: Partial<CatUpdateInput>) {
+	              @Body () catUpdateDto: CatPatchInput) {
 		await this.svc.update (id, catUpdateDto)
 	}
 	

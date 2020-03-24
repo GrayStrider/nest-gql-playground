@@ -1,19 +1,23 @@
 import { Injectable, NotFoundException, Scope, BadRequestException } from '@nestjs/common'
-import { Cat, CatCreateInput, CatUpdateInput } from '@M/cats/interfaces/cat.interface'
+import { Cat, CatCreateInput, CatUpdateInput, CatPatchInput } from '@M/cats/interfaces/cat.interface'
 import { isNone } from 'fp-ts/lib/Option'
 import { findFirst, findIndex, isEmpty, isNonEmpty } from 'fp-ts/lib/Array'
-import { mergeDeepLeft } from 'ramda'
+import { mergeDeepLeft, keys } from 'ramda'
 import { validate } from 'class-validator'
 import { plainToClass } from 'class-transformer'
 import { AnyClass } from 'tsdef'
 import { validatorOptions } from '@M/cats/config/validator'
+import { sig } from '@qdev/utils-ts'
 
 const byId = (id: number) =>
 	({ id: ID }: Cat) => ID === id
 
 const valClass = async (obj: object, cls: AnyClass) => {
-	const err = await validate (plainToClass (cls, obj), validatorOptions)
-	if (isNonEmpty (err)) throw new BadRequestException (err)
+	const fromPlain = plainToClass (cls, obj, {})
+	if (isEmpty (keys (fromPlain))) throw new BadRequestException ()
+	const err = await validate (fromPlain, validatorOptions)
+	if (isNonEmpty (err))
+		throw new BadRequestException (err)
 }
 
 /**
@@ -64,13 +68,13 @@ export class CatsService {
 		return this.cats
 	}
 	
-	replace (id: number, newCat: CatUpdateInput) {
+	replace (id: number, newCatBody: CatUpdateInput) {
 		const index = this.lookup (id)
 		const cat = this.cats[index]
-		this.cats[index] = mergeDeepLeft (newCat, cat)
+		this.cats[index] = mergeDeepLeft (newCatBody, cat)
 	}
 	
-	update (id: number, updatedCat: Partial<CatUpdateInput>) {
+	update (id: number, updatedCat: CatPatchInput) {
 		const index = this.lookup (id)
 		const cat = this.cats[index]
 		this.cats[index] = mergeDeepLeft (updatedCat, cat)
