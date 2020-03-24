@@ -8,14 +8,15 @@ import { Handler } from 'express'
  * They are basically express middleware functions.
  */
 @Injectable ()
-export class LoggerMiddleware implements NestMiddleware{
+export class LoggerMiddleware implements NestMiddleware {
+	constructor (private someService = {}) {}
 	/**
 	 * Does not inherit types; generic types only used when
 	 * generating implementation with IDE;
 	 * better use Handler from Express
 	 */
 	use: Handler = (req, res, next) => {
-		
-		next()
+		this.someService.toString()
+		next ()
 	}
 }
