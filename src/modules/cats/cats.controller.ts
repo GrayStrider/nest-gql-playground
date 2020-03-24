@@ -21,12 +21,12 @@ export class CatsController {
 	async create (@Body () catCreateDto: CatCreateInput) {
 		await this.service.create (catCreateDto)
 	}
-	
-	@Get ()
-	async findAll (): Promise<Cat[]> {
-		return this.service.findAll ()
-	}
-	
+	//
+	// @Get ()
+	// async findAll (): Promise<Cat[]> {
+	// 	return this.service.findAll ()
+	// }
+	//
 	@Get (':id')
 	findOne (
 		@Param ('id', new ParseIntPipe ())
@@ -34,15 +34,15 @@ export class CatsController {
 	) {
 		return this.service.findOneById (id)
 	}
-	
-	
-	@Put (':id')
-	update (@Param ('id') id: number, @Body () catUpdateDto: CatUpdateInput) {
-		return this.service.updateById (id, catUpdateDto)
-	}
-	
-	@Delete (':id')
-	remove (@Param ('id') id: string) {
-		return `This action removes a #${id} cat`
-	}
+	//
+	//
+	// @Put (':id')
+	// update (@Param ('id') id: number, @Body () catUpdateDto: CatUpdateInput) {
+	// 	return this.service.updateById (id, catUpdateDto)
+	// }
+	//
+	// @Delete (':id')
+	// remove (@Param ('id') id: string) {
+	// 	return `This action removes a #${id} cat`
+	// }
 }

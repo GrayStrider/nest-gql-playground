@@ -31,7 +31,11 @@ export class CatsService {
 	async create (cat: CatCreateInput) {
 		this.cats.push (mergeDeepLeft (
 			cat,
-			{ id: this.cats.length + 1 }
+			{
+				id: this.cats.length === 0
+					? 1
+					: this.cats.length + 1
+			}
 		))
 	}
 	
