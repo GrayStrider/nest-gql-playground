@@ -1,9 +1,9 @@
-import { Module, NestModule, MiddlewareConsumer, Inject } from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer, Inject, ValidationPipe } from '@nestjs/common'
 import { AuthModule } from '@M/auth/auth.module'
 import { get } from 'config'
 import session from 'express-session'
 import ConnectRedis from 'connect-redis'
-import { APP_INTERCEPTOR } from '@nestjs/core'
+import { APP_INTERCEPTOR, APP_FILTER, APP_PIPE } from '@nestjs/core'
 import { LoggingInterceptor } from '@M/core/interceptors/logging.interceptor'
 import cookieParser from 'cookie-parser'
 import { KBFModule } from '@M/KBF/KBF.module'
@@ -12,6 +12,8 @@ import { HelloModule } from '@M/hello/hello.module'
 import { REDIS, Redis } from '@/common/constants'
 import { makeRedis } from '@M/redis/redis.provider'
 import { RedisPubSub } from 'graphql-redis-subscriptions'
+import { HttpExceptionFilter } from '@/common/filters/http-exception.filter'
+import { TimeoutInterceptor } from '@/common/interceptors/timeout.interceptor'
 
 const RedisStore = ConnectRedis (session)
 
@@ -24,9 +26,13 @@ const RedisStore = ConnectRedis (session)
 		HelloModule
 	],
 	providers: [
+		{ provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
 		{ provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
+		{ provide: APP_PIPE, useClass: ValidationPipe },
+		{ provide: APP_FILTER, useClass: HttpExceptionFilter },
 		{ provide: REDIS.SESSION, useValue: makeRedis () },
-		{ provide: REDIS.PUBSUB, useValue: new RedisPubSub ({
+		{
+			provide: REDIS.PUBSUB, useValue: new RedisPubSub ({
 				publisher: makeRedis (),
 				subscriber: makeRedis ()
 			})

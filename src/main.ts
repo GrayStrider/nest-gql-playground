@@ -11,11 +11,7 @@ import { AppModule } from '@M/app/app.module'
 async function bootstrap () {
 	if (!NODE_ENV) sig.error ('process.env is undefined!')
 	else sig.info (`Environment: ${NODE_ENV}`)
-	
 	const app = await NestFactory.create <NestExpressApplication> (AppModule)
-	app.useGlobalPipes (new ValidationPipe)
-	app.useGlobalFilters (new HttpExceptionFilter)
-	app.useGlobalInterceptors (new TimeoutInterceptor)
 	await app.listen (PORT)
 	sig.success (`Application is running on: http://${HOST}:${PORT}`)
 }

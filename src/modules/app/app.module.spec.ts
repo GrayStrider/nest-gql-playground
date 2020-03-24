@@ -17,9 +17,6 @@ describe ('app.module', () => {
 			imports: [AppModule]
 		}).compile ()
 		app = moduleFixture.createNestApplication ()
-		app.useGlobalPipes (new ValidationPipe)
-		app.useGlobalFilters (new HttpExceptionFilter)
-		app.useGlobalInterceptors (new TimeoutInterceptor)
 		app = await app.init ()
 		request = supertest (app.getHttpServer ())
 		agent = supertest.agent (app.getHttpServer ())
