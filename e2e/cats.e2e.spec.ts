@@ -67,7 +67,6 @@ describe (path, () => {
 			const e = await req.get (`${path}/899`)
 			isSE (e.status, 404)
 		})
-		
 		it ('should get all valid', async () => {
 			expect.assertions (2)
 			const a = await req.get (path)
@@ -91,8 +90,10 @@ describe (path, () => {
 			}
 			const p = await req.put (`${path}/1`).send (cat2)
 			isSE (p.status, 200)
-			isSE (p.text, '')
 			isSE (p.body, {})
+			
+			const { body } = await req.get (`${path}/1`)
+			isSE(body.name, 'cat2')
 			
 		})
 		it ('should update one PATCH', async () => {

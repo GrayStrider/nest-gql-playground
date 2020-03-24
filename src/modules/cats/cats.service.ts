@@ -64,16 +64,19 @@ export class CatsService {
 		return this.cats
 	}
 	
-	replace (id: number, catUpdateDto: CatUpdateInput) {
+	replace (id: number, newCat: CatUpdateInput) {
 		const index = this.lookup (id)
 		const cat = this.cats[index]
-		this.cats[index] = mergeDeepLeft (cat, catUpdateDto)
+		console.log(newCat)
+		console.log(this.cats[index])
+		this.cats[index] = mergeDeepLeft (newCat, cat)
+		console.log(this.cats[index])
 	}
 	
-	update (id: number, catUpdateDto: Partial<CatUpdateInput>) {
+	update (id: number, updatedCat: Partial<CatUpdateInput>) {
 		const index = this.lookup (id)
 		const cat = this.cats[index]
-		this.cats[index] = mergeDeepLeft (cat, catUpdateDto)
+		this.cats[index] = mergeDeepLeft (updatedCat, cat)
 	}
 	
 	private lookup (id: number) {
