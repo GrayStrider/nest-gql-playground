@@ -67,10 +67,7 @@ export class CatsService {
 	replace (id: number, newCat: CatUpdateInput) {
 		const index = this.lookup (id)
 		const cat = this.cats[index]
-		console.log(newCat)
-		console.log(this.cats[index])
 		this.cats[index] = mergeDeepLeft (newCat, cat)
-		console.log(this.cats[index])
 	}
 	
 	update (id: number, updatedCat: Partial<CatUpdateInput>) {

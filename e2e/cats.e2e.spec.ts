@@ -3,7 +3,7 @@ import supertest from 'supertest'
 import { isSE } from '@qdev/utils-ts'
 import { CatsModule } from '@M/cats/cats.module'
 import { INestApplication } from '@nestjs/common'
-import { repeat } from 'ramda'
+import { repeat, keys } from 'ramda'
 import { plainToClass } from 'class-transformer'
 import { Cat, CatCreateInput, CatUpdateInput } from '@M/cats/interfaces/cat.interface'
 import { validate, ValidationError } from 'class-validator'
@@ -100,15 +100,17 @@ describe (path, () => {
 			
 		})
 		it ('should update one PATCH', async () => {
-			expect.assertions (1)
-			expect.assertions (3)
+			expect.assertions (4)
 			const cat2: Partial<CatUpdateInput> = {
 				name: 'cat2'
 			}
 			const p = await req.patch (`${path}/1`).send (cat2)
 			isSE (p.status, 200)
-			isSE (p.text, '')
 			isSE (p.body, {})
+			
+			const n = await req.get(`${path}/1`)
+			isSE(n.body.name, 'cat2')
+			isSE(keys(n.body).length, 4)
 			
 		})
 	})
