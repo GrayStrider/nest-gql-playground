@@ -27,9 +27,9 @@ describe ('CatsController', () => {
 					name: 'Pixel'
 				}
 			]
-			jest.spyOn (catsService, 'findAll').mockImplementation (() => result)
+			jest.spyOn (catsService, 'all').mockImplementation (() => result)
 			
-			expect (await catsController.findAll ()).toBe (result)
+			expect (await catsController.all ()).toBe (result)
 		})
 	})
 })

@@ -1,15 +1,22 @@
-import { Injectable, NotFoundException, Scope } from '@nestjs/common'
+import { Injectable, NotFoundException, Scope, BadRequestException } from '@nestjs/common'
 import { Cat } from '@M/cats/interfaces/cat.interface'
 import { isNone } from 'fp-ts/lib/Option'
-import { findFirst, findIndex } from 'fp-ts/lib/Array'
+import { findFirst, findIndex, isEmpty, isNonEmpty } from 'fp-ts/lib/Array'
 import { CatUpdateInput } from '@M/cats/inputs/cat.update.input'
 import { CatCreateInput } from '@M/cats/inputs/cat.create.input'
 import { mergeDeepLeft } from 'ramda'
+import { validate } from 'class-validator'
+import { plainToClass } from 'class-transformer'
+import { AnyClass } from 'tsdef'
 
 
 const byId = (id: number) =>
 	({ id: ID }: Cat) => ID === id
 
+const valClass = async (obj: object, cls: AnyClass) => {
+	const err = await validate (plainToClass (cls, obj))
+	if (isNonEmpty(err)) throw new BadRequestException (err)
+}
 
 /**
  * SINGLETON
@@ -29,27 +36,35 @@ const byId = (id: number) =>
 export class CatsService {
 	private readonly cats: Cat[] = []
 	
-	async create (cat: CatCreateInput) {
-		this.cats.push (mergeDeepLeft (
-			cat,
-			{
-				id: this.cats.length === 0
-					? 1
-					: this.cats.length + 1
-			}
-		))
+	async create (cat: CatCreateInput | CatCreateInput[]) {
+		const add = (cat: CatCreateInput) =>
+			this.cats.push (mergeDeepLeft (
+				cat,
+				{
+					id: isEmpty (this.cats)
+						? 1
+						: this.cats.length + 1
+				}
+			))
+		if (Array.isArray (cat)) for (const c of cat) {
+			await valClass (c, CatCreateInput)
+			add (c)
+		}
+		else {
+			await valClass (cat, CatCreateInput)
+			add (cat)
+		}
 	}
 	
-	findOneById (id: number) {
+	one (id: number) {
 		const cat = findFirst ((cat: Cat) => cat.id === id) (this.cats)
 		if (isNone (cat)) throw  new NotFoundException ('cat not found')
 		return cat.value
 	}
 	
-	// findAll (): Cat[] {
-	// 	if (isEmpty (this.cats)) throw new NotFoundException ('no cats found')
-	// 	return this.cats
-	// }
+	all () {
+		return this.cats
+	}
 	
 	replace (id: number, catUpdateDto: CatUpdateInput) {
 		const index = this.lookup (id)

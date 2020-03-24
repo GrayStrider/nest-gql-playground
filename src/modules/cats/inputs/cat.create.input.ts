@@ -1,4 +1,4 @@
-import { IsInt, IsString, IsUUID } from 'class-validator'
+import { IsInt, IsString, IsUUID, MaxLength, MinLength, Min, Max } from 'class-validator'
 
 
 /**
@@ -9,11 +9,16 @@ import { IsInt, IsString, IsUUID } from 'class-validator'
  */
 export class CatCreateInput {
 	@IsString ()
+	@MaxLength (100)
+	@MinLength (1)
 	readonly name: string
 	
-	@IsInt ()
+	@Min (0)
+	@Max (30)
 	readonly age: number
 	
 	@IsString ()
+	@MaxLength (100)
+	@MinLength (1)
 	readonly breed: string
 }

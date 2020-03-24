@@ -1,11 +1,15 @@
 import { CatsService } from './cats.service'
 import { CatsController } from './cats.controller'
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
+import { Module, NestModule, MiddlewareConsumer, ValidationPipe } from '@nestjs/common'
 import { AuthMiddleware } from '@/common/middleware/auth.middleware'
+import { APP_PIPE } from '@nestjs/core'
 
 @Module ({
 	controllers: [CatsController],
-	providers: [CatsService],
+	providers: [CatsService,  {
+		provide: APP_PIPE,
+		useClass: ValidationPipe,
+	}],
 	exports: [CatsService]
 })
 export class CatsModule implements NestModule {
