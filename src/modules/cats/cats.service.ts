@@ -2,12 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { Cat } from '@M/cats/interfaces/cat.interface'
 import { isNone } from 'fp-ts/lib/Option'
 import { findFirst, isEmpty } from 'fp-ts/lib/Array'
-import { Predicate } from 'fp-ts/lib/function'
 import { CatUpdateInput } from '@M/cats/inputs/cat.update.input'
 
 
-const byId: (id: number) => Predicate<Cat> =
-	(id: number) => ({ id: ID }) => ID === id
+const byId = (id: number) =>
+	({ id: ID }: Cat) => ID === id
 
 
 @Injectable ()
