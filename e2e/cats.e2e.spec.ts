@@ -8,7 +8,7 @@ import { plainToClass } from 'class-transformer'
 import { Cat, CatCreateInput, CatUpdateInput } from '@M/cats/interfaces/cat.interface'
 import { validate, ValidationError } from 'class-validator'
 
-let request: ReturnType<typeof supertest>
+let req: ReturnType<typeof supertest>
 let agent: ReturnType<typeof supertest>
 let app: INestApplication
 const path = '/cats'
@@ -24,7 +24,7 @@ describe (path, () => {
 		}).compile ()
 		app = await moduleFixture.createNestApplication ()
 		await app.init ()
-		request = supertest (app.getHttpServer ())
+		req = supertest (app.getHttpServer ())
 		agent = supertest.agent (app.getHttpServer ())
 	})
 	afterAll (async () => await app.close ())
@@ -32,26 +32,26 @@ describe (path, () => {
 	describe ('C', () => {
 		it ('add one POST', async () => {
 			expect.assertions (5)
-			const p = await request.post (path).send (cat)
+			const p = await req.post (path).send (cat)
 			isSE (p.body, {})
 			isSE (p.status, 201)
 			isSE (p.text, '')
-			const e = await request.post (path).send ({ 1: '' })
+			const e = await req.post (path).send ({ 1: '' })
 			isSE (e.body.message.length, 3)
 			isSE (e.status, 400)
 		})
 		it ('should add batch', async () => {
 			expect.assertions (4)
-			const p = await request.post (path)
+			const p = await req.post (path)
 				.send (repeat (cat, 10))
 			isSE (p.status, 201)
 			isSE (p.body, {})
 			
-			const e = await request.post (path)
+			const e = await req.post (path)
 				.send ([[], {foo: 1} , {}, '', 1, 2, '', {}])
 			isSE (p.status, 201)
 			
-			const a = await request.get(path)
+			const a = await req.get(path)
 			isSE(a.body.length, 11)
 			
 		})
@@ -59,15 +59,18 @@ describe (path, () => {
 	
 	describe ('R', () => {
 		it ('should get one', async () => {
-			expect.assertions (2)
-			const g = await request.get (`${path}/1`)
+			expect.assertions (3)
+			const g = await req.get (`${path}/1`)
 			isSE (g.status, 200)
 			isSE (g.body, { ...cat, id: 1 })
+			
+			const e = await req.get (`${path}/899`)
+			isSE (e.status, 404)
 		})
 		
 		it ('should get all valid', async () => {
 			expect.assertions (2)
-			const a = await request.get (path)
+			const a = await req.get (path)
 			isSE (a.status, 200)
 			const catsCls = a.body.map ((cat: Cat) => plainToClass
 			(Cat, cat))
@@ -88,7 +91,7 @@ describe (path, () => {
 				...cat,
 				name: 'cat2'
 			}
-			const p = await request.put (`${path}/1`).send (cat2)
+			const p = await req.put (`${path}/1`).send (cat2)
 			isSE (p.status, 200)
 			isSE (p.text, '')
 			isSE (p.body, {})
@@ -100,7 +103,7 @@ describe (path, () => {
 			const cat2: Partial<CatUpdateInput> = {
 				name: 'cat2'
 			}
-			const p = await request.patch (`${path}/1`).send (cat2)
+			const p = await req.patch (`${path}/1`).send (cat2)
 			isSE (p.status, 200)
 			isSE (p.text, '')
 			isSE (p.body, {})
