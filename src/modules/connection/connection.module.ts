@@ -1,4 +1,4 @@
-import { Module, ValueProvider, FactoryProvider, Injectable } from '@nestjs/common'
+import { Module, ValueProvider, FactoryProvider, Injectable, Scope } from '@nestjs/common'
 import { Tokens } from '@/common/constants'
 import { NODE_ENV } from '@config'
 import sleep from 'sleep-promise'
@@ -12,7 +12,8 @@ const AsyncConnectionFactory: FactoryProvider = {
 		const {data} = await sleep (100) ({ data: 'foobar' })
 		return data
 	},
-	inject: [OptionsProvider]
+	inject: [OptionsProvider],
+	scope: Scope.DEFAULT // Injection scopes
 }
 
 export const connection = {
