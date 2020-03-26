@@ -10,7 +10,6 @@ import { Label } from '@M/KBF/entity/Label'
 
 @Resolver ()
 export class TaskResolver { // TODO merge resolvers
-	
 	@Query (returns => [Task])
 	async tasks (@Args () { tag, ...params }: SearchTaskInput) {
 		

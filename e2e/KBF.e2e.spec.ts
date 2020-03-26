@@ -6,9 +6,10 @@ import gql from 'graphql-tag'
 import { Task } from '@M/KBF/entity/Task'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm'
-import { TaskResolver } from '@M/KBF/TaskResolver'
+import { TaskResolver } from '@M/KBF/resolvers/TaskResolver'
 import { Label } from '@M/KBF/entity/Label'
 import { DBModule } from '@M/db/db.module'
+import { Board } from '@M/KBF/entity/Board'
 
 let app: INestApplication
 let post: Post
@@ -25,7 +26,6 @@ describe ('KBF', () => {
 		await app.init ()
 		;({ post, req } = supertest (app.getHttpServer ()))
 	})
-	afterAll (async () => await app.close ())
 	
 	it ('sanity', async () => {
 		expect.assertions (1)
@@ -36,14 +36,17 @@ describe ('KBF', () => {
 		
 	})
 
-  it ('Create', async () => {
-		expect.assertions (1)
-    const { data, errors } = await post <Task> (gql`mutation {
-        addTask {
-            id
-        }
-    }`)
-	  isSE(data, 2)
-
+  describe ('Board', () => {
+    it ('should create new', async () => {
+			expect.assertions(1)
+      const { data, errors } = await post <Board>
+      (gql`mutation {
+          addBoard(name: "test board") {
+              id
+          }
+      }`)
+			expect (data.id).toBeUUID()
+    })
   })
+	
 })
