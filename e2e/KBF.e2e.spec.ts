@@ -4,7 +4,7 @@ import { KBFModule } from '@M/KBF/KBF.module'
 import { supertest, Post, Req, isSE } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
 import { Board } from '@M/KBF/entity/Board'
-import { defaultColors } from '@M/KBF/resolvers/BoardResolver'
+import { defaultColors, defaultColumns } from '@M/KBF/resolvers/BoardResolver'
 
 let app: INestApplication
 let post: Post
@@ -57,7 +57,7 @@ describe ('KBF', () => {
     })
 
     it ('should have default data', async () => {
-			expect.assertions (1)
+			expect.assertions (2)
       const { data, errors } = await post<Board>
       (gql`query {
           board (name: "${name}") {
@@ -67,11 +67,16 @@ describe ('KBF', () => {
               }
               columns {
                   name
+		              order
+		              taskLimit
               }
           }
       }`)
 			isSE (data.colors, defaultColors.map
 			(([name, value]) => ({ name, value })))
+	    isSE(data.columns, defaultColumns.map
+	    (([name, taskLimit], index) =>
+		    ({name, order: index, taskLimit})))
     })
   })
 

@@ -2,13 +2,21 @@ import { Resolver, Args, Mutation, Query } from '@nestjs/graphql'
 import { Board } from '@M/KBF/entity/Board'
 import { Color } from '@M/KBF/entity/Color'
 import { Maybe } from 'type-graphql'
+import { TColumn } from '@M/KBF/entity/TColumn'
 
-export const defaultColors = [
+export const defaultColors: [string, string][] = [
 	['White', '#FDFFFC'],
 	['Green', '#2EC4B6'],
 	['Blue', '#011627'],
 	['Orange', '#FF9F1C'],
 	['Red', '#E71D36']
+]
+
+export const defaultColumns: [string, number][] = [
+	['To-do', 0],
+	['Do today', 0],
+	['In progress', 3],
+	['Done', 0]
 ]
 
 @Resolver ()
@@ -31,7 +39,11 @@ export class BoardResolver {
 		: Promise<Board> {
 		const colors = defaultColors.map
 		(([name, value]) => Color.create ({ name, value }))
-		return await Board.create ({ name, colors }).save ()
+		const columns = defaultColumns.map
+		(([name, taskLimit], index) => TColumn.create
+		({ name, order: index, taskLimit }))
+		return await Board.create
+		({ name, colors, columns }).save ()
 		
 	}
 }
