@@ -1,26 +1,19 @@
-import { PrimaryGeneratedColumn, Column, ManyToMany, Entity, BaseEntity } from 'typeorm'
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Column, ManyToMany, Entity, BaseEntity, PrimaryColumn } from 'typeorm'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
 
 @ObjectType ()
 @Entity ()
 export class Label extends BaseEntity {
-	
-	@Field (returns => ID)
-	@PrimaryGeneratedColumn ('uuid')
-	id: string
-	
 	@Field ()
-	@Column ()
+	@PrimaryColumn ()
 	name: string
 	
 	@Field ()
 	@Column ({ type: 'bool', default: false })
 	pinned: boolean
 	
-	@Field (returns => [Task])
 	@ManyToMany (type => Task, task => task.labels)
 	tasks: Task[]
-	
 }
 

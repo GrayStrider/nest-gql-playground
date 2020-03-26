@@ -5,6 +5,8 @@ import { supertest, Post, Req, isSE } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
 import { Board } from '@M/KBF/entity/Board'
 import { defaultColors, defaultColumns } from '@M/KBF/resolvers/BoardResolver'
+import { Task } from '@M/KBF/entity/Task'
+import { NewTaskInput } from '@M/KBF/inputs/NewTaskInput'
 
 let app: INestApplication
 let post: Post
@@ -67,20 +69,38 @@ describe ('KBF', () => {
               }
               columns {
                   name
-		              order
-		              taskLimit
+                  order
+                  taskLimit
               }
-		          swimlanes {
-				          name
-		          }
+              swimlanes {
+                  name
+              }
           }
       }`)
 			isSE (data.colors, defaultColors.map
 			(([name, value]) => ({ name, value })))
-	    isSE(data.columns, defaultColumns.map
-	    (([name, taskLimit], index) =>
-		    ({name, order: index, taskLimit})))
-	    isSE(data.swimlanes[0].name, 'Default')
+			isSE (data.columns, defaultColumns.map
+			(([name, taskLimit], index) =>
+				({ name, order: index, taskLimit })))
+			isSE (data.swimlanes[0].name, 'Default')
+    })
+  })
+
+  describe ('task', () => {
+    it ('should add task', async () => {
+			expect.assertions (1)
+			const minTask: NewTaskInput = {
+				title: 'min task'
+			}
+      const { data: task, errors } = await post<Task>
+      (gql`mutation newTask ($data: NewTaskInput!) {
+          addTask(data: $data) {
+              title
+          }
+      }`, { data: minTask })
+			isSE (task.title, minTask.title)
+
+
     })
   })
 

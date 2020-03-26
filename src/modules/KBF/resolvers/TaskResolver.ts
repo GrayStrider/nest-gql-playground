@@ -1,52 +1,71 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql'
-import * as RD from 'ramda-adjunct'
-import { SearchTaskInput } from '@M/KBF/inputs/SearchTaskInput'
+import { Resolver, Args, Mutation } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
-import WrapperLike from '@M/db/utils/wrapper.like'
 import { NewTaskInput } from '@M/KBF/inputs/NewTaskInput'
 import { Promise as bb } from 'bluebird'
-import { DeepPartial } from 'typeorm'
 import { Label } from '@M/KBF/entity/Label'
+import { isNonEmpty } from 'fp-ts/lib/Array'
+
 
 @Resolver ()
 export class TaskResolver {
-	@Query (returns => [Task])
-	async tasks (@Args () { tag, ...params }: SearchTaskInput) {
-		
-		return Task.find ({
-			where: RD.isNotNil (params.title)
-				? WrapperLike (params, 'title')
-				: RD.isNotNil (params.description)
-					? WrapperLike (params, 'description')
-					: RD.isNotNil (tag)
-						? { ...params }
-						: params
-		})
-		
-	}
-	
 	@Mutation (returns => Task)
-	async taskCreate (@Args () { tags: tagNames, ...data }: NewTaskInput) {
-		
-		if (RD.isNotNilOrEmpty (tagNames)) {
-			
+	async addTask (
+		@Args ('data') { tags: tagNames, ...data }: NewTaskInput)
+		: Promise<Task> {
+		if (tagNames && isNonEmpty (tagNames)) {
 			const labels = await bb.reduce (
-				tagNames, async (acc: Array<DeepPartial<Label>>, name) => {
-					
-					const getTag = await Label.findOne ({ name }) ??
-						Label.create ({ name })
-					return [...acc, getTag]
+				tagNames, async (acc: Label[], name) => {
+					const getTag = await Label.findOne ({ name })
+						?? Label.create ({ name })
+					return acc.concat (getTag)
 					
 				}, []
 			)
 			
-			return Task.create ({ ...data, labels })
-			
+			return Task.create ({ ...data, labels }).save ()
 		}
 		
 		return Task.create (data).save ()
-		
 	}
+	
+	// @Query (returns => [Task])
+	// async tasks_
+	// (@Args () { tag, ...params }: SearchTaskInput) {
+	//
+	// 	return Task.find ({
+	// 		where: RD.isNotNil (params.title)
+	// 			? WrapperLike (params, 'title')
+	// 			: RD.isNotNil (params.description)
+	// 				? WrapperLike (params, 'description')
+	// 				: RD.isNotNil (tag)
+	// 					? { ...params }
+	// 					: params
+	// 	})
+	//
+	// }
+	
+	// @Mutation (returns => Task)
+	// async taskCreate_ (@Args () { tags: tagNames, ...data }: NewTaskInput) {
+	//
+	// 	if (RD.isNotNilOrEmpty (tagNames)) {
+	//
+	// 		const labels = await bb.reduce (
+	// 			tagNames, async (acc: Array<DeepPartial<Label>>, name) => {
+	//
+	// 				const getTag = await Label.findOne ({ name }) ??
+	// 					Label.create ({ name })
+	// 				return [...acc, getTag]
+	//
+	// 			}, []
+	// 		)
+	//
+	// 		return Task.create ({ ...data, labels })
+	//
+	// 	}
+	//
+	// 	return Task.create (data).save ()
+	//
+	// }
 	
 }
 

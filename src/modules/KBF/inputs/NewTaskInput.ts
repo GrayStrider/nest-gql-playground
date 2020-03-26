@@ -1,28 +1,25 @@
-import { ArgsType, Field } from '@nestjs/graphql'
+import { ArgsType, Field, InputType } from '@nestjs/graphql'
 import { Priority } from '@M/KBF/entity/Priority'
 import { Task } from '@M/KBF/entity/Task'
 import { MaxLength, IsOptional } from 'class-validator'
 
-@ArgsType ()
+@InputType()
 export class NewTaskInput {
 	
-	@Field ({ defaultValue: '' })
+	@Field ()
 	title: string
 	
 	@MaxLength(500)
 	@IsOptional()
 	@Field ({ nullable: true })
-	description: string
-	
+	description?: string
+
 	@Field (returns => [String], { defaultValue: [] })
-	tags: string[]
-	
+	tags?: string[]
+
 	// TODO check for dupes
 	@Field (returns => Priority, { defaultValue: Priority.NONE })
-	priority: Priority
-	
-	@Field ({ defaultValue: '1234567' })
-	constrained: string
+	priority?: Priority
 	
 }
 
