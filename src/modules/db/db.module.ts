@@ -10,12 +10,18 @@ import { spinner } from '@qdev/utils-ts'
 		TypeOrmModule.forRoot (TypeormConfig)
 	]
 })
-export class DBModule implements OnModuleDestroy {
+export class DBModule implements OnModuleInit, OnModuleDestroy {
 	constructor (private connection: Connection) {}
 	
-	async onModuleDestroy () {
+	async onModuleInit () {
 		const sync = this.connection.synchronize (true)
 		await spinner (sync, 'Resetting DB..', 'DB reset.')
+		
+	}
+	
+	async onModuleDestroy () {
+		const close = this.connection.close ()
+		await spinner (close, 'Closing DB connection..', 'DB connection closed.')
 	}
 }
 
