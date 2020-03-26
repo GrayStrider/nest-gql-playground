@@ -57,7 +57,7 @@ describe ('KBF', () => {
     })
 
     it ('should have default data', async () => {
-			expect.assertions (2)
+			expect.assertions (3)
       const { data, errors } = await post<Board>
       (gql`query {
           board (name: "${name}") {
@@ -70,6 +70,9 @@ describe ('KBF', () => {
 		              order
 		              taskLimit
               }
+		          swimlanes {
+				          name
+		          }
           }
       }`)
 			isSE (data.colors, defaultColors.map
@@ -77,6 +80,7 @@ describe ('KBF', () => {
 	    isSE(data.columns, defaultColumns.map
 	    (([name, taskLimit], index) =>
 		    ({name, order: index, taskLimit})))
+	    isSE(data.swimlanes[0].name, 'Default')
     })
   })
 

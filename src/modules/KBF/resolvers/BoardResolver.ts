@@ -3,6 +3,7 @@ import { Board } from '@M/KBF/entity/Board'
 import { Color } from '@M/KBF/entity/Color'
 import { Maybe } from 'type-graphql'
 import { TColumn } from '@M/KBF/entity/TColumn'
+import { Swimlane } from '@M/KBF/entity/Swimlane'
 
 export const defaultColors: [string, string][] = [
 	['White', '#FDFFFC'],
@@ -42,8 +43,12 @@ export class BoardResolver {
 		const columns = defaultColumns.map
 		(([name, taskLimit], index) => TColumn.create
 		({ name, order: index, taskLimit }))
+		const swimlanes = [
+			Swimlane.create
+			({ name: 'Default' })
+		]
 		return await Board.create
-		({ name, colors, columns }).save ()
+		({ name, colors, columns, swimlanes }).save ()
 		
 	}
 }
