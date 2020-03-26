@@ -9,7 +9,7 @@ import { DeepPartial } from 'typeorm'
 import { Label } from '@M/KBF/entity/Label'
 
 @Resolver ()
-export class KBFResolver {
+export class KBFResolver { // TODO merge resolvers
 	
 	@Query (returns => [Task])
 	async tasks (@Args () { tag, ...params }: SearchTaskInput) {
