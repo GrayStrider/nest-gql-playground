@@ -22,8 +22,7 @@ export class Board {
 	@OneToMany (type => Color, color => color.board)
 	colors: Color[]
 	
-	@OneToMany (type => Swimlane,
-		swimlane => swimlane.board)
+	@OneToMany (type => Swimlane, swimlane => swimlane.board)
 	swimlanes: Swimlane[]
 	
 }
