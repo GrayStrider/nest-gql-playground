@@ -3,13 +3,8 @@ import { INestApplication } from '@nestjs/common'
 import { KBFModule } from '@M/KBF/KBF.module'
 import { supertest, Post, Req, isSE } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
-import { Task } from '@M/KBF/entity/Task'
-import { GraphQLModule } from '@nestjs/graphql'
-import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm'
-import { TaskResolver } from '@M/KBF/resolvers/TaskResolver'
-import { Label } from '@M/KBF/entity/Label'
-import { DBModule } from '@M/db/db.module'
 import { Board } from '@M/KBF/entity/Board'
+import { defaultColors } from '@M/KBF/resolvers/BoardResolver'
 
 let app: INestApplication
 let post: Post
@@ -18,9 +13,9 @@ let req: Req
 
 describe ('KBF', () => {
 	beforeAll (async () => {
-		jest.setTimeout(9000)
+		jest.setTimeout (9000)
 		const moduleFixture = await Test.createTestingModule ({
-				imports: [KBFModule],
+			imports: [KBFModule]
 		}).compile ()
 		app = moduleFixture.createNestApplication ()
 		await app.init ()
@@ -37,16 +32,47 @@ describe ('KBF', () => {
 	})
 
   describe ('Board', () => {
+		let name: string
     it ('should create new', async () => {
-			expect.assertions(1)
-      const { data, errors } = await post <Board>
+			expect.assertions (1)
+      const { data, errors } = await post<Board>
       (gql`mutation {
           addBoard(name: "test board") {
-              id
+              name
           }
       }`)
-			expect (data.id).toBeUUID()
+			isSE (data.name, 'test board')
+    })
+
+    it ('should be created', async () => {
+			expect.assertions (1)
+      const { data, errors } = await post<Board[]>
+      (gql`query {
+          boards {
+              name
+          }
+      }`)
+			name = data[0].name
+			isSE (name, 'test board')
+    })
+
+    it ('should have default data', async () => {
+			expect.assertions (1)
+      const { data, errors } = await post<Board>
+      (gql`query {
+          board (name: "${name}") {
+              colors {
+                  name
+                  value
+              }
+              columns {
+                  name
+              }
+          }
+      }`)
+			isSE (data.colors, defaultColors.map
+			(([name, value]) => ({ name, value })))
     })
   })
-	
+
 })
