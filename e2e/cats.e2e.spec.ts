@@ -8,15 +8,17 @@ import { plainToClass } from 'class-transformer'
 import { Cat, CatCreateInput, CatUpdateInput } from '@M/cats/interfaces/cat.interface'
 import { validate, ValidationError } from 'class-validator'
 
-let req: ReturnType<typeof supertest>
-let agent: ReturnType<typeof supertest>
-let app: INestApplication
 const path = '/cats'
 const cat: CatCreateInput = {
 	age: 10,
 	breed: 'husky',
 	name: 'cat'
 }
+
+let req: ReturnType<typeof supertest>
+let agent: ReturnType<typeof supertest>
+let app: INestApplication
+
 describe (path, () => {
 	beforeAll (async () => {
 		const moduleFixture = await Test.createTestingModule ({
@@ -53,7 +55,7 @@ describe (path, () => {
 			
 			const e = await req.post (path)
 				.send ([[], { foo: 1 }, {}, '', 1, 2, '', {}])
-			isSE (p.status, 201)
+			isSE (p.status, 201) // TODO 400
 			
 			const a = await req.get (path)
 			isSE (a.body.length, 11)
