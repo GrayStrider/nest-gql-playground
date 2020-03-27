@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule, GqlModuleOptions } from '@nestjs/graphql'
-import { TaskResolver } from '@M/KBF/resolvers/TaskResolver'
+import { TaskResolver } from '@M/KBF/resolvers/task.resolver'
 import { CatFactsAPI } from '@M/cat-facts/cat-facts.datasource'
 import { formatError } from '@/graphql/apollo/formatError'
-import { BoardResolver } from '@M/KBF/resolvers/BoardResolver'
+import { BoardResolver } from '@M/KBF/resolvers/board.resolver'
 import { DBModule } from '@M/db/db.module'
 
 const apolloOptions: GqlModuleOptions = {

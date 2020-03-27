@@ -1,13 +1,14 @@
 import { ObjectType, Field } from '@nestjs/graphql'
-import { Entity, OneToMany, Column, ManyToOne, BaseEntity, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, OneToMany, Column, ManyToOne, BaseEntity, PrimaryGeneratedColumn, Unique } from 'typeorm'
 import { Task } from '@M/KBF/entity/Task'
 import { Board } from '@M/KBF/entity/Board'
 
 
 @ObjectType ()
+@Unique (['name', 'board'])
 @Entity ()
 export class Color extends BaseEntity {
-	@PrimaryGeneratedColumn('uuid')
+	@PrimaryGeneratedColumn ('uuid')
 	id: string
 	
 	@Field ()
