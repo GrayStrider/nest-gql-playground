@@ -1,6 +1,6 @@
 import { Resolver, Args, Mutation, Query } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
-import { NewTaskInput } from '@M/KBF/inputs/NewTaskInput'
+import { TaskInput } from '@M/KBF/inputs/task.input'
 import { Promise as bb } from 'bluebird'
 import { Label } from '@M/KBF/entity/Label'
 import { DeepPartial, BaseEntity } from 'typeorm'
@@ -42,7 +42,7 @@ export class TaskResolver {
 		@Args ('data') {
 			tags, colorName, columnName, swimlaneName,
 			boardName, ...rest
-		}: NewTaskInput)
+		}: TaskInput)
 		: Promise<Task> {
 		
 		let taskData: DeepPartial<Task> = {}

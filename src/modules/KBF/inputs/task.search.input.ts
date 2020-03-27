@@ -2,7 +2,7 @@ import { ArgsType, Field } from '@nestjs/graphql'
 import { Max } from 'class-validator'
 
 @ArgsType ()
-export class SearchTaskInput {
+export class TaskSearchInput {
 	
 	@Field ({ nullable: true })
 	title: string

@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 import { Board } from '@M/KBF/entity/Board'
 import { defaultColors, defaultColumns } from '@M/KBF/resolvers/board.resolver'
 import { Task } from '@M/KBF/entity/Task'
-import { NewTaskInput } from '@M/KBF/inputs/NewTaskInput'
+import { TaskInput } from '@M/KBF/inputs/task.input'
 import { zipObj, without, all, head } from 'ramda'
 import { Color } from '@M/KBF/entity/Color'
 import { NewColorInput } from '@M/KBF/inputs/color.input'
@@ -95,13 +95,13 @@ describe ('KBF', () => {
   describe ('Task', () => {
     it ('should add task min', async () => {
 			expect.assertions (1)
-			const minTask: NewTaskInput = {
+			const minTask: TaskInput = {
 				boardName: testBoardName,
 				title: 'min task'
 			}
 
       const [task] = await post<Task>
-      (gql`mutation newTask ($data: NewTaskInput!) {
+      (gql`mutation newTask ($data: TaskInput!) {
           addTask(data: $data) {
               title
           }
@@ -113,7 +113,7 @@ describe ('KBF', () => {
 
     it ('should create task max', async () => {
 			expect.assertions (1)
-			const taskMax: NewTaskInput = {
+			const taskMax: TaskInput = {
 				title: 'max',
 				description: 'MAX',
 				colorName: 'Orange',
@@ -123,7 +123,7 @@ describe ('KBF', () => {
 				columnName: 'To-do'
 			}
       const [task] = await post<Task>
-      (gql`mutation newTask ($data: NewTaskInput!) {
+      (gql`mutation newTask ($data: TaskInput!) {
           addTask(data: $data) {
               board {
                   name
