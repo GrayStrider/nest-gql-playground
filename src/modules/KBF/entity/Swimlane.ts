@@ -1,4 +1,4 @@
-import { Entity, OneToMany, ManyToOne, BaseEntity, PrimaryColumn, Column } from 'typeorm'
+import { Entity, OneToMany, ManyToOne, BaseEntity, PrimaryColumn, Column, PrimaryGeneratedColumn } from 'typeorm'
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
 import { Board } from '@M/KBF/entity/Board'
@@ -6,7 +6,10 @@ import { Board } from '@M/KBF/entity/Board'
 @ObjectType ()
 @Entity ()
 export class Swimlane extends BaseEntity {
-	@PrimaryColumn ()
+	@PrimaryGeneratedColumn('uuid')
+	id: string
+	
+	@Column ()
 	@Field ()
 	name: string
 	

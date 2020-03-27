@@ -7,7 +7,6 @@ import { User } from '@M/KBF/entity/User'
 @Entity ()
 
 export class Comment extends BaseEntity {
-	
 	@Field (returns => ID)
 	@PrimaryGeneratedColumn ('uuid')
 	id: string

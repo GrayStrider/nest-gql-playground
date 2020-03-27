@@ -88,7 +88,6 @@ export class CatsService {
 	
 	
 	delete (id: number) {
-		console.log(this.cats)
 		const index = this.lookup(id)
 		this.cats = unsafeDeleteAt (index, this.cats)
 	}

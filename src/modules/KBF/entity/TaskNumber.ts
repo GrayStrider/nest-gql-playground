@@ -5,7 +5,6 @@ import { Task } from '@M/KBF/entity/Task'
 @ObjectType ()
 @Entity ()
 export class TaskNumber extends BaseEntity {
-	
 	@Field (returns => ID)
 	@PrimaryGeneratedColumn ('uuid')
 	id: string

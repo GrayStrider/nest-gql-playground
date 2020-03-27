@@ -7,11 +7,12 @@ import { Board } from '@M/KBF/entity/Board'
 import { defaultColors, defaultColumns } from '@M/KBF/resolvers/BoardResolver'
 import { Task } from '@M/KBF/entity/Task'
 import { NewTaskInput } from '@M/KBF/inputs/NewTaskInput'
+import { zipObj } from 'ramda'
 
 let app: INestApplication
 let post: Post
 let req: Req
-
+let testBoardName: string
 
 describe ('KBF', () => {
 	beforeAll (async () => {
@@ -34,38 +35,39 @@ describe ('KBF', () => {
 	})
 
   describe ('Board', () => {
-		let name: string
+
     it ('should create new', async () => {
 			expect.assertions (1)
-      const { data, errors } = await post<Board>
+      const [board] = await post<Board>
       (gql`mutation {
           addBoard(name: "test board") {
               name
           }
       }`)
-			isSE (data.name, 'test board')
+			isSE (board.name, 'test board')
     })
 
     it ('should be created', async () => {
 			expect.assertions (1)
-      const { data, errors } = await post<Board[]>
+      const [board] = await post<Board[]>
       (gql`query {
           boards {
               name
           }
       }`)
-			name = data[0].name
-			isSE (name, 'test board')
+			testBoardName = board[0].name
+			isSE (testBoardName, 'test board')
     })
 
     it ('should have default data', async () => {
 			expect.assertions (3)
-      const { data, errors } = await post<Board>
+      const [board] = await post<Board>
       (gql`query {
-          board (name: "${name}") {
+          board (name: "${testBoardName}") {
               colors {
                   name
                   value
+		              default
               }
               columns {
                   name
@@ -77,12 +79,14 @@ describe ('KBF', () => {
               }
           }
       }`)
-			isSE (data.colors, defaultColors.map
-			(([name, value]) => ({ name, value })))
-			isSE (data.columns, defaultColumns.map
+	    
+			isSE (board.colors, defaultColors.map
+			(zipObj (['name', 'value', 'default'])))
+	
+	    isSE (board.columns, defaultColumns.map
 			(([name, taskLimit], index) =>
 				({ name, order: index, taskLimit })))
-			isSE (data.swimlanes[0].name, 'Default')
+			isSE (board.swimlanes[0].name, 'Default')
     })
   })
 
@@ -90,9 +94,11 @@ describe ('KBF', () => {
     it ('should add task', async () => {
 			expect.assertions (1)
 			const minTask: NewTaskInput = {
+				boardName: testBoardName,
 				title: 'min task'
 			}
-      const { data: task, errors } = await post<Task>
+
+      const [task] = await post<Task>
       (gql`mutation newTask ($data: NewTaskInput!) {
           addTask(data: $data) {
               title

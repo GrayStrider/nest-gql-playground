@@ -9,26 +9,33 @@ import { TDate } from '@M/KBF/entity/TDate'
 import { Subtask } from '@M/KBF/entity/Subtask'
 import { Label } from '@M/KBF/entity/Label'
 import { Comment } from '@M/KBF/entity/Comment'
+import { Board } from '@M/KBF/entity/Board'
 
 @ObjectType ()
 @Entity ()
 export class Task extends BaseEntity {
-	
 	@Field (() => ID)
 	@PrimaryGeneratedColumn ('uuid')
 	id: string
+	
+	@Field (returns => Board)
+	@ManyToOne (task => Board,
+		board => board.tasks)
+	board: Board
 	
 	@Field ()
 	@Column ({ length: 255 })
 	title: string
 	
-	@Field ()
+	@Field ({ nullable: true })
 	@Column ({ length: 5000, nullable: true })
-	description: string
+	description?: string
 	
 	@Field (returns => Color)
-	@ManyToOne (type => Color, color => color.tasks)
-	color: Color
+	@ManyToOne (type => Color, color => color.tasks, {
+		eager: true
+	})
+	color?: Color
 	
 	@Field (returns => TColumn)
 	@ManyToOne (type => TColumn)

@@ -16,7 +16,7 @@ const apolloOptions: GqlModuleOptions = {
 			'request.credentials': 'include'
 		}
 	},
-	formatError,
+	// formatError, // TODO
 	context: (args) => ({})
 }
 

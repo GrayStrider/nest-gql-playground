@@ -6,15 +6,12 @@ import { Task } from '@M/KBF/entity/Task'
 @ObjectType ()
 @Entity ()
 export class Subtask extends BaseEntity {
-	
-	@Field (returns => ID)
-	@PrimaryGeneratedColumn ('uuid')
+	@PrimaryGeneratedColumn('uuid')
 	id: string
 	
-	
-	@Field ()
 	@Column ()
-	name: string
+	@Field ()
+	content: string
 	
 	@Field ()
 	@Column ({ type: 'bool', default: false })

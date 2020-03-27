@@ -1,4 +1,4 @@
-import { Entity, OneToMany, ManyToOne, BaseEntity, PrimaryColumn, Column } from 'typeorm'
+import { Entity, OneToMany, ManyToOne, BaseEntity, Column, PrimaryGeneratedColumn } from 'typeorm'
 import { ObjectType, Field } from '@nestjs/graphql'
 import { Board } from '@M/KBF/entity/Board'
 import { Task } from '@M/KBF/entity/Task'
@@ -7,8 +7,11 @@ import { Task } from '@M/KBF/entity/Task'
 @Entity ()
 @ObjectType ()
 export class TColumn extends BaseEntity {
+	@PrimaryGeneratedColumn('uuid')
+	id: string
+	
+	@Column ()
 	@Field ()
-	@PrimaryColumn ()
 	name: string
 	
 	@Field ()

@@ -6,13 +6,14 @@ import { Task } from '@M/KBF/entity/Task'
 @ObjectType ()
 @Entity ()
 export class TDate extends BaseEntity {
-	
 	@Field (returns => ID)
 	@PrimaryGeneratedColumn ('uuid')
 	id: string
 	
-	@Field (returns => [Task], { nullable: true })
-	@ManyToMany (type => Task, task => task.dates, {
+	@Field (returns => [Task],
+		{ nullable: true })
+	@ManyToMany (type => Task,
+			task => task.dates, {
 		nullable: true
 	})
 	tasks: Task[]
