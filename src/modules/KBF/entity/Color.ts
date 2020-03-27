@@ -8,6 +8,7 @@ import { Board } from '@M/KBF/entity/Board'
 @Unique (['name', 'board'])
 @Entity ()
 export class Color extends BaseEntity {
+	@Field()
 	@PrimaryGeneratedColumn ('uuid')
 	id: string
 	

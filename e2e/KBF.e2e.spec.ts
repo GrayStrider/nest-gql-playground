@@ -8,6 +8,8 @@ import { defaultColors, defaultColumns } from '@M/KBF/resolvers/board.resolver'
 import { Task } from '@M/KBF/entity/Task'
 import { NewTaskInput } from '@M/KBF/inputs/NewTaskInput'
 import { zipObj } from 'ramda'
+import { Color } from '@M/KBF/entity/Color'
+import { NewColorInput } from '@M/KBF/inputs/color.input'
 
 let app: INestApplication
 let post: Post
@@ -16,7 +18,7 @@ let testBoardName: string
 
 describe ('KBF', () => {
 	beforeAll (async () => {
-		jest.setTimeout (10000)
+		jest.setTimeout (20000)
 		const moduleFixture = await Test.createTestingModule ({
 			imports: [KBFModule]
 		}).compile ()
@@ -108,8 +110,8 @@ describe ('KBF', () => {
 
 
     })
-		
-		it ('should create task max', async () => {
+
+    it ('should create task max', async () => {
 			expect.assertions (1)
 			const taskMax: NewTaskInput = {
 				title: 'max',
@@ -120,61 +122,93 @@ describe ('KBF', () => {
 				swimlaneName: 'Default',
 				columnName: 'To-do'
 			}
-			const [task] = await post <Task>
-			(gql`mutation newTask ($data: NewTaskInput!) {
-					addTask(data: $data) {
-							board {
-									name
-							}
-							color {
-									name
-							}
-							column {
-									name
-							}
-							description
-							id
-							labels {
-									name
-							}
-							swimlane {
-									name
-							}
-							title
-					}
-			}`, {data: taskMax})
+      const [task] = await post<Task>
+      (gql`mutation newTask ($data: NewTaskInput!) {
+          addTask(data: $data) {
+              board {
+                  name
+              }
+              color {
+                  name
+              }
+              column {
+                  name
+              }
+              description
+              id
+              labels {
+                  name
+              }
+              swimlane {
+                  name
+              }
+              title
+          }
+      }`, { data: taskMax })
 			const exp = {
-				"board": {
-					"name": "test board"
+				'board': {
+					'name': 'test board'
 				},
-				"color": {
-					"name": "Orange"
+				'color': {
+					'name': 'Orange'
 				},
-				"column": {
-					"name": "To-do"
+				'column': {
+					'name': 'To-do'
 				},
-				"description": "MAX",
-				"id": expect.toBeString(),
-				"labels": [
+				'description': 'MAX',
+				'id': expect.toBeString (),
+				'labels': [
 					{
-						"name": "home"
+						'name': 'home'
 					},
 					{
-						"name": "chores"
+						'name': 'chores'
 					},
 					{
-						"name": "work"
+						'name': 'work'
 					}
 				],
-				"swimlane": {
-					"name": "Default"
+				'swimlane': {
+					'name': 'Default'
 				},
-				"title": "max"
+				'title': 'max'
 			}
-			expect (task).toMatchObject(exp)
-			
-			
-		})
+			expect (task).toMatchObject (exp)
+
+
+    })
   })
 
+  describe ('Color', () => {
+    it ('should create new color', async () => {
+			expect.assertions (1)
+			const newColor: NewColorInput = {
+				name: 'Black',
+				value: '000000',
+				boardName: testBoardName,
+				description: 'I am the Night',
+				default: true
+			}
+			const exp = {
+				"default": true,
+				"description": "I am the Night",
+				"id": expect.toBeString(),
+				"name": "Black",
+				"value": "000000"
+			}
+      const [color] = await post<Color>
+      (gql`mutation addColor($data: NewColorInput!) {
+          addColor(data: $data) {
+		          id
+              name
+              description
+              value
+              default
+          }
+      }`, { data: newColor })
+			expect(color).toMatchObject(exp)
+
+
+    })
+  })
 })
