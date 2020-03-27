@@ -16,7 +16,7 @@ let testBoardName: string
 
 describe ('KBF', () => {
 	beforeAll (async () => {
-		jest.setTimeout (9000)
+		jest.setTimeout (10000)
 		const moduleFixture = await Test.createTestingModule ({
 			imports: [KBFModule]
 		}).compile ()
@@ -67,7 +67,7 @@ describe ('KBF', () => {
               colors {
                   name
                   value
-		              default
+                  default
               }
               columns {
                   name
@@ -79,11 +79,11 @@ describe ('KBF', () => {
               }
           }
       }`)
-	    
+			
 			isSE (board.colors, defaultColors.map
 			(zipObj (['name', 'value', 'default'])))
-	
-	    isSE (board.columns, defaultColumns.map
+			
+			isSE (board.columns, defaultColumns.map
 			(([name, taskLimit], index) =>
 				({ name, order: index, taskLimit })))
 			isSE (board.swimlanes[0].name, 'Default')
@@ -91,7 +91,7 @@ describe ('KBF', () => {
   })
 
   describe ('task', () => {
-    it ('should add task', async () => {
+    it ('should add task min', async () => {
 			expect.assertions (1)
 			const minTask: NewTaskInput = {
 				boardName: testBoardName,
@@ -108,6 +108,73 @@ describe ('KBF', () => {
 
 
     })
+		
+		it ('should create task max', async () => {
+			expect.assertions (1)
+			const taskMax: NewTaskInput = {
+				title: 'max',
+				description: 'MAX',
+				colorName: 'Orange',
+				boardName: testBoardName,
+				tags: ['home', 'chores', 'work'],
+				swimlaneName: 'Default',
+				columnName: 'To-do'
+			}
+			const [task] = await post <Task>
+			(gql`mutation newTask ($data: NewTaskInput!) {
+					addTask(data: $data) {
+							board {
+									name
+							}
+							color {
+									name
+							}
+							column {
+									name
+							}
+							description
+							id
+							labels {
+									name
+							}
+							swimlane {
+									name
+							}
+							title
+					}
+			}`, {data: taskMax})
+			const exp = {
+				"board": {
+					"name": "test board"
+				},
+				"color": {
+					"name": "Orange"
+				},
+				"column": {
+					"name": "To-do"
+				},
+				"description": "MAX",
+				"id": expect.toBeString(),
+				"labels": [
+					{
+						"name": "home"
+					},
+					{
+						"name": "chores"
+					},
+					{
+						"name": "work"
+					}
+				],
+				"swimlane": {
+					"name": "Default"
+				},
+				"title": "max"
+			}
+			expect (task).toMatchObject(exp)
+			
+			
+		})
   })
 
 })

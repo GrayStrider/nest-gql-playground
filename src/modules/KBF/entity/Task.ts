@@ -38,7 +38,9 @@ export class Task extends BaseEntity {
 	color?: Color
 	
 	@Field (returns => TColumn)
-	@ManyToOne (type => TColumn)
+	@ManyToOne (type => TColumn, {
+		eager: true
+	})
 	column: TColumn
 	
 	@Column ({ default: 0 })
@@ -54,31 +56,35 @@ export class Task extends BaseEntity {
 	pointsEstimate?: number
 	
 	@Field (returns => Swimlane)
-	@ManyToOne (type => Swimlane, { nullable: true })
+	@ManyToOne (type => Swimlane, { nullable: true, eager: true })
 	swimlane: Swimlane
 	
 	@Column ({ nullable: true })
 	@Field ({ nullable: true })
 	position: number
 	
-	@OneToOne (type => TaskNumber, { nullable: true })
+	@OneToOne (type => TaskNumber, { nullable: true, eager: true })
 	@Field (returns => TaskNumber, { nullable: true })
 	number: TaskNumber
 	
 	@Field (returns => User, { nullable: true })
 	@ManyToMany (
-		type => User, user => user.tasks, { nullable: true }
+		type => User,
+			user => user.tasks,
+		{ nullable: true, eager: true }
 	)
 	@JoinTable ()
 	responsibleUser: User
 	
-	@ManyToMany (type => TDate, date => date.tasks, { nullable: true })
+	@ManyToMany (type => TDate, date => date.tasks, { nullable: true, eager: true })
 	@Field (returns => [TDate], { nullable: true })
 	dates?: TDate[]
 	
 	
 	@OneToMany (type => Subtask,
-		subtask => subtask.parent)
+		subtask => subtask.parent, {
+			eager: true
+		})
 	@Field (returns => [Subtask], { nullable: true })
 	subtasks?: Subtask[]
 	
@@ -100,7 +106,7 @@ export class Task extends BaseEntity {
 	createdAt: Date
 	
 	@Field (returns => Date)
-	@UpdateDateColumn ()
+	@UpdateDateColumn ( )
 	updatedAt: Date
 	
 	@Field (returns => Comment, { nullable: true })

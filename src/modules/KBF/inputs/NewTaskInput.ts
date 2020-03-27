@@ -3,7 +3,7 @@ import { MaxLength, IsOptional } from 'class-validator'
 
 @InputType ()
 export class NewTaskInput {
-	@Field()
+	@Field ()
 	boardName: string
 	
 	@Field ()
@@ -21,6 +21,12 @@ export class NewTaskInput {
 	
 	@Field ({ nullable: true })
 	colorName?: string
+	
+	@Field ({ nullable: true })
+	columnName?: string
+	
+	@Field ({ nullable: true })
+	swimlaneName?: string
 	
 }
 

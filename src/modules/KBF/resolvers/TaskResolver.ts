@@ -6,7 +6,7 @@ import { Label } from '@M/KBF/entity/Label'
 import { DeepPartial, BaseEntity } from 'typeorm'
 import { ApolloError } from 'apollo-server-errors'
 import { Board } from '@M/KBF/entity/Board'
-import { find } from 'ramda'
+import { find, head } from 'ramda'
 
 export enum ErrorCodes {
 	LIMIT_REACHED = 'LIMIT_REACHED',
@@ -32,24 +32,31 @@ export const checkIfMaxReached =
 
 @Resolver ()
 export class TaskResolver {
-	@Query(returns => [Task])
+	@Query (returns => [Task])
 	async tasks () {
-		return Task.find()
+		return Task.find ()
 	}
 	
 	@Mutation (returns => Task)
 	async addTask (
-		@Args ('data') { tags, colorName, boardName, ...rest }: NewTaskInput)
+		@Args ('data') {
+			tags, colorName, columnName, swimlaneName,
+			boardName, ...rest
+		}: NewTaskInput)
 		: Promise<Task> {
 		
 		let taskData: DeepPartial<Task> = {}
 		
-		const board = await Board.findOne ({name: boardName})
-		if (!board) throw new ApolloError (`Board <${boardName}> not found`, ErrorCodes.NOT_FOUND,
-			{
-				requestedName: boardName
-			})
-		taskData = { ...taskData, board }
+		const board = await Board.findOne ({ name: boardName })
+		if (!board) {
+			throw new ApolloError (`Board <${boardName}> not found`, ErrorCodes.NOT_FOUND,
+				{
+					requestedName: boardName
+				})
+		} else {
+			taskData = { ...taskData, board }
+		}
+		
 		if (colorName) {
 			const color = find (c => c.name === colorName,
 				board.colors)
@@ -59,10 +66,9 @@ export class TaskResolver {
 				requestedColor: colorName
 			})
 			taskData = { ...taskData, color }
-		
-		} else {
 			
-			const color = find(c => c.default, board.colors)
+		} else {
+			const color = find (c => c.default, board.colors)
 			taskData = { ...taskData, color }
 		}
 		
@@ -78,7 +84,34 @@ export class TaskResolver {
 			
 			taskData = { ...taskData, labels: tags_ }
 		}
-
+		
+		if (columnName) {
+			const column = find
+			(c => c.name === columnName, board.columns)
+			if (!column) throw new ApolloError
+			(`Column <${columnName}> doesn't exist on board <${boardName}>`, ErrorCodes.NOT_FOUND, {
+				requestedColumn: columnName
+			})
+			taskData = { ...taskData, column }
+		} else {
+			const column = head (board.columns)
+			taskData = { ...taskData, column }
+		}
+		
+		if (swimlaneName) {
+			const swimlane = find
+			(c => c.name === swimlaneName, board.swimlanes)
+			if (!swimlane) throw new ApolloError
+			(`Swimlane <${swimlaneName}> doesn't exist on board <${boardName}>`, ErrorCodes.NOT_FOUND, {
+				requestedSwimlane: swimlaneName
+			})
+			taskData = { ...taskData, swimlane }
+		} else {
+			const swimlane = head (board.swimlanes)
+			taskData = { ...taskData, swimlane }
+		}
+		
+		
 		return await Task.create ({
 			...rest, ...taskData
 		}).save ()
