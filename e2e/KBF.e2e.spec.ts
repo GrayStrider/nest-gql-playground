@@ -7,7 +7,7 @@ import { Board } from '@M/KBF/entity/Board'
 import { defaultColors, defaultColumns } from '@M/KBF/resolvers/board.resolver'
 import { Task } from '@M/KBF/entity/Task'
 import { NewTaskInput } from '@M/KBF/inputs/NewTaskInput'
-import { zipObj } from 'ramda'
+import { zipObj, without, all } from 'ramda'
 import { Color } from '@M/KBF/entity/Color'
 import { NewColorInput } from '@M/KBF/inputs/color.input'
 
@@ -190,23 +190,41 @@ describe ('KBF', () => {
 				default: true
 			}
 			const exp = {
-				"default": true,
-				"description": "I am the Night",
-				"id": expect.toBeString(),
-				"name": "Black",
-				"value": "000000"
+				'default': true,
+				'description': 'I am the Night',
+				'id': expect.toBeString (),
+				'name': 'Black',
+				'value': '000000'
 			}
       const [color] = await post<Color>
       (gql`mutation addColor($data: NewColorInput!) {
           addColor(data: $data) {
-		          id
+              id
               name
               description
               value
               default
           }
       }`, { data: newColor })
-			expect(color).toMatchObject(exp)
+			expect (color).toMatchObject (exp)
+
+
+    })
+    it ('should reset default from the rest of the colors', async () => {
+			expect.assertions (2)
+      const [{ colors }] = await post<Board>
+      (gql`query {
+          board(name: "${testBoardName}") {
+              colors {
+                  name
+                  default
+              }
+          }
+      }`)
+			const newColor = colors.find (c => c.name === 'Black')
+			isSE (newColor?.default, true)
+			const rest = without ([newColor]) (colors)
+			isSE (all (c => !c?.default, rest), true)
 
 
     })
