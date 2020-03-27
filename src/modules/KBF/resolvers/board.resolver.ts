@@ -4,6 +4,7 @@ import { Color } from '@M/KBF/entity/Color'
 import { Maybe } from 'type-graphql'
 import { TColumn } from '@M/KBF/entity/TColumn'
 import { Swimlane } from '@M/KBF/entity/Swimlane'
+import { BoardInput, AddBoardInput } from '@M/KBF/inputs/board.input'
 
 export const defaultColors: [string, string, boolean][] = [
 	['White', '#FDFFFC', true],
@@ -29,14 +30,14 @@ export class BoardResolver {
 	}
 	
 	@Query (returns => Board)
-	async board (@Args ('name') name: string)
+	async board (@Args () { name }: BoardInput)
 		: Promise<Maybe<Board>> {
 		return await Board.findOne ({ name })
 	}
 	
 	
 	@Mutation (returns => Board)
-	async addBoard (@Args ('name') name: string)
+	async addBoard (@Args () { name, columnsParams, swimlanesParams }: AddBoardInput)
 		: Promise<Board> {
 		const colors = defaultColors.map
 		(([name, value, def]) => Color.create
@@ -44,9 +45,9 @@ export class BoardResolver {
 		const columns = defaultColumns.map
 		(([name, taskLimit], index) => TColumn.create
 		({ name, order: index, taskLimit }))
-		const swimlanes = [Swimlane.create
-			({ name: 'Default' })
-		]
+		const swimlanes = swimlanesParams
+			? swimlanesParams.map (name => Swimlane.create ({ name }))
+			: [Swimlane.create ({ name: 'Default' })]
 		
 		return await Board.create
 		({ name, colors, columns, swimlanes }).save ()
