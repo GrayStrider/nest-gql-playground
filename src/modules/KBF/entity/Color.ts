@@ -5,7 +5,7 @@ import { Board } from '@M/KBF/entity/Board'
 
 
 @ObjectType ()
-@Unique (['name', 'board'])
+@Unique (['name', 'board']) // Actually works
 @Entity ()
 export class Color extends BaseEntity {
 	@Field()

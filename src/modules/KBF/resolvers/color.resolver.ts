@@ -1,4 +1,4 @@
-import { Resolver, Args, Mutation, Query } from '@nestjs/graphql'
+import { Resolver, Args, Mutation } from '@nestjs/graphql'
 import { Color } from '@M/KBF/entity/Color'
 import { Board } from '@M/KBF/entity/Board'
 import { ApolloError } from 'apollo-server-errors'
@@ -24,7 +24,7 @@ export class ColorResolver {
 		(c => c.name === rest.name, board.colors)
 		
 		if (isDuplicate) throw new ApolloError
-		(`Color name <${name}> already exists`)
+		(`Color name <${rest.name}> already exists`)
 		
 		if (rest.default === true) {
 			board.colors.forEach ((c, i, a) => a[i].default = false)

@@ -7,7 +7,7 @@ import { Board } from '@M/KBF/entity/Board'
 import { defaultColors, defaultColumns } from '@M/KBF/resolvers/board.resolver'
 import { Task } from '@M/KBF/entity/Task'
 import { NewTaskInput } from '@M/KBF/inputs/NewTaskInput'
-import { zipObj, without, all } from 'ramda'
+import { zipObj, without, all, head } from 'ramda'
 import { Color } from '@M/KBF/entity/Color'
 import { NewColorInput } from '@M/KBF/inputs/color.input'
 
@@ -92,7 +92,7 @@ describe ('KBF', () => {
     })
   })
 
-  describe ('task', () => {
+  describe ('Task', () => {
     it ('should add task min', async () => {
 			expect.assertions (1)
 			const minTask: NewTaskInput = {
@@ -225,6 +225,23 @@ describe ('KBF', () => {
 			isSE (newColor?.default, true)
 			const rest = without ([newColor]) (colors)
 			isSE (all (c => !c?.default, rest), true)
+
+
+    })
+    it ('should prevent dupes', async () => {
+			expect.assertions (2)
+      const [color, errors] = await post<Color>
+      (gql`mutation {
+          addColor(data: {
+              name: "Black",
+              boardName: "${testBoardName}",
+              value: "1234"
+          }) {
+              id
+          }
+      }`)
+			isSE (color, null)
+			expect (head (errors)?.message).toBeString()
 
 
     })
