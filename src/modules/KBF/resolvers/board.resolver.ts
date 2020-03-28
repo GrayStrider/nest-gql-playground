@@ -4,7 +4,7 @@ import { Color } from '@M/KBF/entity/Color'
 import { Maybe } from 'type-graphql'
 import { TColumn } from '@M/KBF/entity/TColumn'
 import { Swimlane } from '@M/KBF/entity/Swimlane'
-import { BoardInput, AddBoardInput } from '@M/KBF/inputs/board.input'
+import { FindBoardInput, AddBoardInput } from '@M/KBF/inputs/board.input'
 
 export const defaultColors: [string, string, boolean][] = [
 	['White', '#FDFFFC', true],
@@ -30,7 +30,7 @@ export class BoardResolver {
 	}
 	
 	@Query (returns => Board)
-	async board (@Args () { name }: BoardInput)
+	async board (@Args () { name }: FindBoardInput)
 		: Promise<Maybe<Board>> {
 		return await Board.findOne ({ name })
 	}

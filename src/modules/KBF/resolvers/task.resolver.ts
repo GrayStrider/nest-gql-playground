@@ -11,6 +11,7 @@ import { find, head } from 'ramda'
 export enum ErrorCodes {
 	LIMIT_REACHED = 'LIMIT_REACHED',
 	NOT_FOUND = 'NOT_FOUND',
+	VALIDATION_ERROR = 'VALIDATION_ERROR'
 }
 
 export const MAX_TASK_NUMBER = 3

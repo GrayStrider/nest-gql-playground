@@ -2,7 +2,7 @@ import { ArgsType, Field, Int } from '@nestjs/graphql'
 import { IsNotEmpty, MaxLength, IsOptional } from 'class-validator'
 
 @ArgsType ()
-export class BoardInput {
+export class FindBoardInput {
 	@IsNotEmpty ()
 	@MaxLength (50)
 	@Field ()

@@ -10,6 +10,9 @@ import { TaskInput } from '@M/KBF/inputs/task.input'
 import { zipObj, without, all, head } from 'ramda'
 import { Color } from '@M/KBF/entity/Color'
 import { NewColorInput } from '@M/KBF/inputs/color.input'
+import { ErrorCodes } from '@M/KBF/resolvers/task.resolver'
+import { ApolloError } from 'apollo-server-errors'
+import { GraphQLError } from 'graphql'
 
 let app: INestApplication
 let post: Post
@@ -26,6 +29,10 @@ beforeAll (async () => {
 	;({ post, req } = supertest (app.getHttpServer ()))
 })
 
+export const shouldHaveFailedValidation = ([data, errors]: [any, GraphQLError[]]) => {
+	isSE (data, null)
+	isSE (head(errors)?.extensions?.code, ErrorCodes.VALIDATION_ERROR)
+}
 
 describe ('Board', () => {
 
@@ -80,6 +87,19 @@ describe ('Board', () => {
 			({ name, order: index, taskLimit })))
 		isSE (board.swimlanes[0].name, 'Default')
   })
+	
+	describe ('validation', () => {
+		it ('FindInput', async () => {
+			expect.assertions(2)
+			const res = await post <Board>
+			(gql`query {
+					board(name: "") {
+							name
+					}
+			}`)
+			shouldHaveFailedValidation(res)
+		})
+	})
 })
 
 describe ('Task', () => {

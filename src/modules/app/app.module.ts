@@ -14,6 +14,7 @@ import { makeRedis } from '@M/redis/redis.provider'
 import { RedisPubSub } from 'graphql-redis-subscriptions'
 import { HttpExceptionFilter } from '@/common/filters/http-exception.filter'
 import { TimeoutInterceptor } from '@/common/interceptors/timeout.interceptor'
+import { validatorOptions } from '@M/cats/config/validator'
 
 const RedisStore = ConnectRedis (session)
 
@@ -32,7 +33,7 @@ const redisPubSub = new RedisPubSub ({
 	providers: [
 		{ provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
 		{ provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
-		{ provide: APP_PIPE, useClass: ValidationPipe },
+		{ provide: APP_PIPE, useValue: new ValidationPipe(validatorOptions) },
 		{ provide: APP_FILTER, useClass: HttpExceptionFilter },
 		{ provide: REDIS.SESSION, useValue: makeRedis () },
 		{ provide: REDIS.PUBSUB, useValue: redisPubSub }
