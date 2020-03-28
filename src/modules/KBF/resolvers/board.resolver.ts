@@ -11,7 +11,7 @@ export const defaultColors: [string, string, boolean][] = [
 	['Green', '2EC4B6', false],
 	['Blue', '011627', false],
 	['Orange', 'FF9F1C', false],
-	['Red', '#71D36', false]
+	['Red', '71D36', false]
 ]
 
 export const defaultColumns: [string, number][] = [
