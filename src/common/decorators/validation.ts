@@ -1,6 +1,11 @@
 import { ReturnTypeFuncValue, Field } from '@nestjs/graphql'
 import { composeFieldDecorators } from '@qdev/utils-ts'
-import { IsOptional, MaxLength, IsNotEmpty } from 'class-validator'
+import { IsOptional, MaxLength, IsNotEmpty, Matches } from 'class-validator'
+
+export const IsHexString = Matches (/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
+	{
+		message: '$property should be a HEX color string (#FFFFFF)'
+	})
 
 const ValidString = (length: number) => composeFieldDecorators (MaxLength (length), IsNotEmpty ())
 export const ValidString20 = ValidString (20)

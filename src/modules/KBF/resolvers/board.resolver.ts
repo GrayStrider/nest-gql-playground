@@ -7,11 +7,11 @@ import { Swimlane } from '@M/KBF/entity/Swimlane'
 import { FindBoardInput, AddBoardInput } from '@M/KBF/inputs/board.input'
 
 export const defaultColors: [string, string, boolean][] = [
-	['White', '#FDFFFC', true],
-	['Green', '#2EC4B6', false],
-	['Blue', '#011627', false],
-	['Orange', '#FF9F1C', false],
-	['Red', '#E71D36', false]
+	['White', 'FDFFFC', true],
+	['Green', '2EC4B6', false],
+	['Blue', '011627', false],
+	['Orange', 'FF9F1C', false],
+	['Red', '#71D36', false]
 ]
 
 export const defaultColumns: [string, number][] = [

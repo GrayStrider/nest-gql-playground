@@ -262,7 +262,7 @@ describe ('Color', () => {
 		expect.assertions (1)
 		const newColor: NewColorInput = {
 			name: 'Black',
-			value: '#000000',
+			value: '000000',
 			boardName: testBoardName,
 			description: 'I am the Night',
 			default: true
@@ -272,7 +272,7 @@ describe ('Color', () => {
 			'description': 'I am the Night',
 			'id': expect.toBeString (),
 			'name': 'Black',
-			'value': '#000000'
+			'value': '000000'
 		}
     const [color] = await post<Color>
     (gql`mutation addColor($data: NewColorInput!) {
@@ -313,7 +313,7 @@ describe ('Color', () => {
         addColor(data: {
             name: "Black",
             boardName: "${testBoardName}",
-            value: "#000000"
+            value: "000000"
         }) {
             id
         }

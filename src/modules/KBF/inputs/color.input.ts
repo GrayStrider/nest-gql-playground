@@ -1,7 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql'
-import { IsNotEmpty, MaxLength, IsOptional, IsBoolean, IsHexColor, Matches } from 'class-validator'
+import { IsNotEmpty, MaxLength, IsOptional, IsBoolean, IsHexColor } from 'class-validator'
 
-const HEXColorRegexp = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
 
 @InputType ()
 export class NewColorInput {
@@ -22,9 +21,7 @@ export class NewColorInput {
 	description?: string
 	
 	@IsNotEmpty()
-	@Matches(HEXColorRegexp, {
-		message: '$property should be a HEX color string (#FFFFFF)'
-	})
+	@IsHexColor()
 	@Field ()
 	value: string
 	
