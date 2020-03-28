@@ -1,58 +1,59 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, ReturnTypeFuncValue } from '@nestjs/graphql'
 import { MaxLength, IsOptional, IsNotEmpty, IsBoolean } from 'class-validator'
+import { composeFieldDecorators } from '@qdev/utils-ts'
 
-type Decorator = (target: object, propertyKey: string) => void
+const ValidString = (length: number) => composeFieldDecorators (MaxLength (length), IsNotEmpty ())
+const ValidString20 = ValidString (20)
+const ValidString50 = ValidString (50)
+const ValidString100 = ValidString (100)
+const ValidString500 = ValidString (500)
 
-const composeDecorators = (...decorators: Decorator[]): Decorator => (target, propertyKey) =>
-	decorators.forEach (decorator => decorator (target, propertyKey))
-
-const ValidString50 = composeDecorators (Field (), MaxLength (50), IsNotEmpty ())
+const FieldNullable = (returns?: ReturnTypeFuncValue) => returns
+	? Field (returns_ => returns, { nullable: true })
+	: Field ({ nullable: true })
 
 @InputType ()
 export class TaskInput {
+	@Field ()
 	@ValidString50
 	boardName: string
 	
-	@IsNotEmpty ()
-	@MaxLength (100)
 	@Field ()
+	@ValidString100
 	title: string
 	
-	@MaxLength (500)
-	@IsNotEmpty ()
+	@FieldNullable ()
 	@IsOptional ()
-	@Field ({ nullable: true })
+	@ValidString500
 	description?: string
 	
-	@IsOptional ()
-	@MaxLength (20, { each: true })
-	@IsNotEmpty ({ each: true })
 	@Field (returns => [String], {
 		nullable: true
 	})
+	@IsOptional ()
+	@MaxLength (20, { each: true })
+	@IsNotEmpty ()
+	@IsNotEmpty ({ each: true })
 	tags?: string[]
 	
 	@IsOptional ()
 	@IsBoolean ()
-	@Field ({ nullable: true })
+	@FieldNullable ()
 	completed?: boolean
 	
+	@FieldNullable ()
 	@IsOptional ()
-	@IsNotEmpty ()
-	@MaxLength (20)
-	@Field ({ nullable: true })
+	@ValidString20
 	colorName?: string
 	
+	@FieldNullable ()
 	@IsOptional ()
-	@MaxLength (20)
-	@IsNotEmpty ()
-	@Field ({ nullable: true })
+	@ValidString20
 	columnName?: string
 	
+	@FieldNullable ()
 	@IsOptional ()
-	@MaxLength (20)
-	@IsNotEmpty ()
-	@Field ({ nullable: true })
+	@ValidString20
 	swimlaneName?: string
 	
 }
