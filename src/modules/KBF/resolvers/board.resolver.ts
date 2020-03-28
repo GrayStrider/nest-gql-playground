@@ -37,16 +37,22 @@ export class BoardResolver {
 	
 	
 	@Mutation (returns => Board)
-	async addBoard (@Args () { name, columnsParams, swimlanesParams }: AddBoardInput)
+	async addBoard (@Args ('data') { name, columnsParams, swimlaneNames }: AddBoardInput)
 		: Promise<Board> {
 		const colors = defaultColors.map
 		(([name, value, def]) => Color.create
 		({ name, value, default: def }))
-		const columns = defaultColumns.map
-		(([name, taskLimit], index) => TColumn.create
-		({ name, order: index, taskLimit }))
-		const swimlanes = swimlanesParams
-			? swimlanesParams.map (name => Swimlane.create ({ name }))
+		
+		const columns = columnsParams
+			? columnsParams.map
+			(({ name, order, taskLimit }) => TColumn.create
+			({ name, order, taskLimit }))
+			: defaultColumns.map
+			(([name, taskLimit], index) => TColumn.create
+			({ name, order: index, taskLimit }))
+		
+		const swimlanes = swimlaneNames
+			? swimlaneNames.map (name => Swimlane.create ({ name }))
 			: [Swimlane.create ({ name: 'Default' })]
 		
 		return await Board.create

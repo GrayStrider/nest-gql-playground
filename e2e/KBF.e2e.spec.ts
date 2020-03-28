@@ -38,12 +38,40 @@ export const shouldHaveFailedValidation = ([data, errors]: [any, GraphQLError[]]
 }
 
 describe ('Board', () => {
+  describe ('validation', () => {
+    it ('FindBoardInput', async () => {
+			expect.assertions (3)
+      const res = await post<Board>
+      (gql`query {
+          board(name: "") {
+              name
+          }
+      }`)
+			shouldHaveFailedValidation (res)
+    })
+    it ('AddBoardInput', async () => {
+			expect.assertions (3)
+      const res = await post<Board>
+      (gql`mutation {
+          addBoard(data: {
+              name: "",
+              swimlaneNames: [""]
+          }) {
+              name
+          }
+      }`)
+			shouldHaveFailedValidation (res, 2)
+    })
+
+  })
 
   it ('should post new', async () => {
 		expect.assertions (1)
     const [board] = await post<Board>
     (gql`mutation {
-        addBoard(name: "${testBoardName}") {
+        addBoard(data: {
+            name: "${testBoardName}"
+        }) {
             name
         }
     }`)
@@ -90,30 +118,6 @@ describe ('Board', () => {
 			({ name, order: index, taskLimit })))
 		isSE (board.swimlanes[0].name, 'Default')
   })
-
-  describe ('validation', () => {
-    it ('FindBoardInput', async () => {
-			expect.assertions (3)
-      const res = await post<Board>
-      (gql`query {
-          board(name: "") {
-              name
-          }
-      }`)
-			shouldHaveFailedValidation (res)
-    })
-    it ('AddBoardInput', async () => {
-			expect.assertions (3)
-      const res = await post<Board>
-      (gql`mutation {
-          addBoard(name: "", swimlanesParams: [""]) {
-              name
-          }
-      }`)
-			shouldHaveFailedValidation (res, 2)
-    })
-
-  })
 })
 
 describe ('Task', () => {
@@ -142,10 +146,10 @@ describe ('Task', () => {
       const res = await post<Task>
       (gql`query {
           task(id: "123") {
-		          id
+              id
           }
       }`)
-			shouldHaveFailedValidation(res)
+			shouldHaveFailedValidation (res)
 
     })
   })
