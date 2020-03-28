@@ -3,7 +3,7 @@ import { composeFieldDecorators } from '@qdev/utils-ts'
 import { IsOptional, MaxLength, IsNotEmpty, Max } from 'class-validator'
 
 
-export const FieldNullable = (returns?: ReturnTypeFuncValue) => returns
+export const ValidatedFieldNullable = (returns?: ReturnTypeFuncValue) => returns
 	? composeFieldDecorators (Field (returns_ => returns, { nullable: true }), IsOptional ())
 	: composeFieldDecorators (Field ({ nullable: true }), IsOptional ())
 

@@ -1,5 +1,5 @@
-import { ObjectType, Field } from '@nestjs/graphql'
-import { Entity, OneToMany, Column, ManyToOne, Unique } from 'typeorm'
+import { Field } from '@nestjs/graphql'
+import { OneToMany, Column, ManyToOne, Unique } from 'typeorm'
 import { Task } from '@M/KBF/entity/Task'
 import { Board } from '@M/KBF/entity/Board'
 import { Base } from '@M/KBF/entity/_Base'
@@ -17,7 +17,7 @@ export class Color extends Base {
 	tasks: Task[]
 	
 	@Field ({ nullable: true })
-	@Column ({ length: 5000, nullable: true })
+	@Column ({ nullable: true })
 	description?: string
 	
 	@Field ()
