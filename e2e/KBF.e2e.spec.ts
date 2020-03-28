@@ -11,7 +11,6 @@ import { zipObj, without, all, head } from 'ramda'
 import { Color } from '@M/KBF/entity/Color'
 import { NewColorInput } from '@M/KBF/inputs/color.input'
 import { ErrorCodes } from '@M/KBF/resolvers/task.resolver'
-import { ApolloError } from 'apollo-server-errors'
 import { GraphQLError } from 'graphql'
 import { FindBoardInput } from '@M/KBF/inputs/board.input'
 
@@ -30,9 +29,12 @@ beforeAll (async () => {
 	;({ post, req } = supertest (app.getHttpServer ()))
 })
 
-export const shouldHaveFailedValidation = ([data, errors]: [any, GraphQLError[]]) => {
+export const shouldHaveFailedValidation = ([data, errors]: [any, GraphQLError[]], amount = 1) => {
 	isSE (data, null)
-	isSE (head(errors)?.extensions?.code, ErrorCodes.VALIDATION_ERROR)
+	isSE (head (errors)?.extensions?.code, ErrorCodes.VALIDATION_ERROR)
+	if (amount)
+		isSE (head (errors)
+			?.extensions?.validationErrors.length, amount)
 }
 
 describe ('Board', () => {
@@ -88,30 +90,30 @@ describe ('Board', () => {
 			({ name, order: index, taskLimit })))
 		isSE (board.swimlanes[0].name, 'Default')
   })
-	
-	describe ('validation', () => {
-		it ('FindBoardInput', async () => {
-			expect.assertions(2)
-			const res = await post <Board>
-			(gql`query {
-					board(name: "") {
-							name
-					}
-			}`)
-			shouldHaveFailedValidation(res)
-		})
-		it ('AddBoardInput', async () => {
-			expect.assertions(2)
-			const res = await post <Board>
-			(gql`mutation {
-					addBoard(name: "", swimlanesParams: [""]) {
-							name
-					}
-			}`)
-			shouldHaveFailedValidation(res)
-		})
-		
-	})
+
+  describe ('validation', () => {
+    it ('FindBoardInput', async () => {
+			expect.assertions (3)
+      const res = await post<Board>
+      (gql`query {
+          board(name: "") {
+              name
+          }
+      }`)
+			shouldHaveFailedValidation (res)
+    })
+    it ('AddBoardInput', async () => {
+			expect.assertions (3)
+      const res = await post<Board>
+      (gql`mutation {
+          addBoard(name: "", swimlanesParams: [""]) {
+              name
+          }
+      }`)
+			shouldHaveFailedValidation (res, 2)
+    })
+
+  })
 })
 
 describe ('Task', () => {
@@ -202,6 +204,23 @@ describe ('Task', () => {
 })
 
 describe ('Color', () => {
+  describe ('validation', () => {
+    it ('NewColorInput', async () => {
+			expect.assertions (3)
+      const res = await post<Color>
+      (gql`mutation {
+          addColor(data: {
+              name: "",
+              value: "foobar",
+              boardName: "",
+              description: ""
+          }) {
+              name
+          }
+      }`)
+			shouldHaveFailedValidation (res, 4)
+    })
+  })
   it ('should create new color', async () => {
 		expect.assertions (1)
 		const newColor: NewColorInput = {

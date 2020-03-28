@@ -8,6 +8,7 @@ import { ColorResolver } from '@M/KBF/resolvers/color.resolver'
 import { APP_PIPE } from '@nestjs/core'
 import { validatorOptions } from '@M/cats/config/validator'
 import { ApolloError } from 'apollo-server-errors'
+import { prop } from 'ramda'
 
 const apolloOptions: GqlModuleOptions = {
 	autoSchemaFile: 'src/graphql/generated/schema.graphql',
@@ -36,7 +37,10 @@ const apolloOptions: GqlModuleOptions = {
 			provide: APP_PIPE, useValue: new ValidationPipe ({
 				...validatorOptions,
 				exceptionFactory (errors) {
-					return new ApolloError ('Validation failed', ErrorCodes.VALIDATION_ERROR, { validationErrors: errors })
+					const validationErrors = errors.map
+					(prop('constraints'))
+					
+					return new ApolloError ('Validation failed', ErrorCodes.VALIDATION_ERROR, { validationErrors })
 				}
 			})
 		}
