@@ -14,236 +14,225 @@ import { NewColorInput } from '@M/KBF/inputs/color.input'
 let app: INestApplication
 let post: Post
 let req: Req
-let testBoardName: string
+const testBoardName = 'test board'
 
-describe ('KBF', () => {
-	beforeAll (async () => {
-		jest.setTimeout (20000)
-		const moduleFixture = await Test.createTestingModule ({
-			imports: [KBFModule]
-		}).compile ()
-		app = moduleFixture.createNestApplication ()
-		await app.init ()
-		;({ post, req } = supertest (app.getHttpServer ()))
-	})
-	
-	it ('sanity', async () => {
+beforeAll (async () => {
+	jest.setTimeout (20000)
+	const moduleFixture = await Test.createTestingModule ({
+		imports: [KBFModule]
+	}).compile ()
+	app = moduleFixture.createNestApplication ()
+	await app.init ()
+	;({ post, req } = supertest (app.getHttpServer ()))
+})
+
+
+describe ('Board', () => {
+
+  it ('should post new', async () => {
 		expect.assertions (1)
-		const endpoint = '/graphql'
-		const { body } = await req.post (endpoint)
-			.send ({ query: 'foobar' })
-		isSE (body.errors[0].extensions.code, 'GRAPHQL_PARSE_FAILED')
+    const [board] = await post<Board>
+    (gql`mutation {
+        addBoard(name: "${testBoardName}") {
+            name
+        }
+    }`)
+		isSE (board.name, testBoardName)
+  })
+
+  it ('should be created', async () => {
+		expect.assertions (1)
+    const [board] = await post<Board[]>
+    (gql`query {
+        boards {
+            name
+        }
+    }`)
+		isSE (board[0].name, testBoardName)
+  })
+
+  it ('should have default data', async () => {
+		expect.assertions (3)
+    const [board] = await post<Board>
+    (gql`query {
+        board (name: "${testBoardName}") {
+            colors {
+                name
+                value
+                default
+            }
+            columns {
+                name
+                order
+                taskLimit
+            }
+            swimlanes {
+                name
+            }
+        }
+    }`)
 		
-	})
+		isSE (board.colors, defaultColors.map
+		(zipObj (['name', 'value', 'default'])))
+		
+		isSE (board.columns, defaultColumns.map
+		(([name, taskLimit], index) =>
+			({ name, order: index, taskLimit })))
+		isSE (board.swimlanes[0].name, 'Default')
+  })
+})
 
-  describe ('Board', () => {
+describe ('Task', () => {
+  it ('should add task min', async () => {
+		expect.assertions (1)
+		const minTask: TaskInput = {
+			boardName: testBoardName,
+			title: 'min task'
+		}
 
-    it ('should create new', async () => {
-			expect.assertions (1)
-      const [board] = await post<Board>
-      (gql`mutation {
-          addBoard(name: "test board") {
-              name
-          }
-      }`)
-			isSE (board.name, 'test board')
-    })
+    const [task] = await post<Task>
+    (gql`mutation newTask ($data: TaskInput!) {
+        addTask(data: $data) {
+            title
+        }
+    }`, { data: minTask })
+		isSE (task.title, minTask.title)
 
-    it ('should be created', async () => {
-			expect.assertions (1)
-      const [board] = await post<Board[]>
-      (gql`query {
-          boards {
-              name
-          }
-      }`)
-			testBoardName = board[0].name
-			isSE (testBoardName, 'test board')
-    })
 
-    it ('should have default data', async () => {
-			expect.assertions (3)
-      const [board] = await post<Board>
-      (gql`query {
-          board (name: "${testBoardName}") {
-              colors {
-                  name
-                  value
-                  default
-              }
-              columns {
-                  name
-                  order
-                  taskLimit
-              }
-              swimlanes {
-                  name
-              }
-          }
-      }`)
-			
-			isSE (board.colors, defaultColors.map
-			(zipObj (['name', 'value', 'default'])))
-			
-			isSE (board.columns, defaultColumns.map
-			(([name, taskLimit], index) =>
-				({ name, order: index, taskLimit })))
-			isSE (board.swimlanes[0].name, 'Default')
-    })
   })
 
-  describe ('Task', () => {
-    it ('should add task min', async () => {
-			expect.assertions (1)
-			const minTask: TaskInput = {
-				boardName: testBoardName,
-				title: 'min task'
-			}
-
-      const [task] = await post<Task>
-      (gql`mutation newTask ($data: TaskInput!) {
-          addTask(data: $data) {
-              title
-          }
-      }`, { data: minTask })
-			isSE (task.title, minTask.title)
-
-
-    })
-
-    it ('should create task max', async () => {
-			expect.assertions (1)
-			const taskMax: TaskInput = {
-				title: 'max',
-				description: 'MAX',
-				colorName: 'Orange',
-				boardName: testBoardName,
-				tags: ['home', 'chores', 'work'],
-				swimlaneName: 'Default',
-				columnName: 'To-do'
-			}
-      const [task] = await post<Task>
-      (gql`mutation newTask ($data: TaskInput!) {
-          addTask(data: $data) {
-              board {
-                  name
-              }
-              color {
-                  name
-              }
-              column {
-                  name
-              }
-              description
-              id
-              labels {
-                  name
-              }
-              swimlane {
-                  name
-              }
-              title
-          }
-      }`, { data: taskMax })
-			const exp = {
-				'board': {
-					'name': 'test board'
+  it ('should create task max', async () => {
+		expect.assertions (1)
+		const taskMax: TaskInput = {
+			title: 'max',
+			description: 'MAX',
+			colorName: 'Orange',
+			boardName: testBoardName,
+			tags: ['home', 'chores', 'work'],
+			swimlaneName: 'Default',
+			columnName: 'To-do'
+		}
+    const [task] = await post<Task>
+    (gql`mutation newTask ($data: TaskInput!) {
+        addTask(data: $data) {
+            board {
+                name
+            }
+            color {
+                name
+            }
+            column {
+                name
+            }
+            description
+            id
+            labels {
+                name
+            }
+            swimlane {
+                name
+            }
+            title
+        }
+    }`, { data: taskMax })
+		const exp = {
+			'board': {
+				'name': 'test board'
+			},
+			'color': {
+				'name': 'Orange'
+			},
+			'column': {
+				'name': 'To-do'
+			},
+			'description': 'MAX',
+			'id': expect.toBeString (),
+			'labels': [
+				{
+					'name': 'home'
 				},
-				'color': {
-					'name': 'Orange'
+				{
+					'name': 'chores'
 				},
-				'column': {
-					'name': 'To-do'
-				},
-				'description': 'MAX',
-				'id': expect.toBeString (),
-				'labels': [
-					{
-						'name': 'home'
-					},
-					{
-						'name': 'chores'
-					},
-					{
-						'name': 'work'
-					}
-				],
-				'swimlane': {
-					'name': 'Default'
-				},
-				'title': 'max'
-			}
-			expect (task).toMatchObject (exp)
+				{
+					'name': 'work'
+				}
+			],
+			'swimlane': {
+				'name': 'Default'
+			},
+			'title': 'max'
+		}
+		expect (task).toMatchObject (exp)
 
 
-    })
   })
+})
 
-  describe ('Color', () => {
-    it ('should create new color', async () => {
-			expect.assertions (1)
-			const newColor: NewColorInput = {
-				name: 'Black',
-				value: '000000',
-				boardName: testBoardName,
-				description: 'I am the Night',
-				default: true
-			}
-			const exp = {
-				'default': true,
-				'description': 'I am the Night',
-				'id': expect.toBeString (),
-				'name': 'Black',
-				'value': '000000'
-			}
-      const [color] = await post<Color>
-      (gql`mutation addColor($data: NewColorInput!) {
-          addColor(data: $data) {
-              id
-              name
-              description
-              value
-              default
-          }
-      }`, { data: newColor })
-			expect (color).toMatchObject (exp)
-
-
-    })
-    it ('should reset default from the rest of the colors', async () => {
-			expect.assertions (2)
-      const [{ colors }] = await post<Board>
-      (gql`query {
-          board(name: "${testBoardName}") {
-              colors {
-                  name
-                  default
-              }
-          }
-      }`)
-			const newColor = colors.find (c => c.name === 'Black')
-			isSE (newColor?.default, true)
-			const rest = without ([newColor]) (colors)
-			isSE (all (c => !c?.default, rest), true)
+describe ('Color', () => {
+  it ('should create new color', async () => {
+		expect.assertions (1)
+		const newColor: NewColorInput = {
+			name: 'Black',
+			value: '000000',
+			boardName: testBoardName,
+			description: 'I am the Night',
+			default: true
+		}
+		const exp = {
+			'default': true,
+			'description': 'I am the Night',
+			'id': expect.toBeString (),
+			'name': 'Black',
+			'value': '000000'
+		}
+    const [color] = await post<Color>
+    (gql`mutation addColor($data: NewColorInput!) {
+        addColor(data: $data) {
+            id
+            name
+            description
+            value
+            default
+        }
+    }`, { data: newColor })
+		expect (color).toMatchObject (exp)
 
 
-    })
-    it ('should prevent dupes', async () => {
-			expect.assertions (2)
-      const [color, errors] = await post<Color>
-      (gql`mutation {
-          addColor(data: {
-              name: "Black",
-              boardName: "${testBoardName}",
-              value: "1234"
-          }) {
-              id
-          }
-      }`)
-			isSE (color, null)
-			expect (head (errors)?.message).toBeString()
+  })
+  it ('should reset default from the rest of the colors', async () => {
+		expect.assertions (2)
+    const [{ colors }] = await post<Board>
+    (gql`query {
+        board(name: "${testBoardName}") {
+            colors {
+                name
+                default
+            }
+        }
+    }`)
+		const newColor = colors.find (c => c.name === 'Black')
+		isSE (newColor?.default, true)
+		const rest = without ([newColor]) (colors)
+		isSE (all (c => !c?.default, rest), true)
 
 
-    })
+  })
+  it ('should prevent dupes', async () => {
+		expect.assertions (2)
+    const [color, errors] = await post<Color>
+    (gql`mutation {
+        addColor(data: {
+            name: "Black",
+            boardName: "${testBoardName}",
+            value: "1234"
+        }) {
+            id
+        }
+    }`)
+		isSE (color, null)
+		expect (head (errors)?.message).toBeString ()
+
+
   })
 })
