@@ -117,27 +117,38 @@ describe ('Board', () => {
 })
 
 describe ('Task', () => {
-	describe ('validation', () => {
-		it ('TaskInput', async () => {
-			expect.assertions(3)
-		  const res = await post <Task>
-		  (gql`mutation {
-				  addTask(data: {
-						  boardName: "",
-						  title: "",
-						  description: "",
-						  tags: ["", ""],
-						  colorName: "",
-						  columnName: "",
-						  swimlaneName: ""
-				  }) {
-						  id
-				  }
-		  }`)
-		  shouldHaveFailedValidation(res, 7)
-		  
-		})
-	})
+  describe ('validation', () => {
+    it ('TaskInput', async () => {
+			expect.assertions (3)
+      const res = await post<Task>
+      (gql`mutation {
+          addTask(data: {
+              boardName: "",
+              title: "",
+              description: "",
+              tags: ["", ""],
+              colorName: "",
+              columnName: "",
+              swimlaneName: ""
+          }) {
+              id
+          }
+      }`)
+			shouldHaveFailedValidation (res, 7)
+
+    })
+    it ('TaskSearchInputByID', async () => {
+			expect.assertions (3)
+      const res = await post<Task>
+      (gql`query {
+          task(id: "123") {
+		          id
+          }
+      }`)
+			shouldHaveFailedValidation(res)
+
+    })
+  })
   it ('should add task min', async () => {
 		expect.assertions (1)
 		const minTask: TaskInput = {
@@ -165,7 +176,8 @@ describe ('Task', () => {
 			boardName: testBoardName,
 			tags: ['home', 'chores', 'work'],
 			swimlaneName: 'Default',
-			columnName: 'To-do'
+			columnName: 'To-do',
+			completed: true
 		}
     const [task] = await post<Task>
     (gql`mutation newTask ($data: TaskInput!) {

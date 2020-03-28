@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { MaxLength, IsOptional, IsNotEmpty } from 'class-validator'
+import { MaxLength, IsOptional, IsNotEmpty, IsBoolean } from 'class-validator'
 
 @InputType ()
 export class TaskInput {
@@ -27,6 +27,11 @@ export class TaskInput {
 	})
 	tags?: string[]
 	
+	@IsOptional()
+	@IsBoolean()
+	@Field ({ nullable: true })
+	completed?: boolean
+	
 	@IsOptional ()
 	@IsNotEmpty ()
 	@MaxLength (20)
@@ -35,13 +40,13 @@ export class TaskInput {
 	
 	@IsOptional ()
 	@MaxLength (20)
-	@IsNotEmpty()
+	@IsNotEmpty ()
 	@Field ({ nullable: true })
 	columnName?: string
 	
 	@IsOptional ()
 	@MaxLength (20)
-	@IsNotEmpty()
+	@IsNotEmpty ()
 	@Field ({ nullable: true })
 	swimlaneName?: string
 	

@@ -7,6 +7,7 @@ import { DeepPartial, BaseEntity } from 'typeorm'
 import { ApolloError } from 'apollo-server-errors'
 import { Board } from '@M/KBF/entity/Board'
 import { find, head } from 'ramda'
+import { TaskSearchInputByID } from '@M/KBF/inputs/task.search-by-id.input'
 
 export enum ErrorCodes {
 	LIMIT_REACHED = 'LIMIT_REACHED',
@@ -34,8 +35,13 @@ export const checkIfMaxReached =
 @Resolver ()
 export class TaskResolver {
 	@Query (returns => [Task])
-	async tasks () {
-		return Task.find ()
+	async tasks (@Args('searchBy') args: TaskInput) {
+		return Task.find (args)
+	}
+	
+	@Query(returns => Task)
+	async task (@Args() args: TaskSearchInputByID) {
+		return Task.findOne(args)
 	}
 	
 	@Mutation (returns => Task)
