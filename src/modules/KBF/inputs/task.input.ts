@@ -1,16 +1,6 @@
-import { Field, InputType, ReturnTypeFuncValue } from '@nestjs/graphql'
-import { MaxLength, IsOptional, IsNotEmpty, IsBoolean } from 'class-validator'
-import { composeFieldDecorators } from '@qdev/utils-ts'
-
-const ValidString = (length: number) => composeFieldDecorators (MaxLength (length), IsNotEmpty ())
-const ValidString20 = ValidString (20)
-const ValidString50 = ValidString (50)
-const ValidString100 = ValidString (100)
-const ValidString500 = ValidString (500)
-
-const FieldNullable = (returns?: ReturnTypeFuncValue) => returns
-	? composeFieldDecorators(Field (returns_ => returns, { nullable: true }), IsOptional())
-	: composeFieldDecorators(Field ( { nullable: true }), IsOptional())
+import { Field, InputType } from '@nestjs/graphql'
+import { MaxLength, IsNotEmpty, IsBoolean } from 'class-validator'
+import { FieldNullable, ValidString500, ValidString100, ValidString50, ValidString20 } from '@/common/decorators/validation'
 
 @InputType ()
 export class TaskInput {
