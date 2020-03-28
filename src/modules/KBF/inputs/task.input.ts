@@ -20,7 +20,7 @@ export class TaskInput {
 	@ArrayNotEmpty()
 	@MaxLength (20, { each: true })
 	@IsNotEmpty ({ each: true })
-	tags?: string[]
+	tagLabels?: string[]
 	
 	@FieldNullable ()
 	@IsBoolean ()

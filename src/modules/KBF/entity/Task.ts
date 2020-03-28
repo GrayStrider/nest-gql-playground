@@ -7,7 +7,7 @@ import { TaskNumber } from '@M/KBF/entity/TaskNumber'
 import { User } from '@M/KBF/entity/User'
 import { TDate } from '@M/KBF/entity/TDate'
 import { Subtask } from '@M/KBF/entity/Subtask'
-import { Label } from '@M/KBF/entity/Label'
+import { Tag } from '@M/KBF/entity/Tag'
 import { Comment } from '@M/KBF/entity/Comment'
 import { Board } from '@M/KBF/entity/Board'
 import { Base } from '@M/KBF/entity/_Base'
@@ -86,17 +86,18 @@ export class Task extends Base {
 	@Field (returns => [Subtask], { nullable: true })
 	subtasks?: Subtask[]
 	
-	@Field (returns => [Label])
-	@ManyToMany (type => Label, label => label.tasks, {
+	@Field (returns => [Tag])
+	@ManyToMany (type => Tag, label => label.tasks, {
 		cascade: true,
 		eager: true
 	})
 	@JoinTable ()
-	labels: Label[]
+	tags: Tag[]
 	
-	@ManyToMany (type => User,
-		user => user.collaboratingAt)
 	@Field (returns => [User])
+	@ManyToMany (type => User,
+		user => user.collaboratingAt,
+		{ eager: true })
 	collaborators: User[]
 	
 	@Field (returns => Date)

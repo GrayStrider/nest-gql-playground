@@ -26,7 +26,8 @@ export class User extends Base {
 	collaboratingAt: Task[]
 	
 	@Field (returns => [Comment])
-	@OneToMany (type => Comment, comm => comm.author)
+	@OneToMany (type => Comment, comm => comm.author,
+		{ cascade: true })
 	comments: Comment[]
 	
 }

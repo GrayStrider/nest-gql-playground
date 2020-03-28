@@ -24,8 +24,8 @@ export class CommentResolver {
 			User.findOne (authorID)
 		])
 		
-		if (!task) throw NotFoundByIDError (taskID)
-		if (!author) throw NotFoundByIDError (authorID)
+		if (!task) throw NotFoundByIDError ('task', taskID)
+		if (!author) throw NotFoundByIDError ('author', authorID)
 		
 		return Comment.find ({
 			where: {
@@ -45,8 +45,8 @@ export class CommentResolver {
 			User.findOne (authorID)
 		])
 		
-		if (!task) throw NotFoundByIDError (taskID)
-		if (!author) throw NotFoundByIDError (authorID)
+		if (!task) throw NotFoundByIDError ('task', taskID)
+		if (!author) throw NotFoundByIDError ('author', authorID)
 		
 		return Comment.create ({ text, task, author }).save ()
 	}

@@ -6,7 +6,7 @@ import { EntityObject } from '@/common/decorators'
 
 
 @EntityObject
-export class Label extends Base {
+export class Tag extends Base {
 	@Column ()
 	@Field ()
 	name: string
@@ -15,7 +15,7 @@ export class Label extends Base {
 	@Column ({ type: 'bool', default: false })
 	pinned: boolean
 	
-	@ManyToMany (type => Task, task => task.labels)
+	@ManyToMany (type => Task, task => task.tags)
 	tasks: Task[]
 }
 

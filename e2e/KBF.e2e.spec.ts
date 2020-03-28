@@ -131,7 +131,7 @@ describe ('Task', () => {
               boardName: "",
               title: "",
               description: "",
-              tags: ["", ""],
+              tagLabels: ["", ""],
               colorName: "",
               columnName: "",
               swimlaneName: ""
@@ -179,7 +179,7 @@ describe ('Task', () => {
 			description: 'MAX',
 			colorName: 'Orange',
 			boardName: testBoardName,
-			tags: ['home', 'chores', 'work'],
+			tagLabels: ['home', 'chores', 'work'],
 			swimlaneName: 'Default',
 			columnName: 'To-do',
 			completed: true
@@ -198,7 +198,7 @@ describe ('Task', () => {
             }
             description
             id
-            labels {
+            tags {
                 name
             }
             swimlane {
@@ -219,7 +219,7 @@ describe ('Task', () => {
 			},
 			'description': 'MAX',
 			'id': expect.toBeString (),
-			'labels': [
+			'tags': [
 				{
 					'name': 'home'
 				},

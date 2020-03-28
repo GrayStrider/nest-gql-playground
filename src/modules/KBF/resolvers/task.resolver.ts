@@ -2,7 +2,7 @@ import { Resolver, Args, Mutation, Query } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
 import { TaskInput } from '@M/KBF/inputs/task.input'
 import { Promise as bb } from 'bluebird'
-import { Label } from '@M/KBF/entity/Label'
+import { Tag } from '@M/KBF/entity/Tag'
 import { DeepPartial, BaseEntity } from 'typeorm'
 import { ApolloError } from 'apollo-server-errors'
 import { Board } from '@M/KBF/entity/Board'
@@ -35,8 +35,8 @@ export const checkIfMaxReached =
 @Resolver ()
 export class TaskResolver {
 	@Query (returns => [Task])
-	async tasks (@Args('searchBy') args: TaskInput) {
-		return Task.find (args)
+	async tasks (@Args('searchBy') data: TaskInput) {
+		return Task.find ()
 	}
 	
 	@Query(returns => Task)
@@ -47,7 +47,7 @@ export class TaskResolver {
 	@Mutation (returns => Task)
 	async addTask (
 		@Args ('data') {
-			tags, colorName, columnName, swimlaneName,
+			tagLabels, colorName, columnName, swimlaneName,
 			boardName, ...rest
 		}: TaskInput)
 		: Promise<Task> {
@@ -79,17 +79,17 @@ export class TaskResolver {
 			taskData = { ...taskData, color }
 		}
 		
-		if (tags) {
-			const tags_ = await bb.reduce (
-				tags, async (acc: Label[], name) => {
-					const getTag = await Label.findOne ({ name })
-						?? Label.create ({ name })
+		if (tagLabels) {
+			const tags = await bb.reduce (
+				tagLabels, async (acc: Tag[], name) => {
+					const getTag = await Tag.findOne ({ name })
+						?? Tag.create ({ name })
 					return acc.concat (getTag)
 					
 				}, []
 			)
 			
-			taskData = { ...taskData, labels: tags_ }
+			taskData = { ...taskData, tags }
 		}
 		
 		if (columnName) {
@@ -123,22 +123,6 @@ export class TaskResolver {
 			...rest, ...taskData
 		}).save ()
 	}
-	
-	// @Query (returns => [Task])
-	// async tasks_
-	// (@Args () { tag, ...params }: SearchTaskInput) {
-	//
-	// 	return Task.find ({
-	// 		where: RD.isNotNil (params.title)
-	// 			? WrapperLike (params, 'title')
-	// 			: RD.isNotNil (params.description)
-	// 				? WrapperLike (params, 'description')
-	// 				: RD.isNotNil (tag)
-	// 					? { ...params }
-	// 					: params
-	// 	})
-	//
-	// }
 	
 }
 

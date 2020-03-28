@@ -13,7 +13,8 @@ export class Comment extends Base {
 	text: string
 	
 	@Field (returns => User)
-	@ManyToOne (type => User, user => user.comments)
+	@ManyToOne (type => User, user => user.comments,
+		{ eager: true })
 	author: User
 	
 	@Field (returns => Date)
@@ -21,7 +22,8 @@ export class Comment extends Base {
 	createdTimestamp: Date
 	
 	@Field (returns => Task)
-	@ManyToOne (type => Task, task => task.comments)
+	@ManyToOne (type => Task, task => task.comments,
+		{ eager: true })
 	task: Task
 	
 }
