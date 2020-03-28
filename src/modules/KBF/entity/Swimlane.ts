@@ -2,13 +2,11 @@ import { Entity, OneToMany, ManyToOne, BaseEntity, PrimaryColumn, Column, Primar
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
 import { Board } from '@M/KBF/entity/Board'
+import { Base } from '@M/KBF/entity/_Base'
 
 @ObjectType ()
 @Entity ()
-export class Swimlane extends BaseEntity {
-	@PrimaryGeneratedColumn('uuid')
-	id: string
-	
+export class Swimlane extends Base {
 	@Column ()
 	@Field ()
 	name: string

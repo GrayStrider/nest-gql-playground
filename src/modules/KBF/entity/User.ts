@@ -3,15 +3,12 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
 import { Subtask } from '@M/KBF/entity/Subtask'
 import { Comment } from '@M/KBF/entity/Comment'
+import { Base } from '@M/KBF/entity/_Base'
 
 
 @ObjectType ()
 @Entity ()
-export class User extends BaseEntity {
-	@Field (returns => ID)
-	@PrimaryGeneratedColumn ('uuid')
-	id: string
-	
+export class User extends Base {
 	@Column()
 	@Field()
 	name: string

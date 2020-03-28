@@ -1,5 +1,5 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn, ManyToOne, OneToOne, OneToMany } from 'typeorm'
+import { Field, ObjectType } from '@nestjs/graphql'
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, UpdateDateColumn, ManyToOne, OneToOne, OneToMany } from 'typeorm'
 import { Color } from '@M/KBF/entity/Color'
 import { TColumn } from '@M/KBF/entity/TColumn'
 import { Swimlane } from '@M/KBF/entity/Swimlane'
@@ -10,14 +10,11 @@ import { Subtask } from '@M/KBF/entity/Subtask'
 import { Label } from '@M/KBF/entity/Label'
 import { Comment } from '@M/KBF/entity/Comment'
 import { Board } from '@M/KBF/entity/Board'
+import { Base } from '@M/KBF/entity/_Base'
 
 @ObjectType ()
 @Entity ()
-export class Task extends BaseEntity {
-	@Field (() => ID)
-	@PrimaryGeneratedColumn ('uuid')
-	id: string
-	
+export class Task extends Base {
 	@Field (returns => Board)
 	@ManyToOne (task => Board,
 		board => board.tasks)
@@ -70,7 +67,7 @@ export class Task extends BaseEntity {
 	@Field (returns => User, { nullable: true })
 	@ManyToMany (
 		type => User,
-			user => user.tasks,
+		user => user.tasks,
 		{ nullable: true, eager: true }
 	)
 	@JoinTable ()
@@ -106,7 +103,7 @@ export class Task extends BaseEntity {
 	createdAt: Date
 	
 	@Field (returns => Date)
-	@UpdateDateColumn ( )
+	@UpdateDateColumn ()
 	updatedAt: Date
 	
 	@Field (returns => Comment, { nullable: true })

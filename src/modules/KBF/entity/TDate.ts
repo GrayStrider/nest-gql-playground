@@ -2,14 +2,11 @@ import { ObjectType, Field, ID } from '@nestjs/graphql'
 import { Entity, ManyToOne, Column, ManyToMany, BaseEntity, PrimaryGeneratedColumn } from 'typeorm'
 import { TColumn } from '@M/KBF/entity/TColumn'
 import { Task } from '@M/KBF/entity/Task'
+import { Base } from '@M/KBF/entity/_Base'
 
 @ObjectType ()
 @Entity ()
-export class TDate extends BaseEntity {
-	@Field (returns => ID)
-	@PrimaryGeneratedColumn ('uuid')
-	id: string
-	
+export class TDate extends Base {
 	@Field (returns => [Task],
 		{ nullable: true })
 	@ManyToMany (type => Task,

@@ -2,15 +2,12 @@ import { PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, BaseEntity
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
 import { User } from '@M/KBF/entity/User'
+import { Base } from '@M/KBF/entity/_Base'
 
 @ObjectType ()
 @Entity ()
 
-export class Comment extends BaseEntity {
-	@Field (returns => ID)
-	@PrimaryGeneratedColumn ('uuid')
-	id: string
-	
+export class Comment extends Base {
 	@Field ()
 	@Column ({ length: 5000 })
 	text: string
