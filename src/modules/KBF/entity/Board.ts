@@ -14,10 +14,11 @@ export class Board extends Base {
 	@Field ()
 	name: string
 	
-	@Field (returns => [Task])
-	@OneToMany (type => Task,
-		task => task.board)
-	tasks: Task[]
+	@Field (returns => [Color])
+	@OneToMany (type => Color, color => color.board, {
+		cascade: true, eager: true
+	})
+	colors: Color[]
 	
 	@Field (returns => [TColumn])
 	@OneToMany (type => TColumn, coll => coll.board, {
@@ -25,17 +26,16 @@ export class Board extends Base {
 	})
 	columns: TColumn[]
 	
-	@Field (returns => [Color])
-	@OneToMany (type => Color, color => color.board, {
-		cascade: true, eager: true
-	})
-	colors: Color[]
-	
 	@Field (returns => [Swimlane])
 	@OneToMany (type => Swimlane, swimlane => swimlane.board, {
 		cascade: true, eager: true
 	})
 	swimlanes: Swimlane[]
+	
+	@Field (returns => [Task])
+	@OneToMany (type => Task,
+		task => task.board)
+	tasks: Task[]
 	
 }
 
