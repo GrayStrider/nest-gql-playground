@@ -32,23 +32,19 @@ export class TaskInput {
 	@IsNotEmpty ({ each: true })
 	tags?: string[]
 	
-	@IsOptional ()
-	@IsBoolean ()
 	@FieldNullable ()
+	@IsBoolean ()
 	completed?: boolean
 	
 	@FieldNullable ()
-	@IsOptional ()
 	@ValidString20
 	colorName?: string
 	
 	@FieldNullable ()
-	@IsOptional ()
 	@ValidString20
 	columnName?: string
 	
 	@FieldNullable ()
-	@IsOptional ()
 	@ValidString20
 	swimlaneName?: string
 	
