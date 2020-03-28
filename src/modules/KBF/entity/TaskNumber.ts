@@ -1,10 +1,11 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { Entity, OneToOne, Column, BaseEntity, PrimaryGeneratedColumn } from 'typeorm'
+import { Field } from '@nestjs/graphql'
+import { OneToOne, Column } from 'typeorm'
 import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
+import { EntityObject } from '@/common/decorators'
 
-@ObjectType ()
-@Entity ()
+
+@EntityObject
 export class TaskNumber extends Base {
 	@Field ()
 	@Column ({ type: 'int' })

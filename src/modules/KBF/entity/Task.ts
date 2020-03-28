@@ -1,5 +1,5 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, UpdateDateColumn, ManyToOne, OneToOne, OneToMany } from 'typeorm'
+import { Field } from '@nestjs/graphql'
+import { Column, CreateDateColumn, JoinTable, ManyToMany, UpdateDateColumn, ManyToOne, OneToOne, OneToMany } from 'typeorm'
 import { Color } from '@M/KBF/entity/Color'
 import { TColumn } from '@M/KBF/entity/TColumn'
 import { Swimlane } from '@M/KBF/entity/Swimlane'
@@ -11,9 +11,10 @@ import { Label } from '@M/KBF/entity/Label'
 import { Comment } from '@M/KBF/entity/Comment'
 import { Board } from '@M/KBF/entity/Board'
 import { Base } from '@M/KBF/entity/_Base'
+import { EntityObject } from '@/common/decorators'
 
-@ObjectType ()
-@Entity ()
+
+@EntityObject
 export class Task extends Base {
 	@Field (returns => Board)
 	@ManyToOne (task => Board,

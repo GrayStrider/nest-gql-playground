@@ -1,13 +1,11 @@
-import { Column, ManyToMany, Entity, BaseEntity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm'
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Column, ManyToMany, PrimaryColumn } from 'typeorm'
+import { Field } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
+import { EntityObject } from '@/common/decorators'
 
-export const PrimaryUniqueColumn = (...args: Parameters<typeof PrimaryColumn>) => PrimaryColumn
-({ unique: true, ...args })
 
-@ObjectType ()
-@Entity ()
+@EntityObject
 export class Label extends Base {
 	@Column ()
 	@Field ()

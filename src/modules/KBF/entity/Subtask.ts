@@ -1,11 +1,12 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { Entity, Column, ManyToMany, ManyToOne, JoinTable, BaseEntity, PrimaryGeneratedColumn } from 'typeorm'
+import { Field } from '@nestjs/graphql'
+import { Column, ManyToMany, ManyToOne, JoinTable } from 'typeorm'
 import { User } from '@M/KBF/entity/User'
 import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
+import { EntityObject } from '@/common/decorators'
 
-@ObjectType ()
-@Entity ()
+
+@EntityObject
 export class Subtask extends Base {
 	@Column ()
 	@Field ()

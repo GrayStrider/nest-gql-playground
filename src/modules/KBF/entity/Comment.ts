@@ -1,12 +1,12 @@
-import { PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, BaseEntity, Entity } from 'typeorm'
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Column, ManyToOne, CreateDateColumn } from 'typeorm'
+import { Field } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
 import { User } from '@M/KBF/entity/User'
 import { Base } from '@M/KBF/entity/_Base'
+import { EntityObject } from '@/common/decorators'
 
-@ObjectType ()
-@Entity ()
 
+@EntityObject
 export class Comment extends Base {
 	@Field ()
 	@Column ({ length: 5000 })

@@ -1,4 +1,4 @@
-import { Entity, OneToMany, ManyToOne, BaseEntity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, OneToMany, ManyToOne, Column } from 'typeorm'
 import { ObjectType, Field } from '@nestjs/graphql'
 import { Board } from '@M/KBF/entity/Board'
 import { Task } from '@M/KBF/entity/Task'

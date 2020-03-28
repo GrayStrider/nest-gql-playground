@@ -1,5 +1,5 @@
-import { PrimaryGeneratedColumn, ManyToMany, OneToMany, Entity, BaseEntity, Column } from 'typeorm'
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { ManyToMany, OneToMany, Column } from 'typeorm'
+import { Field } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
 import { Subtask } from '@M/KBF/entity/Subtask'
 import { Comment } from '@M/KBF/entity/Comment'
@@ -9,8 +9,8 @@ import { EntityObject } from '@/common/decorators'
 
 @EntityObject
 export class User extends Base {
-	@Column()
-	@Field()
+	@Column ()
+	@Field ()
 	name: string
 	
 	@Field (returns => [Task])

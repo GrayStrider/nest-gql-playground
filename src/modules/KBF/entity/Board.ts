@@ -1,14 +1,14 @@
-import { Entity, OneToMany, Column } from 'typeorm'
-import { ObjectType, Field } from '@nestjs/graphql'
+import { OneToMany, Column } from 'typeorm'
+import { Field } from '@nestjs/graphql'
 import { Swimlane } from '@M/KBF/entity/Swimlane'
 import { Color } from '@M/KBF/entity/Color'
 import { TColumn } from '@M/KBF/entity/TColumn'
 import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
+import { EntityObject } from '@/common/decorators'
 
 
-@ObjectType ()
-@Entity ()
+@EntityObject
 export class Board extends Base {
 	@Column ({ unique: true })
 	@Field ()
