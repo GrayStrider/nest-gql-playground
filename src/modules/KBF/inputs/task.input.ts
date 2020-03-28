@@ -37,6 +37,5 @@ export class TaskInput {
 	@FieldNullable ()
 	@String20
 	swimlaneName?: string
-	
 }
 
