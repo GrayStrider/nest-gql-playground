@@ -1,12 +1,11 @@
-import { Field, ArgsType } from '@nestjs/graphql'
-import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator'
+import { ArgsType } from '@nestjs/graphql'
+import { IsNotEmpty, IsUUID } from 'class-validator'
+import { FieldNullable } from '@/common/decorators/validation'
 
 @ArgsType ()
 export class TaskSearchInputByID {
-	@IsOptional()
-	@IsNotEmpty()
-	@IsUUID()
-	@Field ({ nullable: true })
+	@FieldNullable ()
+	@IsUUID ()
 	id: string
 }
 
