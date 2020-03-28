@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { MaxLength, IsNotEmpty, IsBoolean, ArrayNotEmpty } from 'class-validator'
-import { ValidatedFieldNullable, String500, String100, String50, String20 } from '@/common/decorators/validation'
+import { ValidatedFieldNullable, String5K, String100, String50, String20 } from '@/common/decorators/validation'
 
 @InputType ()
 export class TaskInput {
@@ -13,7 +13,7 @@ export class TaskInput {
 	title: string
 	
 	@ValidatedFieldNullable ()
-	@String500
+	@String5K
 	description?: string
 	
 	@ValidatedFieldNullable ([String])

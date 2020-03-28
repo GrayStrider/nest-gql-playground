@@ -4,6 +4,7 @@ import { Task } from '@M/KBF/entity/Task'
 import { Board } from '@M/KBF/entity/Board'
 import { Base } from '@M/KBF/entity/_Base'
 import { EntityObject } from '@/common/decorators'
+import { ColumnField } from '@/common/decorators/validation'
 
 
 @Unique (['name', 'board']) // Actually works
@@ -17,11 +18,10 @@ export class Color extends Base {
 	tasks: Task[]
 	
 	@Field ({ nullable: true })
-	@Column ({ nullable: true })
+	@Column ({ nullable: true, length: 5000 })
 	description?: string
 	
-	@Field ()
-	@Column ()
+	@ColumnField
 	value: string
 	
 	@Field ()
