@@ -4,7 +4,7 @@ import { Swimlane } from '@M/KBF/entity/Swimlane'
 import { Color } from '@M/KBF/entity/Color'
 import { TColumn } from '@M/KBF/entity/TColumn'
 import { Task } from '@M/KBF/entity/Task'
-import { Base } from '@M/KBF/entity/Base'
+import { Base } from '@M/KBF/entity/_Base'
 
 
 @ObjectType ()
