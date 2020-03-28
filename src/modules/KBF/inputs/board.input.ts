@@ -1,31 +1,27 @@
-import { ArgsType, Field, Int, InputType } from '@nestjs/graphql'
+import { ArgsType, Field, InputType } from '@nestjs/graphql'
 import { IsNotEmpty, MaxLength, IsOptional, ArrayNotEmpty } from 'class-validator'
 import { ColumnInput } from '@M/KBF/inputs/column.input'
+import { ValidString50, FieldNullable } from '@/common/decorators/validation'
 
 @ArgsType ()
 export class FindBoardInput {
-	@IsNotEmpty ()
-	@MaxLength (50)
 	@Field ()
+	@ValidString50
 	name: string
 }
 
 @InputType ()
 export class AddBoardInput {
-	@IsNotEmpty ()
-	@MaxLength (50)
 	@Field ()
+	@ValidString50
 	name: string
 	
-	@IsOptional ()
-	@Field (returns => [ColumnInput], { nullable: true })
+	@FieldNullable ([ColumnInput])
 	columnsParams?: ColumnInput[]
 	
-	
-	@ArrayNotEmpty()
+	@FieldNullable([String])
+	@ArrayNotEmpty ()
 	@IsNotEmpty ({ each: true })
 	@MaxLength (20, { each: true })
-	@IsOptional ()
-	@Field (returns => [String], { nullable: true })
 	swimlaneNames?: string[]
 }
