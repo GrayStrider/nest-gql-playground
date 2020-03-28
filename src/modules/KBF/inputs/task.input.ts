@@ -9,8 +9,8 @@ const ValidString100 = ValidString (100)
 const ValidString500 = ValidString (500)
 
 const FieldNullable = (returns?: ReturnTypeFuncValue) => returns
-	? Field (returns_ => returns, { nullable: true })
-	: Field ({ nullable: true })
+	? composeFieldDecorators(Field (returns_ => returns, { nullable: true }), IsOptional())
+	: composeFieldDecorators(Field ( { nullable: true }), IsOptional())
 
 @InputType ()
 export class TaskInput {
@@ -23,14 +23,10 @@ export class TaskInput {
 	title: string
 	
 	@FieldNullable ()
-	@IsOptional ()
 	@ValidString500
 	description?: string
 	
-	@Field (returns => [String], {
-		nullable: true
-	})
-	@IsOptional ()
+	@FieldNullable ([String])
 	@MaxLength (20, { each: true })
 	@IsNotEmpty ()
 	@IsNotEmpty ({ each: true })
