@@ -117,6 +117,27 @@ describe ('Board', () => {
 })
 
 describe ('Task', () => {
+	describe ('validation', () => {
+		it ('TaskInput', async () => {
+			expect.assertions(3)
+		  const res = await post <Task>
+		  (gql`mutation {
+				  addTask(data: {
+						  boardName: "",
+						  title: "",
+						  description: "",
+						  tags: ["", ""],
+						  colorName: "",
+						  columnName: "",
+						  swimlaneName: ""
+				  }) {
+						  id
+				  }
+		  }`)
+		  shouldHaveFailedValidation(res, 7)
+		  
+		})
+	})
   it ('should add task min', async () => {
 		expect.assertions (1)
 		const minTask: TaskInput = {

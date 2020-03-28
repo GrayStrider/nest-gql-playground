@@ -28,14 +28,20 @@ export class TaskInput {
 	tags?: string[]
 	
 	@IsOptional ()
+	@IsNotEmpty ()
+	@MaxLength (20)
 	@Field ({ nullable: true })
 	colorName?: string
 	
 	@IsOptional ()
+	@MaxLength (20)
+	@IsNotEmpty()
 	@Field ({ nullable: true })
 	columnName?: string
 	
 	@IsOptional ()
+	@MaxLength (20)
+	@IsNotEmpty()
 	@Field ({ nullable: true })
 	swimlaneName?: string
 	
