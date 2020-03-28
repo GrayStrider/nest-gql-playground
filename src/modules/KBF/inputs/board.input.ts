@@ -1,5 +1,6 @@
 import { ArgsType, Field, Int } from '@nestjs/graphql'
 import { IsNotEmpty, MaxLength, IsOptional } from 'class-validator'
+import { ColumnInput } from '@M/KBF/inputs/column.input'
 
 @ArgsType ()
 export class FindBoardInput {
@@ -17,8 +18,8 @@ export class AddBoardInput {
 	name: string
 	
 	@IsOptional ()
-	@Field (returns => [[String, Int, Int]], { nullable: true })
-	columnsParams?: [string, number][]
+	@Field (returns => [ColumnInput], { nullable: true })
+	columnsParams?: ColumnInput[]
 	
 	
 	@IsNotEmpty ({ each: true })
