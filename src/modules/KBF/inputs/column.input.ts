@@ -1,21 +1,19 @@
 import { InputType, Field } from '@nestjs/graphql'
 import { IsNotEmpty, MaxLength, IsOptional, Max } from 'class-validator'
+import { String20, FieldNullable, Number500 } from '@/common/decorators/validation'
 
 @InputType ()
 export class ColumnInput {
 	@Field ()
-	@IsNotEmpty ()
-	@MaxLength (20)
+	@String20
 	name: string
 	
-	@Field ()
-	@IsOptional ()
-	@Max (500)
+	@FieldNullable ()
+	@Number500
 	order?: number
 	
-	@Field ()
-	@IsOptional ()
-	@Max (500)
+	@FieldNullable()
+	@Number500
 	taskLimit?: number
 }
 

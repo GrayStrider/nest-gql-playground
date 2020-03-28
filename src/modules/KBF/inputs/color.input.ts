@@ -1,20 +1,20 @@
 import { InputType, Field } from '@nestjs/graphql'
 import { IsNotEmpty, IsBoolean, IsHexColor } from 'class-validator'
-import { ValidString50, ValidString20, FieldNullable, ValidString100 } from '@/common/decorators/validation'
+import { String50, String20, FieldNullable, String100 } from '@/common/decorators/validation'
 
 
 @InputType ()
 export class NewColorInput {
 	@Field ()
-	@ValidString50
+	@String50
 	boardName: string
 	
 	@Field ()
-	@ValidString20
+	@String20
 	name: string
 	
 	@FieldNullable ()
-	@ValidString100
+	@String100
 	description?: string
 	
 	@Field ()
