@@ -1,32 +1,28 @@
 import { InputType, Field } from '@nestjs/graphql'
-import { IsNotEmpty, MaxLength, IsOptional, IsBoolean, IsHexColor } from 'class-validator'
+import { IsNotEmpty, IsBoolean, IsHexColor } from 'class-validator'
+import { ValidString50, ValidString20, FieldNullable, ValidString100 } from '@/common/decorators/validation'
 
 
 @InputType ()
 export class NewColorInput {
-	@IsNotEmpty ()
-	@MaxLength (50)
 	@Field ()
+	@ValidString50
 	boardName: string
 	
-	@IsNotEmpty ()
-	@MaxLength (20)
 	@Field ()
+	@ValidString20
 	name: string
 	
-	@IsOptional()
-	@IsNotEmpty ()
-	@MaxLength (100)
-	@Field ({ nullable: true })
+	@FieldNullable ()
+	@ValidString100
 	description?: string
 	
-	@IsNotEmpty()
-	@IsHexColor()
 	@Field ()
+	@IsNotEmpty ()
+	@IsHexColor ()
 	value: string
 	
-	@IsOptional()
-	@IsBoolean()
-	@Field ({ nullable: true })
+	@FieldNullable ()
+	@IsBoolean ()
 	default?: boolean
 }
