@@ -1,11 +1,16 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { MaxLength, IsOptional, IsNotEmpty, IsBoolean } from 'class-validator'
 
+type Decorator = (target: object, propertyKey: string) => void
+
+const composeDecorators = (...decorators: Decorator[]): Decorator => (target, propertyKey) =>
+	decorators.forEach (decorator => decorator (target, propertyKey))
+
+const ValidString50 = composeDecorators (Field (), MaxLength (50), IsNotEmpty ())
+
 @InputType ()
 export class TaskInput {
-	@IsNotEmpty ()
-	@MaxLength (50)
-	@Field ()
+	@ValidString50
 	boardName: string
 	
 	@IsNotEmpty ()
@@ -27,8 +32,8 @@ export class TaskInput {
 	})
 	tags?: string[]
 	
-	@IsOptional()
-	@IsBoolean()
+	@IsOptional ()
+	@IsBoolean ()
 	@Field ({ nullable: true })
 	completed?: boolean
 	
