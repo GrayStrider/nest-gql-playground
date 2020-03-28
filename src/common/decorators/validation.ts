@@ -4,17 +4,9 @@ import { IsOptional, MaxLength, IsNotEmpty, Max } from 'class-validator'
 import { Column } from 'typeorm'
 
 
-export const ValidatedFieldNullable = (returns?: ReturnTypeFuncValue) => returns
+export const FieldNullable = (returns?: ReturnTypeFuncValue) => returns
 	? composeFieldDecorators (Field (returns_ => returns, { nullable: true }), IsOptional ())
 	: composeFieldDecorators (Field ({ nullable: true }), IsOptional ())
-
-export const ColumnFieldNullable = (returns?: ReturnTypeFuncValue) => returns
-	? composeFieldDecorators (Field (returns_ => returns, { nullable: true }), Column ({ nullable: true }))
-	: composeFieldDecorators (Field ({ nullable: true }), Column ({ nullable: true }))
-
-export const ColumnField =
-	composeFieldDecorators (Field (), Column ())
-
 
 const ValidString = (maxLength: number) => composeFieldDecorators (MaxLength (maxLength), IsNotEmpty ())
 

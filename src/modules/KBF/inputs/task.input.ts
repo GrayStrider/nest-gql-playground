@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { MaxLength, IsNotEmpty, IsBoolean, ArrayNotEmpty } from 'class-validator'
-import { ValidatedFieldNullable, String5K, String100, String50, String20 } from '@/common/decorators/validation'
+import { FieldNullable, String5K, String100, String50, String20 } from '@/common/decorators/validation'
 
 @InputType ()
 export class TaskInput {
@@ -12,29 +12,29 @@ export class TaskInput {
 	@String100
 	title: string
 	
-	@ValidatedFieldNullable ()
+	@FieldNullable ()
 	@String5K
 	description?: string
 	
-	@ValidatedFieldNullable ([String])
+	@FieldNullable ([String])
 	@ArrayNotEmpty()
 	@MaxLength (20, { each: true })
 	@IsNotEmpty ({ each: true })
 	tags?: string[]
 	
-	@ValidatedFieldNullable ()
+	@FieldNullable ()
 	@IsBoolean ()
 	completed?: boolean
 	
-	@ValidatedFieldNullable ()
+	@FieldNullable ()
 	@String20
 	colorName?: string
 	
-	@ValidatedFieldNullable ()
+	@FieldNullable ()
 	@String20
 	columnName?: string
 	
-	@ValidatedFieldNullable ()
+	@FieldNullable ()
 	@String20
 	swimlaneName?: string
 }

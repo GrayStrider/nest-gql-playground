@@ -1,7 +1,7 @@
 import { ArgsType, Field, InputType } from '@nestjs/graphql'
 import { IsNotEmpty, MaxLength, IsOptional, ArrayNotEmpty } from 'class-validator'
 import { ColumnInput } from '@M/KBF/inputs/column.input'
-import { String50, ValidatedFieldNullable } from '@/common/decorators/validation'
+import { String50, FieldNullable } from '@/common/decorators/validation'
 
 @ArgsType ()
 export class FindBoardInput {
@@ -16,10 +16,10 @@ export class AddBoardInput {
 	@String50
 	name: string
 	
-	@ValidatedFieldNullable ([ColumnInput])
+	@FieldNullable ([ColumnInput])
 	columnsParams?: ColumnInput[]
 	
-	@ValidatedFieldNullable([String])
+	@FieldNullable([String])
 	@ArrayNotEmpty ()
 	@IsNotEmpty ({ each: true })
 	@MaxLength (20, { each: true })

@@ -10,7 +10,7 @@ import { EntityObject } from '@/common/decorators'
 @EntityObject
 export class Board extends Base {
 	@Field ()
-	@Column ({ unique: true })
+	@Column ({ length: 50 })
 	name: string
 	
 	@Field (returns => [Color])
@@ -34,7 +34,6 @@ export class Board extends Base {
 	)
 	swimlanes: Swimlane[]
 	
-	@Field (returns => [Task])
 	@OneToMany (type => Task,
 		task => task.board
 	)

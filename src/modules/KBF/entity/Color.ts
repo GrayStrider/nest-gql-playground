@@ -6,18 +6,18 @@ import { Base } from '@M/KBF/entity/_Base'
 import { EntityObject } from '@/common/decorators'
 
 
-@Unique (['name', 'board']) // Actually works
+@Unique (['name', 'board'])
 @EntityObject
 export class Color extends Base {
 	@Field ()
-	@Column ()
+	@Column ({ length: 20 })
 	name: string
 	
 	@OneToMany (type => Task, task => task.color)
 	tasks: Task[]
 	
 	@Field ({ nullable: true })
-	@Column ({ nullable: true, length: 5000 })
+	@Column ({ nullable: true, length: 100 })
 	description?: string
 	
 	@Field ()

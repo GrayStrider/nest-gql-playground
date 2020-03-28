@@ -323,4 +323,12 @@ describe ('Color', () => {
 
 
   })
+	
+	describe ('Comment', () => {
+		it ('validation', async () => {
+			expect.assertions(1)
+		 
+		 
+		})
+	})
 })
