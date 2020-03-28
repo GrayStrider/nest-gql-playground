@@ -137,8 +137,6 @@
 
     "nodemailer": "^6.4.2",
 
-    "type-graphql": "^0.18.0-beta.10",
-
     "typeorm-typedi-extensions": "^0.2.3",
     "typedi": "^0.8.0",
 
