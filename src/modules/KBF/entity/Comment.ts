@@ -14,7 +14,7 @@ export class Comment extends Base {
 	
 	@Field (returns => User)
 	@ManyToOne (type => User, user => user.comments)
-	author: string
+	author: User
 	
 	@Field (returns => Date)
 	@CreateDateColumn ()

@@ -9,7 +9,7 @@ import { Board } from '@M/KBF/entity/Board'
 import { find, head } from 'ramda'
 import { SearchByIDInput } from '@M/KBF/inputs/search-by-id.input'
 
-export enum ErrorCodes {
+export enum ErrorCodes2 {
 	LIMIT_REACHED = 'LIMIT_REACHED',
 	NOT_FOUND = 'NOT_FOUND',
 	VALIDATION_ERROR = 'VALIDATION_ERROR'
@@ -25,7 +25,7 @@ export const checkIfMaxReached =
 		})
 		
 		if (count >= max) throw new ApolloError
-		(`You've reached the maximum allowed amount of ${numberOf}: ${max}`, ErrorCodes.LIMIT_REACHED,
+		(`You've reached the maximum allowed amount of ${numberOf}: ${max}`, ErrorCodes2.LIMIT_REACHED,
 			{
 				entity: entity.name,
 				max
@@ -56,7 +56,7 @@ export class TaskResolver {
 		
 		const board = await Board.findOne ({ name: boardName })
 		if (!board) {
-			throw new ApolloError (`Board <${boardName}> not found`, ErrorCodes.NOT_FOUND,
+			throw new ApolloError (`Board <${boardName}> not found`, ErrorCodes2.NOT_FOUND,
 				{
 					requestedName: boardName
 				})
@@ -69,7 +69,7 @@ export class TaskResolver {
 				board.colors)
 			
 			if (!color) throw new ApolloError
-			(`Color <${colorName}> doesn't exist on board <${boardName}>`, ErrorCodes.NOT_FOUND, {
+			(`Color <${colorName}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND, {
 				requestedColor: colorName
 			})
 			taskData = { ...taskData, color }
@@ -96,7 +96,7 @@ export class TaskResolver {
 			const column = find
 			(c => c.name === columnName, board.columns)
 			if (!column) throw new ApolloError
-			(`Column <${columnName}> doesn't exist on board <${boardName}>`, ErrorCodes.NOT_FOUND, {
+			(`Column <${columnName}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND, {
 				requestedColumn: columnName
 			})
 			taskData = { ...taskData, column }
@@ -109,7 +109,7 @@ export class TaskResolver {
 			const swimlane = find
 			(c => c.name === swimlaneName, board.swimlanes)
 			if (!swimlane) throw new ApolloError
-			(`Swimlane <${swimlaneName}> doesn't exist on board <${boardName}>`, ErrorCodes.NOT_FOUND, {
+			(`Swimlane <${swimlaneName}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND, {
 				requestedSwimlane: swimlaneName
 			})
 			taskData = { ...taskData, swimlane }

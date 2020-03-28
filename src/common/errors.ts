@@ -1,6 +1,8 @@
 import { truncate } from 'lodash'
 import { AnyObject } from 'tsdef'
 import { ApolloError } from 'apollo-server-errors'
+import { ErrorCodes2 } from '@M/KBF/resolvers/task.resolver'
+import { toUpper } from 'ramda'
 
 
 interface IExpectedError {
@@ -43,4 +45,10 @@ const userNotFoundError = (id: string) =>
 	new Errors.NotFound (`User ${truncate (id, { length: 10 })} not found`)
 
 export default Errors
-export { ErrorCodes, userNotFoundError, makeCustomError, IExpectedError }
+export { ErrorCodes2, userNotFoundError, makeCustomError, IExpectedError }
+export const NotFoundByIDError = (name: string, id: string) => new ApolloError (`${toUpper(name)} ${truncate (id, {
+		length: 10
+	})} was not found`,
+	ErrorCodes2.NOT_FOUND, {
+		providedID: id
+	})

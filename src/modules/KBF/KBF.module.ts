@@ -1,6 +1,6 @@
 import { Module, ValidationPipe } from '@nestjs/common'
 import { GraphQLModule, GqlModuleOptions } from '@nestjs/graphql'
-import { TaskResolver, ErrorCodes } from '@M/KBF/resolvers/task.resolver'
+import { TaskResolver, ErrorCodes2 } from '@M/KBF/resolvers/task.resolver'
 import { CatFactsAPI } from '@M/cat-facts/cat-facts.datasource'
 import { BoardResolver } from '@M/KBF/resolvers/board.resolver'
 import { DBModule } from '@M/db/db.module'
@@ -9,6 +9,7 @@ import { APP_PIPE } from '@nestjs/core'
 import { validatorOptions } from '@M/cats/config/validator'
 import { ApolloError } from 'apollo-server-errors'
 import { prop } from 'ramda'
+import { CommentResolver } from '@M/KBF/resolvers/comment.resolver'
 
 const apolloOptions: GqlModuleOptions = {
 	autoSchemaFile: 'src/graphql/generated/schema.graphql',
@@ -32,6 +33,7 @@ const apolloOptions: GqlModuleOptions = {
 	providers: [
 		BoardResolver,
 		TaskResolver,
+		CommentResolver,
 		ColorResolver,
 		{
 			provide: APP_PIPE, useValue: new ValidationPipe ({
@@ -40,7 +42,7 @@ const apolloOptions: GqlModuleOptions = {
 					const validationErrors = errors.map
 					(prop('constraints'))
 					
-					return new ApolloError ('Validation failed', ErrorCodes.VALIDATION_ERROR, { validationErrors })
+					return new ApolloError ('Validation failed', ErrorCodes2.VALIDATION_ERROR, { validationErrors })
 				}
 			})
 		}

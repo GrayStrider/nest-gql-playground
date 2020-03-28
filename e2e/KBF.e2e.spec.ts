@@ -10,9 +10,10 @@ import { TaskInput } from '@M/KBF/inputs/task.input'
 import { zipObj, without, all, head } from 'ramda'
 import { Color } from '@M/KBF/entity/Color'
 import { NewColorInput } from '@M/KBF/inputs/color.input'
-import { ErrorCodes } from '@M/KBF/resolvers/task.resolver'
+import { ErrorCodes2 } from '@M/KBF/resolvers/task.resolver'
 import { GraphQLError } from 'graphql'
 import { FindBoardInput } from '@M/KBF/inputs/board.input'
+import { Comment } from '@M/KBF/entity/Comment'
 
 let app: INestApplication
 let post: Post
@@ -31,7 +32,7 @@ beforeAll (async () => {
 
 export const shouldHaveFailedValidation = ([data, errors]: [any, GraphQLError[]], amount = 1) => {
 	isSE (data, null)
-	isSE (head (errors)?.extensions?.code, ErrorCodes.VALIDATION_ERROR)
+	isSE (head (errors)?.extensions?.code, ErrorCodes2.VALIDATION_ERROR)
 	if (amount)
 		isSE (head (errors)
 			?.extensions?.validationErrors.length, amount)
@@ -323,12 +324,36 @@ describe ('Color', () => {
 
 
   })
-	
-	describe ('Comment', () => {
-		it ('validation', async () => {
-			expect.assertions(1)
-		 
-		 
-		})
-	})
+
+
+})
+
+describe ('Comment', () => {
+  describe ('validation', () => {
+    it ('ID', async () => {
+			expect.assertions (3)
+      const res = await post<Comment>
+      (gql`query {
+          comment(id: "") {
+              text
+          }
+      }`)
+			shouldHaveFailedValidation (res)
+    })
+    it ('CommentInput', async () => {
+			expect.assertions (3)
+      const res = await post<Comment[]>
+      (gql`query {
+          comments(data: {
+              taskID: "",
+              authorID: "",
+              text: ""
+          }) {
+              text
+          }
+      }`)
+	    shouldHaveFailedValidation(res, 3)
+    })
+  })
+
 })

@@ -2,7 +2,7 @@ import { Resolver, Args, Mutation } from '@nestjs/graphql'
 import { Color } from '@M/KBF/entity/Color'
 import { Board } from '@M/KBF/entity/Board'
 import { ApolloError } from 'apollo-server-errors'
-import { ErrorCodes } from '@M/KBF/resolvers/task.resolver'
+import { ErrorCodes2 } from '@M/KBF/resolvers/task.resolver'
 import { NewColorInput } from '@M/KBF/inputs/color.input'
 import { find } from 'ramda'
 
@@ -15,7 +15,7 @@ export class ColorResolver {
 	): Promise<Color> {
 		
 		const board = await Board.findOne ({ name: boardName })
-		if (!board) throw new ApolloError (`Board <${boardName}> not found`, ErrorCodes.NOT_FOUND,
+		if (!board) throw new ApolloError (`Board <${boardName}> not found`, ErrorCodes2.NOT_FOUND,
 			{
 				requestedName: boardName
 			})
