@@ -13,6 +13,7 @@ import { NewColorInput } from '@M/KBF/inputs/color.input'
 import { ErrorCodes } from '@M/KBF/resolvers/task.resolver'
 import { ApolloError } from 'apollo-server-errors'
 import { GraphQLError } from 'graphql'
+import { FindBoardInput } from '@M/KBF/inputs/board.input'
 
 let app: INestApplication
 let post: Post
@@ -89,7 +90,7 @@ describe ('Board', () => {
   })
 	
 	describe ('validation', () => {
-		it ('FindInput', async () => {
+		it ('FindBoardInput', async () => {
 			expect.assertions(2)
 			const res = await post <Board>
 			(gql`query {
@@ -99,6 +100,17 @@ describe ('Board', () => {
 			}`)
 			shouldHaveFailedValidation(res)
 		})
+		it ('AddBoardInput', async () => {
+			expect.assertions(2)
+			const res = await post <Board>
+			(gql`mutation {
+					addBoard(name: "", swimlanesParams: [""]) {
+							name
+					}
+			}`)
+			shouldHaveFailedValidation(res)
+		})
+		
 	})
 })
 
@@ -194,7 +206,7 @@ describe ('Color', () => {
 		expect.assertions (1)
 		const newColor: NewColorInput = {
 			name: 'Black',
-			value: '000000',
+			value: '#000000',
 			boardName: testBoardName,
 			description: 'I am the Night',
 			default: true
@@ -204,7 +216,7 @@ describe ('Color', () => {
 			'description': 'I am the Night',
 			'id': expect.toBeString (),
 			'name': 'Black',
-			'value': '000000'
+			'value': '#000000'
 		}
     const [color] = await post<Color>
     (gql`mutation addColor($data: NewColorInput!) {
@@ -245,7 +257,7 @@ describe ('Color', () => {
         addColor(data: {
             name: "Black",
             boardName: "${testBoardName}",
-            value: "1234"
+            value: "#000000"
         }) {
             id
         }
