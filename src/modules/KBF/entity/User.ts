@@ -13,6 +13,15 @@ export class User extends Base {
 	@Field ()
 	name: string
 	
+	@Column()
+	@Field()
+	password: string
+	
+	@Field (returns => [Comment])
+	@OneToMany (type => Comment, comm => comm.author,
+		{ cascade: true })
+	comments: Comment[]
+	
 	@Field (returns => [Task])
 	@ManyToMany (type => Task)
 	tasks: Task[]
@@ -21,13 +30,6 @@ export class User extends Base {
 	@ManyToMany (type => Subtask)
 	subtasks: Subtask[]
 	
-	@Field (returns => [Task])
 	@ManyToMany (type => Task, task => task.collaborators)
 	collaboratingAt: Task[]
-	
-	@Field (returns => [Comment])
-	@OneToMany (type => Comment, comm => comm.author,
-		{ cascade: true })
-	comments: Comment[]
-	
 }
