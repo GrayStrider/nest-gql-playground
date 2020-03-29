@@ -357,3 +357,9 @@ describe ('Comment', () => {
   })
 
 })
+
+describe ('User', () => {
+	describe ('validation', () => {
+	
+	})
+})

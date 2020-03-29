@@ -5,11 +5,13 @@ import { CatFactsAPI } from '@M/cat-facts/cat-facts.datasource'
 import { BoardResolver } from '@M/KBF/resolvers/board.resolver'
 import { DBModule } from '@M/db/db.module'
 import { ColorResolver } from '@M/KBF/resolvers/color.resolver'
-import { APP_PIPE } from '@nestjs/core'
+import { APP_PIPE, APP_FILTER } from '@nestjs/core'
 import { validatorOptions } from '@M/cats/config/validator'
 import { ApolloError } from 'apollo-server-errors'
 import { prop } from 'ramda'
 import { CommentResolver } from '@M/KBF/resolvers/comment.resolver'
+import { UserResolver } from '@M/KBF/resolvers/user.resolver'
+import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 
 const apolloOptions: GqlModuleOptions = {
 	autoSchemaFile: 'src/graphql/generated/schema.graphql',
@@ -25,6 +27,16 @@ const apolloOptions: GqlModuleOptions = {
 	context: (args) => ({})
 }
 
+const GqlValidationPipe = new ValidationPipe ({
+	...validatorOptions,
+	exceptionFactory (errors) {
+		const validationErrors = errors.map
+		(prop ('constraints'))
+		
+		return new ApolloError ('Validation failed', ErrorCodes2.VALIDATION_ERROR, { validationErrors })
+	}
+})
+
 @Module ({
 	imports: [
 		GraphQLModule.forRoot (apolloOptions),
@@ -33,19 +45,11 @@ const apolloOptions: GqlModuleOptions = {
 	providers: [
 		BoardResolver,
 		TaskResolver,
+		UserResolver,
 		CommentResolver,
 		ColorResolver,
-		{
-			provide: APP_PIPE, useValue: new ValidationPipe ({
-				...validatorOptions,
-				exceptionFactory (errors) {
-					const validationErrors = errors.map
-					(prop('constraints'))
-					
-					return new ApolloError ('Validation failed', ErrorCodes2.VALIDATION_ERROR, { validationErrors })
-				}
-			})
-		}
+		{ provide: APP_PIPE, useValue: GqlValidationPipe },
+		{ provide: APP_FILTER, useClass: GqlExceptionFilter }
 	],
 	controllers: [],
 	exports: []

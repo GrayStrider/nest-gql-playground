@@ -13,13 +13,13 @@ export class User extends Base {
 	@Field ()
 	name: string
 	
-	@Column()
-	@Field()
-	password: string
+	@Column ({ nullable: true })
+	@Field ({ nullable: true })
+	// Could have logged on via other service
+	password?: string
 	
 	@Field (returns => [Comment])
-	@OneToMany (type => Comment, comm => comm.author,
-		{ cascade: true })
+	@OneToMany (type => Comment, comm => comm.author)
 	comments: Comment[]
 	
 	@Field (returns => [Task])
