@@ -48,8 +48,7 @@ const GqlValidationPipe = new ValidationPipe ({
 		UserResolver,
 		CommentResolver,
 		ColorResolver,
-		{ provide: APP_PIPE, useValue: GqlValidationPipe },
-		{ provide: APP_FILTER, useClass: GqlExceptionFilter }
+		{ provide: APP_PIPE, useValue: GqlValidationPipe }
 	],
 	controllers: [],
 	exports: []

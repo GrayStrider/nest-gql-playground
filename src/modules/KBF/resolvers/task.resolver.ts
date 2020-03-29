@@ -35,13 +35,13 @@ export const checkIfMaxReached =
 @Resolver ()
 export class TaskResolver {
 	@Query (returns => [Task])
-	async tasks (@Args('searchBy') data: TaskInput) {
+	async tasks (@Args ('searchBy') data: TaskInput) {
 		return Task.find ()
 	}
 	
-	@Query(returns => Task)
-	async task (@Args() args: SearchByIDInput) {
-		return Task.findOne(args)
+	@Query (returns => Task)
+	async task (@Args () args: SearchByIDInput) {
+		return Task.findOne (args)
 	}
 	
 	@Mutation (returns => Task)
@@ -51,7 +51,7 @@ export class TaskResolver {
 			boardName, ...rest
 		}: TaskInput)
 		: Promise<Task> {
-		
+
 		let taskData: DeepPartial<Task> = {}
 		
 		const board = await Board.findOne ({ name: boardName })
