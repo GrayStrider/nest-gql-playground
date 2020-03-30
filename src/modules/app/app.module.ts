@@ -35,6 +35,7 @@ const redisPubSub = new RedisPubSub ({
 		{ provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
 		{ provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
 		{ provide: APP_PIPE, useValue: new ValidationPipe(validatorOptions) },
+		{provide: APP_FILTER, useClass: GqlExceptionFilter},
 		{ provide: REDIS.SESSION, useValue: makeRedis () },
 		{ provide: REDIS.PUBSUB, useValue: redisPubSub }
 	]
