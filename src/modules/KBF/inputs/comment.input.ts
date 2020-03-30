@@ -1,9 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { CreateDateColumn } from 'typeorm'
 import { IsUUID } from 'class-validator'
-import { String5K } from '@/common/decorators/validation'
+import { ValidString } from '@/common/decorators/validation'
+import { textLength } from '@M/KBF/entity/Comment'
 
-@InputType()
+@InputType ()
 export class CommentInput {
 	@Field ()
 	@IsUUID ()
@@ -11,9 +11,9 @@ export class CommentInput {
 	
 	@Field ()
 	@IsUUID ()
-	authorID: string
+	userID: string
 	
 	@Field ()
-	@String5K
+	@ValidString (textLength)
 	text: string
 }

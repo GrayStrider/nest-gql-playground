@@ -1,14 +1,13 @@
 import { InputType, Field } from '@nestjs/graphql'
-import { IsNotEmpty, IsBoolean, IsHexColor } from 'class-validator'
 import { FieldNullable, ValidString } from '@/common/decorators/validation'
-import { nameLength, descriptionLength } from '@M/KBF/entity/Color'
+import { nameLength, descriptionLength } from '@M/KBF/entity/Swimlane'
 import * as Board from '@M/KBF/entity/Board'
 
 
 @InputType ()
-export class NewColorInput {
+export class SwimlaneInput {
 	@Field ()
-	@ValidString (Board.nameLength)
+	@ValidString(Board.nameLength)
 	boardName: string
 	
 	@Field ()
@@ -18,13 +17,4 @@ export class NewColorInput {
 	@FieldNullable ()
 	@ValidString (descriptionLength)
 	description?: string
-	
-	@Field ()
-	@IsNotEmpty ()
-	@IsHexColor ()
-	value: string
-	
-	@FieldNullable ()
-	@IsBoolean ()
-	default?: boolean
 }

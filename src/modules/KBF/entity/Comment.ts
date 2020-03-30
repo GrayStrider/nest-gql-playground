@@ -5,17 +5,18 @@ import { User } from '@M/KBF/entity/User'
 import { Base } from '@M/KBF/entity/_Base'
 import { EntityObject } from '@/common/decorators'
 
+export const textLength = 5000
 
 @EntityObject
 export class Comment extends Base {
 	@Field ()
-	@Column ({ length: 5000 })
+	@Column ({ length: textLength })
 	text: string
 	
 	@Field (returns => User)
 	@ManyToOne (type => User, user => user.comments,
 		{ eager: true })
-	author: User
+	user: User
 	
 	@Field (returns => Date)
 	@CreateDateColumn ()
@@ -25,5 +26,4 @@ export class Comment extends Base {
 	@ManyToOne (type => Task, task => task.comments,
 		{ eager: true })
 	task: Task
-	
 }

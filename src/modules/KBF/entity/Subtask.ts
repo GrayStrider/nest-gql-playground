@@ -5,32 +5,31 @@ import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
 import { EntityObject } from '@/common/decorators'
 
+export const contentLength = 500
 
 @EntityObject
 export class Subtask extends Base {
-	@Column ()
 	@Field ()
+	@Column ({ length: contentLength })
 	content: string
 	
 	@Field ()
-	@Column ({ type: 'bool', default: false })
+	@Column ({ default: false, type: 'bool' })
 	finished: boolean
 	
-	@Field (returns => Date, { nullable: true })
+	@Field (returns => Date,
+		{ nullable: true })
 	@Column ({ type: 'date', nullable: true })
 	dueDateTimestamp?: string
 	
-	@Field (returns => Date, { nullable: true })
-	@Column ({ type: 'date', nullable: true })
-	dueDateTimestampLocal?: string
-	
-	@Field (returns => [User], { nullable: true })
+	@Field (returns => [User])
 	@ManyToMany (type => User, user => user.subtasks)
 	@JoinTable ()
-	user?: User[]
+	user: User[]
 	
 	@Field (returns => Task)
-	@ManyToOne (type => Task)
+	@ManyToOne (type => Task,
+		task => task.subtasks)
 	parent: Task
 	
 }

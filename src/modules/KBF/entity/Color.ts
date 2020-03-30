@@ -5,19 +5,24 @@ import { Board } from '@M/KBF/entity/Board'
 import { Base } from '@M/KBF/entity/_Base'
 import { EntityObject } from '@/common/decorators'
 
+export const nameLength = 20
+export const descriptionLength = 20
 
 @Unique (['name', 'board'])
 @EntityObject
 export class Color extends Base {
 	@Field ()
-	@Column ({ length: 20 })
+	@Column ({ length: nameLength })
 	name: string
 	
 	@OneToMany (type => Task, task => task.color)
 	tasks: Task[]
 	
 	@Field ({ nullable: true })
-	@Column ({ nullable: true, length: 100 })
+	@Column ({
+		nullable: true,
+		length: descriptionLength
+	})
 	description?: string
 	
 	@Field ()
@@ -25,7 +30,7 @@ export class Color extends Base {
 	value: string
 	
 	@Field ()
-	@Column ({ default: false })
+	@Column ({ default: false, type: 'bool' })
 	default: boolean
 	
 	@ManyToOne (type => Board, board => board.colors)

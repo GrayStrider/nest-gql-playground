@@ -7,36 +7,37 @@ import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
 import { EntityObject } from '@/common/decorators'
 
+export const nameLength = 50
+
 @EntityObject
 export class Board extends Base {
 	@Field ()
-	@Column ({ length: 50 })
+	@Column ({ length: nameLength })
 	name: string
 	
-	@Field (returns => [Color])
+	@Field (returns => [Color],
+		{ nullable: true })
 	@OneToMany (type => Color,
 		color => color.board,
-		{ cascade: true, eager: true }
-	)
+		{ cascade: true, eager: true })
 	colors: Color[]
 	
-	@Field (returns => [TColumn])
+	@Field (returns => [TColumn],
+		{ nullable: true })
 	@OneToMany (type => TColumn,
 		coll => coll.board,
-		{ cascade: true, eager: true }
-	)
+		{ cascade: true, eager: true })
 	columns: TColumn[]
 	
-	@Field (returns => [Swimlane])
+	@Field (returns => [Swimlane],
+		{ nullable: true })
 	@OneToMany (type => Swimlane,
 		swimlane => swimlane.board,
-		{ cascade: true, eager: true }
-	)
+		{ cascade: true, eager: true })
 	swimlanes: Swimlane[]
 	
 	@OneToMany (type => Task,
-		task => task.board
-	)
+		task => task.board)
 	tasks: Task[]
 	
 }

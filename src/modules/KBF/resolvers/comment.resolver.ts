@@ -7,30 +7,37 @@ import { User } from '@M/KBF/entity/User'
 import { bb } from '@qdev/utils-ts'
 import { NotFoundByIDError } from '@/common/errors'
 import { Like } from 'typeorm'
+import Maybe from 'graphql/tsutils/Maybe'
 
 @Resolver ()
 export class CommentResolver {
 	@Query (returns => Comment)
-	async comment (@Args () data: SearchByIDInput) {
-		return Comment.findOne (data)
+	async comment (@Args () {id}: SearchByIDInput): Promise<Comment> {
+		const [comment] = await bb.all ([
+			Comment.findOne (id),
+		])
+		
+		if (!comment) throw NotFoundByIDError ('comment', id)
+		
+		return comment
 	}
 	
 	@Query (returns => [Comment])
 	async comments (@Args ('data') {
-		authorID, taskID, text
+		userID, taskID, text
 	}: CommentInput) {
-		const [task, author] = await bb.all ([
+		const [task, user] = await bb.all ([
 			Task.findOne (taskID),
-			User.findOne (authorID)
+			User.findOne (userID)
 		])
 		
 		if (!task) throw NotFoundByIDError ('task', taskID)
-		if (!author) throw NotFoundByIDError ('author', authorID)
+		if (!user) throw NotFoundByIDError ('user', userID)
 		
 		return Comment.find ({
 			where: {
 				task,
-				author,
+				user,
 				text: Like (`%${text}%`)
 			}
 		})
@@ -38,16 +45,16 @@ export class CommentResolver {
 	
 	@Mutation (returns => Comment)
 	async addComment (@Args ('data') {
-		authorID, taskID, text
+		userID, taskID, text
 	}: CommentInput) {
-		const [task, author] = await bb.all ([
+		const [task, user] = await bb.all ([
 			Task.findOne (taskID),
-			User.findOne (authorID)
+			User.findOne (userID)
 		])
 		
 		if (!task) throw NotFoundByIDError ('task', taskID)
-		if (!author) throw NotFoundByIDError ('author', authorID)
+		if (!user) throw NotFoundByIDError ('user', userID)
 		
-		return Comment.create ({ text, task, author }).save ()
+		return Comment.create ({ text, task, user }).save ()
 	}
 }

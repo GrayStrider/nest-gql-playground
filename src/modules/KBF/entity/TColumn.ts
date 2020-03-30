@@ -1,23 +1,31 @@
-import { Entity, OneToMany, ManyToOne, Column } from 'typeorm'
-import { ObjectType, Field } from '@nestjs/graphql'
+import { OneToMany, ManyToOne, Column, Check } from 'typeorm'
+import { Field } from '@nestjs/graphql'
 import { Board } from '@M/KBF/entity/Board'
 import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
+import { EntityObject } from '@/common/decorators'
 
+export const nameLength = 20
+export const maxOrder = 5000
+export const taskLimit = 100000
 
-@Entity ()
-@ObjectType ()
+// TODO unique name per board (to use name as id)
+@EntityObject
+@Check (`"order" < ${maxOrder}`)
+@Check (`"order" >= 0`)
+@Check (`"taskLimit" < ${taskLimit}`)
+@Check (`"taskLimit" >= 0`)
 export class TColumn extends Base {
-	@Column ()
+	@Column ({ length: nameLength })
 	@Field ()
 	name: string
 	
 	@Field ()
-	@Column ({ default: 0 })
+	@Column ({ type: 'int', default: 0 })
 	order: number
 	
 	@Field ()
-	@Column ({ default: 0 })
+	@Column ({ type: 'int', default: 0 })
 	taskLimit: number
 	
 	@OneToMany (type => Task, task => task.column)

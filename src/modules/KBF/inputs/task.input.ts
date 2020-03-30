@@ -1,41 +1,81 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { MaxLength, IsNotEmpty, IsBoolean, ArrayNotEmpty } from 'class-validator'
-import { FieldNullable, String5K, String100, String50, String20 } from '@/common/decorators/validation'
+import { MaxLength, IsNotEmpty, IsBoolean, ArrayNotEmpty, Max, Min, IsUUID, IsDateString } from 'class-validator'
+import { FieldNullable, ValidString, ValidNumber } from '@/common/decorators/validation'
+import * as Tag from '@M/KBF/entity/Tag'
+import * as Board from '@M/KBF/entity/Board'
+import * as Task from '@M/KBF/entity/Task'
+import { Year, maxOrderTasksInColumn } from '@M/KBF/entity/Task'
+import * as Color from '@M/KBF/entity/Color'
+import * as Swimlane from '@M/KBF/entity/Swimlane'
+import * as Column from '@M/KBF/entity/TColumn'
+import { SubbtaskInput } from '@M/KBF/inputs/subbtask.input'
 
 @InputType ()
 export class TaskInput {
 	@Field ()
-	@String50
+	@ValidString (Board.nameLength)
 	boardName: string
 	
-	@Field ()
-	@String100
-	title: string
+	@FieldNullable ()
+	@ValidString (Swimlane.nameLength)
+	swimlaneName?: string
 	
 	@FieldNullable ()
-	@String5K
-	description?: string
-	
-	@FieldNullable ([String])
-	@ArrayNotEmpty()
-	@MaxLength (20, { each: true })
-	@IsNotEmpty ({ each: true })
-	tagLabels?: string[]
+	@ValidString (Column.nameLength)
+	columnName?: string
 	
 	@FieldNullable ()
 	@IsBoolean ()
 	completed?: boolean
 	
+	@Field ()
+	@ValidString (Task.titleLength)
+	title: string
+	
 	@FieldNullable ()
-	@String20
+	@ValidString (Task.descriptionLength)
+	description?: string
+	
+	@FieldNullable ()
+	@ValidString (Color.nameLength)
 	colorName?: string
 	
-	@FieldNullable ()
-	@String20
-	columnName?: string
+	@FieldNullable ([String])
+	@ArrayNotEmpty ()
+	@MaxLength (Tag.nameLength, { each: true })
+	@IsNotEmpty ({ each: true })
+	tagNames?: string[]
 	
 	@FieldNullable ()
-	@String20
-	swimlaneName?: string
+	@ValidNumber (maxOrderTasksInColumn)
+	position?: number
+	
+	@FieldNullable ()
+	@IsUUID ()
+	responsibleUserID?: string
+	
+	@FieldNullable ([String])
+	@IsUUID ('all', { each: true })
+	collaboratorsIDs?: string[]
+	
+	@FieldNullable ([SubbtaskInput])
+	subtasks?: SubbtaskInput[]
+	
+	@FieldNullable ([Date])
+	@ArrayNotEmpty ()
+	@IsNotEmpty ({ each: true })
+	@IsDateString ({ each: true })
+	dates?: Date[]
+	
+	@FieldNullable ()
+	@Max (24 * 60 * 60, {
+		message: 'Cannot add more than 24h at a time'
+	})
+	@Min (0)
+	totalSecondsSpent?: number
+	
+	@FieldNullable ()
+	@ValidNumber (Year)
+	totalSecondsEstimate?: number
 }
 

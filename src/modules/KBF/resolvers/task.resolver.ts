@@ -8,6 +8,7 @@ import { ApolloError } from 'apollo-server-errors'
 import { Board } from '@M/KBF/entity/Board'
 import { find, head } from 'ramda'
 import { SearchByIDInput } from '@M/KBF/inputs/search-by-id.input'
+import { NotFoundByIDError } from '@/common/errors'
 
 export enum ErrorCodes2 {
 	LIMIT_REACHED = 'LIMIT_REACHED',
@@ -40,18 +41,24 @@ export class TaskResolver {
 	}
 	
 	@Query (returns => Task)
-	async task (@Args () args: SearchByIDInput) {
-		return Task.findOne (args)
+	async task (@Args () { id }: SearchByIDInput): Promise<Task> {
+		const [task] = await bb.all ([
+			Task.findOne (id)
+		])
+		
+		if (!task) throw NotFoundByIDError ('task', id)
+		
+		return task
 	}
 	
 	@Mutation (returns => Task)
 	async addTask (
 		@Args ('data') {
-			tagLabels, colorName, columnName, swimlaneName,
-			boardName, ...rest
+			tagNames, colorName, columnName, swimlaneName,
+			boardName, dates, ...rest
 		}: TaskInput)
 		: Promise<Task> {
-
+		
 		let taskData: DeepPartial<Task> = {}
 		
 		const board = await Board.findOne ({ name: boardName })
@@ -79,9 +86,9 @@ export class TaskResolver {
 			taskData = { ...taskData, color }
 		}
 		
-		if (tagLabels) {
+		if (tagNames) {
 			const tags = await bb.reduce (
-				tagLabels, async (acc: Tag[], name) => {
+				tagNames, async (acc: Tag[], name) => {
 					const getTag = await Tag.findOne ({ name })
 						?? Tag.create ({ name })
 					return acc.concat (getTag)
@@ -116,6 +123,10 @@ export class TaskResolver {
 		} else {
 			const swimlane = head (board.swimlanes)
 			taskData = { ...taskData, swimlane }
+		}
+		
+		if (dates) {
+		
 		}
 		
 		

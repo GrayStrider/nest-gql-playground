@@ -8,12 +8,9 @@ import { EntityObject } from '@/common/decorators'
 
 @EntityObject
 export class TDate extends Base {
-	@Field (returns => [Task],
-		{ nullable: true })
+	@Field (returns => [Task])
 	@ManyToMany (type => Task,
-		task => task.dates, {
-			nullable: true
-		})
+		task => task.dates)
 	tasks: Task[]
 	
 	@Field (returns => TColumn)

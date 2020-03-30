@@ -1,24 +1,31 @@
 import { InputType, Field } from '@nestjs/graphql'
-import { String20, FieldNullable, Number500, String50 } from '@/common/decorators/validation'
+import { FieldNullable, ValidString, ValidNumber } from '@/common/decorators/validation'
+import { nameLength, maxOrder, taskLimit } from '@M/KBF/entity/TColumn'
+import * as Board from '@M/KBF/entity/Board'
+import { IsUUID } from 'class-validator'
 
 @InputType ()
 export class ColumnInput {
 	@Field ()
-	@String20
+	@ValidString (nameLength)
 	name: string
 	
+	@FieldNullable ([String])
+	@IsUUID ('all', { each: true })
+	tasksIDs?: string[]
+	
 	@FieldNullable ()
-	@Number500
+	@ValidNumber (maxOrder)
 	order?: number
 	
 	@FieldNullable ()
-	@Number500
+	@ValidNumber (taskLimit)
 	taskLimit?: number
 }
 
 @InputType ()
 export class AddColumnInput extends ColumnInput {
 	@Field ()
-	@String50
+	@ValidString (Board.nameLength)
 	boardName: string
 }
