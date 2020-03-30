@@ -68,7 +68,7 @@ export class TaskResolver {
 					ErrorCodes2.NOT_FOUND, { requestedColor: colorName }))
 			: find (c => c.default, board.colors)
 		
-		const tags = await bb.reduce (uniq (tagNames ?? []),
+		const tags = await bb.reduce (uniq (toDefault(tagNames, [])),
 			async (acc: Tag[], name) => {
 				const tag = await Tag.findOne ({ name, board })
 					?? Tag.create ({ name, board })
