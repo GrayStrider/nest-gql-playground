@@ -62,20 +62,14 @@ export class TaskResolver {
 				{ requestedName: boardName })
 		)
 		
-		if (colorName) {
-			const color = find (c => c.name === colorName,
-				board.colors)
-			
-			if (!color) throw new ApolloError
-			(`Color <${colorName}> doesn't exist on board <${boardName}>`,
-				ErrorCodes2.NOT_FOUND, { requestedColor: colorName })
-			taskData = { ...taskData, color }
-			
-		} else {
-			const color = find (c => c.default, board.colors)
-			taskData = { ...taskData, color }
-		}
-		
+		const color = colorName
+		? toDefault (
+				board.colors.find (c => c.name === colorName),
+				new ApolloError
+				(`Color <${colorName}> doesn't exist on board <${boardName}>`,
+					ErrorCodes2.NOT_FOUND, { requestedColor: colorName })
+			)
+			:find (c => c.default, board.colors)
 		
 		const tags = await bb.reduce (uniq (tagNames ?? []),
 			async (acc: Tag[], name) => {
@@ -124,12 +118,12 @@ export class TaskResolver {
 		}
 		
 		if (dates) {
-			
+		
 		}
 		
 		
 		return await Task.create ({
-			...rest, ...taskData, board, tags
+			...rest, ...taskData, board, tags, color
 		}).save ()
 	}
 	
