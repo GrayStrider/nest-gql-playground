@@ -6,6 +6,7 @@ import { TColumn } from '@M/KBF/entity/TColumn'
 import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
 import { EntityObject } from '@/common/decorators'
+import { Tag } from '@M/KBF/entity/Tag'
 
 export const nameLength = 50
 
@@ -39,6 +40,10 @@ export class Board extends Base {
 	@OneToMany (type => Task,
 		task => task.board)
 	tasks: Task[]
+	
+	@OneToMany (type => Tag,
+		tags => tags.board)
+	tags: Tag[]
 	
 }
 

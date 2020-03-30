@@ -6,7 +6,7 @@ import { Tag } from '@M/KBF/entity/Tag'
 import { DeepPartial, BaseEntity } from 'typeorm'
 import { ApolloError } from 'apollo-server-errors'
 import { Board } from '@M/KBF/entity/Board'
-import { find, head } from 'ramda'
+import { find, head, uniq } from 'ramda'
 import { SearchByIDInput } from '@M/KBF/inputs/search-by-id.input'
 import { NotFoundByIDError } from '@/common/errors'
 
@@ -92,10 +92,11 @@ export class TaskResolver {
 		
 		if (tagNames) {
 			const tags = await bb.reduce (
-				tagNames, async (acc: Tag[], name) => {
-					const getTag = await Tag.findOne ({ name })
-						?? Tag.create ({ name })
-					return acc.concat (getTag)
+				uniq(tagNames), async (acc: Tag[], name, index) => {
+					const existingTag = await Tag.findOne ({ name, board })
+					const createdTag = Tag.create ({ name, board })
+					const tag = existingTag ?? createdTag
+					return acc.concat (tag)
 					
 				}, []
 			)
