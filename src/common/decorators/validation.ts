@@ -1,6 +1,6 @@
 import { ReturnTypeFuncValue, Field } from '@nestjs/graphql'
 import { composeFieldDecorators } from '@qdev/utils-ts'
-import { IsOptional, MaxLength, IsNotEmpty, Max, IsInt, Min } from 'class-validator'
+import { IsOptional, MaxLength, IsNotEmpty, Max, IsInt, Min, ArrayNotEmpty } from 'class-validator'
 
 
 export const FieldNullable = (returns?: ReturnTypeFuncValue) => returns
@@ -11,8 +11,10 @@ export const FieldNullable = (returns?: ReturnTypeFuncValue) => returns
 		Field ({ nullable: true }),
 		IsOptional ())
 
-export const ValidString = (maxLength: number) => composeFieldDecorators (
-	MaxLength (maxLength), IsNotEmpty ()
+export const ValidString = (maxLength: number, each = false) => composeFieldDecorators (
+	MaxLength (maxLength, { each }),
+	IsNotEmpty ({ each }),
+	each ? ArrayNotEmpty () : (target, propertyKey) => {}
 )
 
 export const ValidNumber = (max: number, min = 0) => composeFieldDecorators (

@@ -12,6 +12,7 @@ import { prop } from 'ramda'
 import { CommentResolver } from '@M/KBF/resolvers/comment.resolver'
 import { UserResolver } from '@M/KBF/resolvers/user.resolver'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
+import { TagResolver } from '@M/KBF/resolvers/tag.resolver'
 
 const apolloOptions: GqlModuleOptions = {
 	autoSchemaFile: 'src/graphql/generated/schema.graphql',
@@ -46,6 +47,7 @@ const GqlValidationPipe = new ValidationPipe ({
 		BoardResolver,
 		TaskResolver,
 		UserResolver,
+		TagResolver,
 		CommentResolver,
 		ColorResolver,
 		{ provide: APP_PIPE, useValue: GqlValidationPipe }

@@ -10,6 +10,13 @@ import * as Swimlane from '@M/KBF/entity/Swimlane'
 import * as Column from '@M/KBF/entity/TColumn'
 import { SubbtaskInput } from '@M/KBF/inputs/subbtask.input'
 
+@InputType()
+export class TaskSearchInput {
+	@FieldNullable([String])
+	@ValidString (Board.nameLength, true)
+	boardNames?: string[]
+}
+
 @InputType ()
 export class TaskInput {
 	@Field ()

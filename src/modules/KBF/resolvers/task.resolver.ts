@@ -1,6 +1,6 @@
 import { Resolver, Args, Mutation, Query } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
-import { TaskInput } from '@M/KBF/inputs/task.input'
+import { TaskInput, TaskSearchInput } from '@M/KBF/inputs/task.input'
 import { Promise as bb } from 'bluebird'
 import { Tag } from '@M/KBF/entity/Tag'
 import { DeepPartial, BaseEntity } from 'typeorm'
@@ -36,7 +36,11 @@ export const checkIfMaxReached =
 @Resolver ()
 export class TaskResolver {
 	@Query (returns => [Task])
-	async tasks (@Args ('searchBy') data: TaskInput) {
+	async tasks (@Args ('searchBy', { nullable: true })
+		             { boardNames }: TaskSearchInput) {
+		
+		
+		
 		return Task.find ()
 	}
 	
