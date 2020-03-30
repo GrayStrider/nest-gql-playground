@@ -37,43 +37,38 @@ export class TaskResolver {
 		
 		const board = toDefault (
 			await Board.findOne ({ name: boardName }),
-			new ApolloError (`Board <${boardName}> not found`,
-				ErrorCodes2.NOT_FOUND,
-				{ requestedName: boardName }))
+			new Errors.NotFound
+			(`Board <${boardName}> not found`, { boardName }))
 		
 		const color = colorName
 			? toDefault (
 				board.colors.find (c => c.name === colorName),
-				new ApolloError
-				(`Color <${colorName}> doesn't exist on board <${boardName}>`,
-					ErrorCodes2.NOT_FOUND, { requestedColor: colorName }))
+				new Errors.NotFound
+				(`Color <${colorName}> doesn't exist on board <${boardName}>`, { colorName, boardName }))
 			: find (c => c.default, board.colors)
 		
-		const tags = await bb.reduce (uniq (toDefault (tagNames, [])),
-			async (acc: Tag[], name) => {
-				const tag = await Tag.findOne ({ name, board })
-					?? Tag.create ({ name, board })
-				return acc.concat (tag)
-			}, []
-		)
-		
+		const tags = tagNames
+			? await bb.reduce (uniq (tagNames),
+				async (acc: Tag[], name) => {
+					const tag = toDefault (
+						await Tag.findOne ({ name, board }),
+						Tag.create ({ name, board }))
+					return acc.concat (tag)
+				}, [])
+			: []
 		
 		const column = columnName
 			? toDefault (
 				board.columns.find (c => c.name === columnName),
-				new ApolloError
-				(`Column <${columnName}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND,
-					{ requestedColumn: columnName }))
+				new Errors.NotFound
+				(`Column <${columnName}> doesn't exist on board <${boardName}>`, { columnName, boardName }))
 			: head (board.columns)
 		
 		const swimlane = swimlaneName
 			? toDefault (
 				board.swimlanes.find (c => c.name === swimlaneName),
-				new ApolloError
-				(`Swimlane <${swimlaneName}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND, {
-					requestedSwimlane: swimlaneName
-				})
-			)
+				new Errors.NotFound
+				(`Swimlane <${swimlaneName}> doesn't exist on board <${boardName}>`, { swimlaneName }))
 			: head (board.swimlanes)
 		
 		if (dates) {
