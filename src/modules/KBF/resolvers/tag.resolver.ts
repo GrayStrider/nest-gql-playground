@@ -10,14 +10,13 @@ import { ApolloError } from 'apollo-server-errors'
 @Resolver ()
 export class TagResolver {
 	@Query (returns => [Tag])
-	async tags (@Args ('searchBy', { nullable: true })
-		            {}: TagInput): Promise<Tag[]> {
+	async tags (@Args ('searchBy', { nullable: true }) data: TagInput): Promise<Tag[]> {
 		return Tag.find ()
 	}
 	
 	@Mutation (returns => Tag)
-	async addTag (@Args ('data')
-		              { tasksIDs, boardName, name, ...rest }: TagInput): Promise<Tag> {
+	async addTag (@Args ('data') data: TagInput): Promise<Tag> {
+		const { tasksIDs, boardName, name, ...rest } = data
 		const board = await Board.findOne ({ name: boardName })
 		if (!board) {
 			throw new ApolloError (`Board <${boardName}> not found`, ErrorCodes2.NOT_FOUND,

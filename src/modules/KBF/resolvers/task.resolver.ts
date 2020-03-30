@@ -9,6 +9,8 @@ import { Board } from '@M/KBF/entity/Board'
 import { find, head, uniq } from 'ramda'
 import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
 import { NotFoundByIDError, ErrorCodes2 } from '@/common/errors'
+import { merge } from 'lodash'
+
 
 export const MAX_TASK_NUMBER = 3
 
@@ -34,7 +36,6 @@ export class TaskResolver {
 		             { boardNames }: TaskSearchInput) {
 		
 		
-		
 		return Task.find ()
 	}
 	
@@ -51,20 +52,20 @@ export class TaskResolver {
 	
 	@Mutation (returns => Task)
 	async addTask (
-		@Args ('data') {
-			tagNames, colorName, columnName, swimlaneName,
-			boardName, dates, ...rest
-		}: TaskInput)
-		: Promise<Task> {
+		@Args ('data') data: TaskInput): Promise<Task> {
+		const {
+			tagNames, colorName, columnName,
+			swimlaneName, boardName, dates,
+			...rest
+		} = data
 		
 		let taskData: DeepPartial<Task> = {}
 		
 		const board = await Board.findOne ({ name: boardName })
 		if (!board) {
-			throw new ApolloError (`Board <${boardName}> not found`, ErrorCodes2.NOT_FOUND,
-				{
-					requestedName: boardName
-				})
+			throw new ApolloError (`Board <${boardName}> not found`,
+				ErrorCodes2.NOT_FOUND,
+				{ requestedName: boardName })
 		} else {
 			taskData = { ...taskData, board }
 		}
@@ -74,9 +75,8 @@ export class TaskResolver {
 				board.colors)
 			
 			if (!color) throw new ApolloError
-			(`Color <${colorName}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND, {
-				requestedColor: colorName
-			})
+			(`Color <${colorName}> doesn't exist on board <${boardName}>`,
+				ErrorCodes2.NOT_FOUND, { requestedColor: colorName })
 			taskData = { ...taskData, color }
 			
 		} else {
@@ -84,17 +84,15 @@ export class TaskResolver {
 			taskData = { ...taskData, color }
 		}
 		
+
 		if (tagNames) {
-			const tags = await bb.reduce (
-				uniq(tagNames), async (acc: Tag[], name, index) => {
-					const existingTag = await Tag.findOne ({ name, board })
-					const createdTag = Tag.create ({ name, board })
-					const tag = existingTag ?? createdTag
+			const tags = await bb.reduce (uniq (tagNames),
+				async (acc: Tag[], name) => {
+					const tag = await Tag.findOne ({ name, board })
+						?? Tag.create ({ name, board })
 					return acc.concat (tag)
-					
 				}, []
 			)
-			
 			taskData = { ...taskData, tags }
 		}
 		
