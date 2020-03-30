@@ -9,6 +9,13 @@ export const nameLength = 20
 export const maxOrder = 5000
 export const taskLimit = 100000
 
+export const defaultColumns: [string, number][] = [
+	['To-do', 0],
+	['Do today', 0],
+	['In progress', 3],
+	['Done', 0]
+]
+
 // TODO unique name per board (to use name as id)
 @EntityObject
 @Check (`"order" < ${maxOrder}`)
@@ -35,3 +42,4 @@ export class TColumn extends Base {
 	board: Board
 	
 }
+

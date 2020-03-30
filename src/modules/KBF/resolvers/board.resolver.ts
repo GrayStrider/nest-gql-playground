@@ -1,25 +1,10 @@
 import { Resolver, Args, Mutation, Query } from '@nestjs/graphql'
 import { Board } from '@M/KBF/entity/Board'
-import { Color } from '@M/KBF/entity/Color'
+import { Color, defaultColors } from '@M/KBF/entity/Color'
 import { Maybe } from 'type-graphql'
-import { TColumn } from '@M/KBF/entity/TColumn'
+import { TColumn, defaultColumns } from '@M/KBF/entity/TColumn'
 import { Swimlane } from '@M/KBF/entity/Swimlane'
 import { FindBoardInput, AddBoardInput } from '@M/KBF/inputs/board.input'
-
-export const defaultColors: [string, string, boolean][] = [
-	['White', 'FDFFFC', true],
-	['Green', '2EC4B6', false],
-	['Blue', '011627', false],
-	['Orange', 'FF9F1C', false],
-	['Red', '71D36', false]
-]
-
-export const defaultColumns: [string, number][] = [
-	['To-do', 0],
-	['Do today', 0],
-	['In progress', 3],
-	['Done', 0]
-]
 
 @Resolver ()
 export class BoardResolver {
@@ -37,7 +22,8 @@ export class BoardResolver {
 	
 	
 	@Mutation (returns => Board)
-	async addBoard (@Args ('data') { name, columnsParams, swimlaneNames }: AddBoardInput)
+	async addBoard (@Args ('data')
+		                  { name, columnsParams, swimlaneNames }: AddBoardInput)
 		: Promise<Board> {
 		const colors = defaultColors.map
 		(([name, value, def]) => Color.create

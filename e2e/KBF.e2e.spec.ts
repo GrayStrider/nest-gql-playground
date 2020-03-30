@@ -4,7 +4,6 @@ import { KBFModule } from '@M/KBF/KBF.module'
 import { supertest, Post, Req, isSE, chance } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
 import { Board } from '@M/KBF/entity/Board'
-import { defaultColumns } from '@M/KBF/resolvers/board.resolver'
 import { Task } from '@M/KBF/entity/Task'
 import { TaskInput } from '@M/KBF/inputs/task.input'
 import { zipObj, without, all, head } from 'ramda'
@@ -14,6 +13,7 @@ import { GraphQLError } from 'graphql'
 import { FindBoardInput } from '@M/KBF/inputs/board.input'
 import { Comment } from '@M/KBF/entity/Comment'
 import { ErrorCodes2 } from '@/common/errors'
+import { defaultColumns } from '@M/KBF/entity/TColumn'
 
 let app: INestApplication
 let post: Post
