@@ -9,7 +9,8 @@ import { Board } from '@M/KBF/entity/Board'
 import { find, head, uniq } from 'ramda'
 import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
 import { NotFoundByIDError, ErrorCodes2 } from '@/common/errors'
-import { merge } from 'lodash'
+import { Swimlane } from '@M/KBF/entity/Swimlane'
+import { getOrThrow } from '@qdev/utils-ts'
 
 
 export const MAX_TASK_NUMBER = 3
@@ -45,9 +46,7 @@ export class TaskResolver {
 			Task.findOne (id)
 		])
 		
-		if (!task) throw NotFoundByIDError ('task', id)
-		
-		return task
+		return getOrThrow(task, NotFoundByIDError ('task', id))
 	}
 	
 	@Mutation (returns => Task)
@@ -84,7 +83,7 @@ export class TaskResolver {
 			taskData = { ...taskData, color }
 		}
 		
-
+		
 		if (tagNames) {
 			const tags = await bb.reduce (uniq (tagNames),
 				async (acc: Tag[], name) => {
@@ -109,6 +108,17 @@ export class TaskResolver {
 			taskData = { ...taskData, column }
 		}
 		
+		const swimlane = ({ swimlanes }: Board, name: string): Swimlane => {
+			if (name) {
+				const present = find (c => c.name === name, swimlanes)
+				if (!present) throw new ApolloError
+				(`Swimlane <${name}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND, {
+					requestedSwimlane: name
+				})
+				return present
+			}
+			return head (swimlanes)!
+		}
 		if (swimlaneName) {
 			const swimlane = find
 			(c => c.name === swimlaneName, board.swimlanes)
