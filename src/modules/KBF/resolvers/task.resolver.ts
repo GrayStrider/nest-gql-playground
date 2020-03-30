@@ -9,7 +9,6 @@ import { Board } from '@M/KBF/entity/Board'
 import { find, head, uniq } from 'ramda'
 import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
 import { NotFoundByIDError, ErrorCodes2 } from '@/common/errors'
-import { Swimlane } from '@M/KBF/entity/Swimlane'
 import { toDefault } from '@qdev/utils-ts'
 
 
@@ -86,29 +85,15 @@ export class TaskResolver {
 					{ requestedColumn: columnName }))
 			: head (board.columns)
 		
-		const swimlane = ({ swimlanes }: Board, name: string): Swimlane => {
-			if (name) {
-				const present = find (c => c.name === name, swimlanes)
-				if (!present) throw new ApolloError
-				(`Swimlane <${name}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND, {
-					requestedSwimlane: name
+		const swimlane = swimlaneName
+			? toDefault (
+				board.swimlanes.find (c => c.name === swimlaneName),
+				new ApolloError
+				(`Swimlane <${swimlaneName}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND, {
+					requestedSwimlane: swimlaneName
 				})
-				return present
-			}
-			return head (swimlanes)!
-		}
-		if (swimlaneName) {
-			const swimlane = find
-			(c => c.name === swimlaneName, board.swimlanes)
-			if (!swimlane) throw new ApolloError
-			(`Swimlane <${swimlaneName}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND, {
-				requestedSwimlane: swimlaneName
-			})
-			taskData = { ...taskData, swimlane }
-		} else {
-			const swimlane = head (board.swimlanes)
-			taskData = { ...taskData, swimlane }
-		}
+			)
+			: head (board.swimlanes)
 		
 		if (dates) {
 		
@@ -116,7 +101,7 @@ export class TaskResolver {
 		
 		
 		return await Task.create ({
-			...rest, ...taskData, board, tags, color, column
+			...rest, ...taskData, board, tags, color, column, swimlane
 		}).save ()
 	}
 	
