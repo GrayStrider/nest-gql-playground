@@ -29,14 +29,18 @@ function makeCustomError (
 enum ErrorCodes {
 	'VALIDATION_ERROR' = 'VALIDATION_ERROR',
 	'NOT_FOUND' = 'NOT_FOUND',
-	'UNATHORIZED' = 'UNATHORIZED'
+	'UNATHORIZED' = 'UNATHORIZED',
+	LIMIT_REACHED = 'LIMIT_REACHED',
+	NOT_UNIQUE = 'NOT_UNIQUE'
 }
 
 const Errors = {
-	Validation: makeCustomError (ErrorCodes.VALIDATION_ERROR, 'Unspecified validation error'),
+	Validation: makeCustomError (ErrorCodes.VALIDATION_ERROR, 'Validation error'),
 	NotFound: makeCustomError (ErrorCodes.NOT_FOUND, 'Object not found'),
 	Unathorized: makeCustomError (ErrorCodes.UNATHORIZED, 'Unathorized to perform requested action'),
-	InvalidCredentials: makeCustomError (ErrorCodes.UNATHORIZED, 'Invalid credentials provided')
+	InvalidCredentials: makeCustomError (ErrorCodes.UNATHORIZED, 'Invalid credentials provided'),
+	NotUnique: makeCustomError(ErrorCodes.NOT_UNIQUE,
+		'Unique constraint violation')
 }
 
 const userNotFoundError = (id: string) =>

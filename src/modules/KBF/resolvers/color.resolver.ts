@@ -1,30 +1,23 @@
 import { Resolver, Args, Mutation } from '@nestjs/graphql'
 import { Color } from '@M/KBF/entity/Color'
-import { Board } from '@M/KBF/entity/Board'
-import { ApolloError } from 'apollo-server-errors'
 import { NewColorInput } from '@M/KBF/inputs/color.input'
 import { find } from 'ramda'
-import { ErrorCodes2 } from '@/common/errors'
+import { getBoard } from '@M/KBF/resolvers/task.resolver'
+import Errors from '@/common/errors'
 
 @Resolver ()
 export class ColorResolver {
 	@Mutation (returns => Color)
 	async addColor (
 		@Args ('data')
-			{ boardName, ...rest }: NewColorInput
+			{ boardName, name, ...rest }: NewColorInput
 	): Promise<Color> {
 		
-		const board = await Board.findOne ({ name: boardName })
-		if (!board) throw new ApolloError (`Board <${boardName}> not found`, ErrorCodes2.NOT_FOUND,
-			{
-				requestedName: boardName
-			})
+		const board = await getBoard (boardName)
 		
-		const isDuplicate = find
-		(c => c.name === rest.name, board.colors)
-		
-		if (isDuplicate) throw new ApolloError
-		(`Color name <${rest.name}> already exists`)
+		if (find (c => c.name === name, board.colors))
+			throw new Errors.NotUnique
+			(`Color name <${name}> already exists`, { name })
 		
 		if (rest.default === true) {
 			board.colors.forEach ((c, i, a) => a[i].default = false)
@@ -33,7 +26,7 @@ export class ColorResolver {
 		}
 		
 		return Color.create
-		({ board, ...rest }).save ()
+		({ board, name, ...rest }).save ()
 		
 	}
 	

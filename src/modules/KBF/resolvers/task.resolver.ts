@@ -13,6 +13,13 @@ import { toDefault } from '@qdev/utils-ts'
 
 export const MAX_TASK_NUMBER = 3
 
+export async function getBoard (boardName: string) {
+	return toDefault (
+		await Board.findOne ({ name: boardName }),
+		new Errors.NotFound
+		(`Board <${boardName}> not found`, { boardName }))
+}
+
 @Resolver ()
 export class TaskResolver {
 	@Query (returns => [Task])
@@ -35,10 +42,7 @@ export class TaskResolver {
 		@Args ('data') data: TaskInput): Promise<Task> {
 		const { tagNames, colorName, columnName, swimlaneName, boardName, dates, ...rest } = data
 		
-		const board = toDefault (
-			await Board.findOne ({ name: boardName }),
-			new Errors.NotFound
-			(`Board <${boardName}> not found`, { boardName }))
+		const board = await getBoard (boardName)
 		
 		const color = colorName
 			? toDefault (
@@ -46,16 +50,6 @@ export class TaskResolver {
 				new Errors.NotFound
 				(`Color <${colorName}> doesn't exist on board <${boardName}>`, { colorName, boardName }))
 			: find (c => c.default, board.colors)
-		
-		const tags = tagNames
-			? await bb.reduce (uniq (tagNames),
-				async (acc: Tag[], name) => {
-					const tag = toDefault (
-						await Tag.findOne ({ name, board }),
-						Tag.create ({ name, board }))
-					return acc.concat (tag)
-				}, [])
-			: []
 		
 		const column = columnName
 			? toDefault (
@@ -74,6 +68,16 @@ export class TaskResolver {
 		if (dates) {
 		
 		}
+		
+		const tags = tagNames
+			? await bb.reduce (uniq (tagNames),
+				async (acc: Tag[], name) => {
+					const tag = toDefault (
+						await Tag.findOne ({ name, board }),
+						Tag.create ({ name, board }))
+					return acc.concat (tag)
+				}, [])
+			: []
 		
 		
 		return await Task.create
