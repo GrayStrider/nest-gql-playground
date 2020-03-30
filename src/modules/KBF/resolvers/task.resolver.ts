@@ -45,21 +45,17 @@ export class TaskResolver {
 		const [task] = await bb.all ([
 			Task.findOne (id)
 		])
-		return toDefault(task, NotFoundByIDError ('task', id))
+		return toDefault (task, NotFoundByIDError ('task', id))
 	}
 	
 	@Mutation (returns => Task)
 	async addTask (
 		@Args ('data') data: TaskInput): Promise<Task> {
-		const {
-			tagNames, colorName, columnName,
-			swimlaneName, boardName, dates,
-			...rest
-		} = data
+		const { tagNames, colorName, columnName, swimlaneName, boardName, dates, ...rest } = data
 		
 		let taskData: DeepPartial<Task> = {}
 		
-		const board = toDefault(
+		const board = toDefault (
 			await Board.findOne ({ name: boardName }),
 			new ApolloError (`Board <${boardName}> not found`,
 				ErrorCodes2.NOT_FOUND,
@@ -81,16 +77,14 @@ export class TaskResolver {
 		}
 		
 		
-		if (tagNames) {
-			const tags = await bb.reduce (uniq (tagNames),
-				async (acc: Tag[], name) => {
-					const tag = await Tag.findOne ({ name, board })
-						?? Tag.create ({ name, board })
-					return acc.concat (tag)
-				}, []
-			)
-			taskData = { ...taskData, tags }
-		}
+		const tags = await bb.reduce (uniq (tagNames ?? []),
+			async (acc: Tag[], name) => {
+				const tag = await Tag.findOne ({ name, board })
+					?? Tag.create ({ name, board })
+				return acc.concat (tag)
+			}, []
+		)
+		
 		
 		if (columnName) {
 			const column = find
@@ -130,12 +124,12 @@ export class TaskResolver {
 		}
 		
 		if (dates) {
-		
+			
 		}
 		
 		
 		return await Task.create ({
-			...rest, ...taskData, board
+			...rest, ...taskData, board, tags
 		}).save ()
 	}
 	
