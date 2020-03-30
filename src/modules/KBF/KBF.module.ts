@@ -1,6 +1,6 @@
 import { Module, ValidationPipe } from '@nestjs/common'
 import { GraphQLModule, GqlModuleOptions } from '@nestjs/graphql'
-import { TaskResolver, ErrorCodes2 } from '@M/KBF/resolvers/task.resolver'
+import { TaskResolver} from '@M/KBF/resolvers/task.resolver'
 import { CatFactsAPI } from '@M/cat-facts/cat-facts.datasource'
 import { BoardResolver } from '@M/KBF/resolvers/board.resolver'
 import { DBModule } from '@M/db/db.module'
@@ -13,6 +13,7 @@ import { CommentResolver } from '@M/KBF/resolvers/comment.resolver'
 import { UserResolver } from '@M/KBF/resolvers/user.resolver'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 import { TagResolver } from '@M/KBF/resolvers/tag.resolver'
+import { ErrorCodes2 } from '@/common/errors'
 
 const apolloOptions: GqlModuleOptions = {
 	autoSchemaFile: 'src/graphql/generated/schema.graphql',

@@ -7,14 +7,8 @@ import { DeepPartial, BaseEntity } from 'typeorm'
 import { ApolloError } from 'apollo-server-errors'
 import { Board } from '@M/KBF/entity/Board'
 import { find, head, uniq } from 'ramda'
-import { SearchByIDInput } from '@M/KBF/inputs/search-by-id.input'
-import { NotFoundByIDError } from '@/common/errors'
-
-export enum ErrorCodes2 {
-	LIMIT_REACHED = 'LIMIT_REACHED',
-	NOT_FOUND = 'NOT_FOUND',
-	VALIDATION_ERROR = 'VALIDATION_ERROR'
-}
+import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
+import { NotFoundByIDError, ErrorCodes2 } from '@/common/errors'
 
 export const MAX_TASK_NUMBER = 3
 

@@ -1,5 +1,5 @@
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
-import { SearchByIDInput } from '@M/KBF/inputs/search-by-id.input'
+import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
 import { Comment } from '@M/KBF/entity/Comment'
 import { CommentInput } from '@M/KBF/inputs/comment.input'
 import { Task } from '@M/KBF/entity/Task'

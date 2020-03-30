@@ -1,6 +1,6 @@
 import { Resolver, Query, Args } from '@nestjs/graphql'
 import { User } from '@M/KBF/entity/User'
-import { SearchByIDInput } from '@M/KBF/inputs/search-by-id.input'
+import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
 import Maybe from 'graphql/tsutils/Maybe'
 
 @Resolver()

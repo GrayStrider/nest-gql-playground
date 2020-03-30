@@ -8,6 +8,14 @@ import { EntityObject } from '@/common/decorators'
 export const nameLength = 20
 export const descriptionLength = 20
 
+export const defaultColors: [string, string, boolean][] = [
+	['White', 'FDFFFC', true],
+	['Green', '2EC4B6', false],
+	['Blue', '011627', false],
+	['Orange', 'FF9F1C', false],
+	['Red', '71D36', false]
+]
+
 @Unique (['name', 'board'])
 @EntityObject
 export class Color extends Base {
@@ -15,7 +23,8 @@ export class Color extends Base {
 	@Column ({ length: nameLength })
 	name: string
 	
-	@OneToMany (type => Task, task => task.color)
+	@OneToMany (type => Task,
+			task => task.color)
 	tasks: Task[]
 	
 	@Field ({ nullable: true })
@@ -33,7 +42,8 @@ export class Color extends Base {
 	@Column ({ default: false, type: 'bool' })
 	default: boolean
 	
-	@ManyToOne (type => Board, board => board.colors)
+	@ManyToOne (type => Board,
+			board => board.colors)
 	board: Board
 	
 }

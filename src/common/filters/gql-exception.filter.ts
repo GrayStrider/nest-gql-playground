@@ -1,5 +1,4 @@
 import { Catch, ExceptionFilter, ArgumentsHost } from '@nestjs/common'
-import { sig } from '@qdev/utils-ts'
 
 @Catch ()
 export class GqlExceptionFilter implements ExceptionFilter {
@@ -9,7 +8,10 @@ export class GqlExceptionFilter implements ExceptionFilter {
 		const request = ctx.getRequest ()
 		const next = ctx.getNext ()
 		
-		sig.debug(exception)
-		
+		if (exception.routine === '_bt_check_unique') {
+			throw new Error('unique constraint violation')
+		} else {
+			throw exception
+		}
 	}
 }

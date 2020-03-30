@@ -2,9 +2,9 @@ import { Resolver, Args, Mutation } from '@nestjs/graphql'
 import { Color } from '@M/KBF/entity/Color'
 import { Board } from '@M/KBF/entity/Board'
 import { ApolloError } from 'apollo-server-errors'
-import { ErrorCodes2 } from '@M/KBF/resolvers/task.resolver'
 import { NewColorInput } from '@M/KBF/inputs/color.input'
 import { find } from 'ramda'
+import { ErrorCodes2 } from '@/common/errors'
 
 @Resolver ()
 export class ColorResolver {
