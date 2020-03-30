@@ -59,14 +59,12 @@ export class TaskResolver {
 		
 		let taskData: DeepPartial<Task> = {}
 		
-		const board = await Board.findOne ({ name: boardName })
-		if (!board) {
-			throw new ApolloError (`Board <${boardName}> not found`,
+		const board = toDefault(
+			await Board.findOne ({ name: boardName }),
+			new ApolloError (`Board <${boardName}> not found`,
 				ErrorCodes2.NOT_FOUND,
 				{ requestedName: boardName })
-		} else {
-			taskData = { ...taskData, board }
-		}
+		)
 		
 		if (colorName) {
 			const color = find (c => c.name === colorName,
@@ -137,7 +135,7 @@ export class TaskResolver {
 		
 		
 		return await Task.create ({
-			...rest, ...taskData
+			...rest, ...taskData, board
 		}).save ()
 	}
 	
