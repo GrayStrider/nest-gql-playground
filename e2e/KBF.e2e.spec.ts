@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import { KBFModule } from '@M/KBF/KBF.module'
-import { supertest, Post, Req, isSE } from '@qdev/utils-ts'
+import { supertest, Post, Req, isSE, chance } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
 import { Board } from '@M/KBF/entity/Board'
 import { defaultColors, defaultColumns } from '@M/KBF/resolvers/board.resolver'
@@ -131,7 +131,7 @@ describe ('Task', () => {
               boardName: "",
               title: "",
               description: "",
-              tagLabels: ["", ""],
+              tagNames: ["", ""],
               colorName: "",
               columnName: "",
               swimlaneName: ""
@@ -152,6 +152,18 @@ describe ('Task', () => {
       }`)
 			shouldHaveFailedValidation (res)
 
+    })
+    it ('should handle not found', async () => {
+			expect.assertions (2)
+      const [task, errors] = await post<Task>
+      (gql`query {
+          task(id: "${chance.guid()}") {
+              id
+          }
+      }`)
+			isSE (task, null)
+			isSE (head (errors)?.extensions?.code,
+				ErrorCodes2.NOT_FOUND)
     })
   })
   it ('should add task min', async () => {
@@ -179,7 +191,7 @@ describe ('Task', () => {
 			description: 'MAX',
 			colorName: 'Orange',
 			boardName: testBoardName,
-			tagLabels: ['home', 'chores', 'work'],
+			tagNames: ['home', 'chores', 'work'],
 			swimlaneName: 'Default',
 			columnName: 'To-do',
 			completed: true
@@ -346,13 +358,26 @@ describe ('Comment', () => {
       (gql`query {
           comments(data: {
               taskID: "",
-              authorID: "",
+              userID: "",
               text: ""
           }) {
               text
           }
       }`)
-	    shouldHaveFailedValidation(res, 3)
+			shouldHaveFailedValidation (res, 3)
+    })
+	  
+    it ('should handle not found', async () => {
+			expect.assertions (2)
+      const [comment, errors] = await post<Comment>
+      (gql`query {
+          comment(id: "${chance.guid()}") {
+              id
+          }
+      }`)
+			isSE (comment, null)
+			isSE (head (errors)?.extensions?.code,
+				ErrorCodes2.NOT_FOUND)
     })
   })
 
