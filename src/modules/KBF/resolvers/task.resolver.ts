@@ -3,31 +3,15 @@ import { Task } from '@M/KBF/entity/Task'
 import { TaskInput, TaskSearchInput } from '@M/KBF/inputs/task.input'
 import { Promise as bb } from 'bluebird'
 import { Tag } from '@M/KBF/entity/Tag'
-import { DeepPartial, BaseEntity } from 'typeorm'
+import { BaseEntity } from 'typeorm'
 import { ApolloError } from 'apollo-server-errors'
 import { Board } from '@M/KBF/entity/Board'
 import { find, head, uniq } from 'ramda'
 import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
-import { NotFoundByIDError, ErrorCodes2 } from '@/common/errors'
+import Errors, { ErrorCodes2 } from '@/common/errors'
 import { toDefault } from '@qdev/utils-ts'
 
-
 export const MAX_TASK_NUMBER = 3
-
-export const checkIfMaxReached =
-	async <C extends typeof BaseEntity>
-	(numberOf: string, entity: C, max = 10.000) => {
-		const count = await entity.count ({
-			take: max
-		})
-		
-		if (count >= max) throw new ApolloError
-		(`You've reached the maximum allowed amount of ${numberOf}: ${max}`, ErrorCodes2.LIMIT_REACHED,
-			{
-				entity: entity.name,
-				max
-			})
-	}
 
 @Resolver ()
 export class TaskResolver {
@@ -41,18 +25,15 @@ export class TaskResolver {
 	
 	@Query (returns => Task)
 	async task (@Args () { id }: SearchByIDInput): Promise<Task> {
-		const [task] = await bb.all ([
-			Task.findOne (id)
-		])
-		return toDefault (task, NotFoundByIDError ('task', id))
+		return toDefault (
+			await Task.findOne (id),
+			new Errors.NotFound ('Task not found', { id }))
 	}
 	
 	@Mutation (returns => Task)
 	async addTask (
 		@Args ('data') data: TaskInput): Promise<Task> {
 		const { tagNames, colorName, columnName, swimlaneName, boardName, dates, ...rest } = data
-		
-		let taskData: DeepPartial<Task> = {}
 		
 		const board = toDefault (
 			await Board.findOne ({ name: boardName }),
@@ -68,7 +49,7 @@ export class TaskResolver {
 					ErrorCodes2.NOT_FOUND, { requestedColor: colorName }))
 			: find (c => c.default, board.colors)
 		
-		const tags = await bb.reduce (uniq (toDefault(tagNames, [])),
+		const tags = await bb.reduce (uniq (toDefault (tagNames, [])),
 			async (acc: Tag[], name) => {
 				const tag = await Tag.findOne ({ name, board })
 					?? Tag.create ({ name, board })
@@ -100,10 +81,21 @@ export class TaskResolver {
 		}
 		
 		
-		return await Task.create ({
-			...rest, ...taskData, board, tags, color, column, swimlane
-		}).save ()
+		return await Task.create
+		({ ...rest, board, tags, color, column, swimlane }).save ()
 	}
 	
 }
 
+export async function checkIfMaxReached<C extends typeof BaseEntity> (numberOf: string, entity: C, max = 10.000) {
+	const count = await entity.count ({
+		take: max
+	})
+	
+	if (count >= max) throw new ApolloError
+	(`You've reached the maximum allowed amount of ${numberOf}: ${max}`, ErrorCodes2.LIMIT_REACHED,
+		{
+			entity: entity.name,
+			max
+		})
+}

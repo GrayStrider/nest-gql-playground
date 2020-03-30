@@ -57,4 +57,5 @@ export const NotFoundByIDError = (name: string, id: string) => new ApolloError (
 	ErrorCodes2.NOT_FOUND, {
 		providedID: id
 	})
+
 export { ErrorCodes2, userNotFoundError, makeCustomError, IExpectedError }
