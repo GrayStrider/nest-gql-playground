@@ -10,7 +10,7 @@ import { find, head, uniq } from 'ramda'
 import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
 import { NotFoundByIDError, ErrorCodes2 } from '@/common/errors'
 import { Swimlane } from '@M/KBF/entity/Swimlane'
-import { getOrThrow } from '@qdev/utils-ts'
+import { toDefault } from '@qdev/utils-ts'
 
 
 export const MAX_TASK_NUMBER = 3
@@ -45,8 +45,7 @@ export class TaskResolver {
 		const [task] = await bb.all ([
 			Task.findOne (id)
 		])
-		
-		return getOrThrow(task, NotFoundByIDError ('task', id))
+		return toDefault(task, NotFoundByIDError ('task', id))
 	}
 	
 	@Mutation (returns => Task)
