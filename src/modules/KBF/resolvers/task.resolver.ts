@@ -59,17 +59,15 @@ export class TaskResolver {
 			await Board.findOne ({ name: boardName }),
 			new ApolloError (`Board <${boardName}> not found`,
 				ErrorCodes2.NOT_FOUND,
-				{ requestedName: boardName })
-		)
+				{ requestedName: boardName }))
 		
 		const color = colorName
-		? toDefault (
+			? toDefault (
 				board.colors.find (c => c.name === colorName),
 				new ApolloError
 				(`Color <${colorName}> doesn't exist on board <${boardName}>`,
-					ErrorCodes2.NOT_FOUND, { requestedColor: colorName })
-			)
-			:find (c => c.default, board.colors)
+					ErrorCodes2.NOT_FOUND, { requestedColor: colorName }))
+			: find (c => c.default, board.colors)
 		
 		const tags = await bb.reduce (uniq (tagNames ?? []),
 			async (acc: Tag[], name) => {
@@ -80,18 +78,13 @@ export class TaskResolver {
 		)
 		
 		
-		if (columnName) {
-			const column = find
-			(c => c.name === columnName, board.columns)
-			if (!column) throw new ApolloError
-			(`Column <${columnName}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND, {
-				requestedColumn: columnName
-			})
-			taskData = { ...taskData, column }
-		} else {
-			const column = head (board.columns)
-			taskData = { ...taskData, column }
-		}
+		const column = columnName
+			? toDefault (
+				board.columns.find (c => c.name === columnName),
+				new ApolloError
+				(`Column <${columnName}> doesn't exist on board <${boardName}>`, ErrorCodes2.NOT_FOUND,
+					{ requestedColumn: columnName }))
+			: head (board.columns)
 		
 		const swimlane = ({ swimlanes }: Board, name: string): Swimlane => {
 			if (name) {
@@ -123,7 +116,7 @@ export class TaskResolver {
 		
 		
 		return await Task.create ({
-			...rest, ...taskData, board, tags, color
+			...rest, ...taskData, board, tags, color, column
 		}).save ()
 	}
 	
