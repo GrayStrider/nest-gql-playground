@@ -2,11 +2,16 @@ import { InputType, Field } from '@nestjs/graphql'
 import { FieldNullable, ValidString } from '@/common/decorators/validation'
 import { IsUUID, IsBoolean, ArrayNotEmpty } from 'class-validator'
 import { nameLength, descriptionLength } from '@M/KBF/entity/Tag'
+import * as Board from '@M/KBF/entity/Board'
 
 @InputType ()
 export class TagInput {
+	@Field ()
+	@ValidString (Board.nameLength)
+	boardName: string
+	
 	@FieldNullable ([String])
-	@ArrayNotEmpty()
+	@ArrayNotEmpty ()
 	@IsUUID ('all', { each: true })
 	tasksIDs: string[]
 	
