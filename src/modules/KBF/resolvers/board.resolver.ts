@@ -9,33 +9,29 @@ import { FindBoardInput, AddBoardInput } from '@M/KBF/inputs/board.input'
 @Resolver ()
 export class BoardResolver {
 	@Query (returns => [Board])
-	async boards ()
-		: Promise<Board[]> {
+	async boards (): Promise<Board[]> {
 		return Board.find ()
 	}
 	
 	@Query (returns => Board)
-	async board (@Args () { name }: FindBoardInput)
-		: Promise<Maybe<Board>> {
+	async board (@Args () { name }: FindBoardInput): Promise<Maybe<Board>> {
 		return await Board.findOne ({ name })
 	}
 	
 	
 	@Mutation (returns => Board)
-	async addBoard (@Args ('data')
-		                  { name, columnsParams, swimlaneNames }: AddBoardInput)
-		: Promise<Board> {
+	async addBoard (@Args ('data') data: AddBoardInput): Promise<Board> {
+		const { name, columnsParams, swimlaneNames } = data
+		
 		const colors = defaultColors.map
 		(([name, value, def]) => Color.create
 		({ name, value, default: def }))
 		
 		const columns = columnsParams
-			? columnsParams.map
-			(({ name, order, taskLimit }) => TColumn.create
-			({ name, order, taskLimit }))
+			? columnsParams.map (TColumn.create)
 			: defaultColumns.map
-			(([name, taskLimit], index) => TColumn.create
-			({ name, order: index, taskLimit }))
+			(([name, order, taskLimit]) => TColumn.create
+			({ name, order, taskLimit }))
 		
 		const swimlanes = swimlaneNames
 			? swimlaneNames.map (name => Swimlane.create ({ name }))

@@ -115,8 +115,8 @@ describe ('Board', () => {
 		(zipObj (['name', 'value', 'default'])))
 		
 		isSE (board.columns, defaultColumns.map
-		(([name, taskLimit], index) =>
-			({ name, order: index, taskLimit })))
+		(zipObj (['name', 'order', 'taskLimit'])))
+	 
 		isSE (board.swimlanes[0].name, 'Default')
   })
 })
