@@ -383,26 +383,60 @@ describe ('Comment', () => {
 
 describe ('User', () => {
   describe ('validation', () => {
-  	const invalidPasswords = [
-  		'', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
-		  'BBBBBBBBBBBB', '@@@@@@@@@@@@@',
-		  '33333333333333333', '_f4Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-	  ]
     it ('passwords', async () => {
-			expect.assertions (3 * invalidPasswords.length)
-	    for (const password of invalidPasswords) {
+	    const invalidPasswords = [
+		    '', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
+		    'BBBBBBBBBBBB', '@@@@@@@@@@@@@',
+		    '33333333333333333', '_f4Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+	    ]
+			expect.assertions
+			(3 * invalidPasswords.length)
+      for (const password of invalidPasswords) {
         const res = await post<User>
         (gql`mutation {
             register(data: {
                 name: "Ivan",
                 password: "${password}"
+		            confirmPassword: "${password}"
             }) {
                 name
             }
         }`)
-		    shouldHaveFailedValidation (res)
-		    }
+				shouldHaveFailedValidation (res)
+      }
 
     })
+	  it ('should compare passwords', async () => {
+	  	expect.assertions(3)
+      const res = await post<User>
+      (gql`mutation {
+          register(data: {
+              name: "Ivan"
+              password: "aG2_ddddddd"
+              confirmPassword: "aG2_dddddd"
+          }) {
+              id
+          }
+      }`)
+		  shouldHaveFailedValidation(res)
+	   
+	   
+	   
+	  })
+  })
+  it ('should create user', async () => {
+		expect.assertions (1)
+    const [user, errors] = await post<User>
+    (gql`mutation {
+        register(data: {
+            name: "Ivan"
+            password: "aG2_ddddddd"
+            confirmPassword: "aG2_ddddddd"
+        }) {
+		        id
+        }
+    }`)
+	  expect (user.id).toBeUUID()
+
   })
 })

@@ -1,20 +1,18 @@
 import { InputType, Field } from '@nestjs/graphql'
-import { ValidString, FieldNullable, StrongPassword } from '@/common/decorators/validation'
+import { ValidString, StrongPassword } from '@/common/decorators/validation'
 import { nameLength } from '@M/KBF/entity/User'
-import { MaxLength, MinLength, IsString } from 'class-validator'
 
-@InputType()
+@InputType ()
 export class UserInput {
-	@Field()
-	@ValidString(nameLength, 4)
+	@Field ()
+	@ValidString (nameLength, 4)
 	name: string
 	
-	@FieldNullable()
+	@Field ()
 	@StrongPassword
-	password?: string
+	password: string
 	
-	@FieldNullable()
-	@StrongPassword
-	confirmPassword?: string
+	@Field ()
+	confirmPassword: string
 	
 }
