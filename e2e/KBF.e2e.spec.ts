@@ -14,6 +14,7 @@ import { FindBoardInput } from '@M/KBF/inputs/board.input'
 import { Comment } from '@M/KBF/entity/Comment'
 import { ErrorCodes } from '@/common/errors'
 import { defaultColumns } from '@M/KBF/entity/TColumn'
+import { User } from '@M/KBF/entity/User'
 
 let app: INestApplication
 let post: Post
@@ -116,7 +117,7 @@ describe ('Board', () => {
 		
 		isSE (board.columns, defaultColumns.map
 		(zipObj (['name', 'order', 'taskLimit'])))
-	 
+		
 		isSE (board.swimlanes[0].name, 'Default')
   })
 })
@@ -363,7 +364,7 @@ describe ('Comment', () => {
       }`)
 			shouldHaveFailedValidation (res, 3)
     })
-	  
+
     it ('should handle not found', async () => {
 			expect.assertions (2)
       const [comment, errors] = await post<Comment>
@@ -381,7 +382,27 @@ describe ('Comment', () => {
 })
 
 describe ('User', () => {
-	describe ('validation', () => {
-	
-	})
+  describe ('validation', () => {
+  	const invalidPasswords = [
+  		'', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
+		  'BBBBBBBBBBBB', '@@@@@@@@@@@@@',
+		  '33333333333333333', '_f4Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+	  ]
+    it ('passwords', async () => {
+			expect.assertions (3 * invalidPasswords.length)
+	    for (const password of invalidPasswords) {
+        const res = await post<User>
+        (gql`mutation {
+            register(data: {
+                name: "Ivan",
+                password: "${password}"
+            }) {
+                name
+            }
+        }`)
+		    shouldHaveFailedValidation (res)
+		    }
+
+    })
+  })
 })
