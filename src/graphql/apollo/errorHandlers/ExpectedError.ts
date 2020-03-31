@@ -1,9 +1,9 @@
 import { GraphQLError } from 'graphql'
 import { AnyObject } from 'tsdef'
-import { ErrorCodes2, IExpectedError } from '@/common/errors'
+import { ErrorCodes, IExpectedError } from '@/common/errors'
 
 const isExpectedError = (err: AnyObject) =>
-	Object.keys (ErrorCodes2).includes (err.extensions?.code)
+	Object.keys (ErrorCodes).includes (err.extensions?.code)
 
 export default function ExpectedError (err: GraphQLError<IExpectedError>) {
 	

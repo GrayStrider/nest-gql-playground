@@ -8,17 +8,10 @@ import { ApolloError } from 'apollo-server-errors'
 import { Board } from '@M/KBF/entity/Board'
 import { find, head, uniq } from 'ramda'
 import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
-import Errors, { ErrorCodes2 } from '@/common/errors'
+import Errors, { ErrorCodes, NotFoundByIDError } from '@/common/errors'
 import { toDefault } from '@qdev/utils-ts'
 
 export const MAX_TASK_NUMBER = 3
-
-export async function getBoard (boardName: string) {
-	return toDefault (
-		await Board.findOne ({ name: boardName }),
-		new Errors.NotFound
-		(`Board <${boardName}> not found`, { boardName }))
-}
 
 @Resolver ()
 export class TaskResolver {
@@ -34,7 +27,7 @@ export class TaskResolver {
 	async task (@Args () { id }: SearchByIDInput): Promise<Task> {
 		return toDefault (
 			await Task.findOne (id),
-			new Errors.NotFound ('Task not found', { id }))
+			NotFoundByIDError ('task', id))
 	}
 	
 	@Mutation (returns => Task)
@@ -69,19 +62,18 @@ export class TaskResolver {
 		
 		}
 		
-		const tags = tagNames
-			? await bb.reduce (uniq (tagNames),
-				async (acc: Tag[], name) => {
-					const tag = toDefault (
-						await Tag.findOne ({ name, board }),
-						Tag.create ({ name, board }))
-					return acc.concat (tag)
-				}, [])
-			: []
+		const tags = await bb.reduce
+		(uniq (toDefault (tagNames, [])),
+			async (acc: Tag[], name) => {
+				const tag = toDefault (
+					await Tag.findOne ({ name, board }),
+					Tag.create ({ name, board }))
+				return acc.concat (tag)
+			}, [])
 		
 		
 		return await Task.create
-		({ ...rest, board, tags, color, column, swimlane }).save ()
+		({ board, tags, color, column, swimlane, ...rest }).save ()
 	}
 	
 }
@@ -92,9 +84,16 @@ export async function checkIfMaxReached<C extends typeof BaseEntity> (numberOf: 
 	})
 	
 	if (count >= max) throw new ApolloError
-	(`You've reached the maximum allowed amount of ${numberOf}: ${max}`, ErrorCodes2.LIMIT_REACHED,
+	(`You've reached the maximum allowed amount of ${numberOf}: ${max}`, ErrorCodes.LIMIT_REACHED,
 		{
 			entity: entity.name,
 			max
 		})
+}
+
+export async function getBoard (boardName: string) {
+	return toDefault (
+		await Board.findOne ({ name: boardName }),
+		new Errors.NotFound
+		(`Board <${boardName}> not found`, { boardName }))
 }

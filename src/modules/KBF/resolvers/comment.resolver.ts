@@ -4,22 +4,17 @@ import { Comment } from '@M/KBF/entity/Comment'
 import { CommentInput } from '@M/KBF/inputs/comment.input'
 import { Task } from '@M/KBF/entity/Task'
 import { User } from '@M/KBF/entity/User'
-import { bb } from '@qdev/utils-ts'
+import { bb, toDefault } from '@qdev/utils-ts'
 import { NotFoundByIDError } from '@/common/errors'
 import { Like } from 'typeorm'
-import Maybe from 'graphql/tsutils/Maybe'
 
 @Resolver ()
 export class CommentResolver {
 	@Query (returns => Comment)
-	async comment (@Args () {id}: SearchByIDInput): Promise<Comment> {
-		const [comment] = await bb.all ([
-			Comment.findOne (id),
-		])
-		
-		if (!comment) throw NotFoundByIDError ('comment', id)
-		
-		return comment
+	async comment (@Args () { id }: SearchByIDInput): Promise<Comment> {
+		return toDefault (
+			await Comment.findOne (id),
+			NotFoundByIDError ('comment', id))
 	}
 	
 	@Query (returns => [Comment])

@@ -22,11 +22,9 @@ export class ColorResolver {
 		if (rest.default === true) {
 			board.colors.forEach ((c, i, a) => a[i].default = false)
 			await Color.save (board.colors)
-			
 		}
 		
-		return Color.create
-		({ board, name, ...rest }).save ()
+		return Color.create ({ board, name, ...rest }).save ()
 		
 	}
 	

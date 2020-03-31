@@ -3,9 +3,9 @@ import { Tag } from '@M/KBF/entity/Tag'
 import { TagInput } from '@M/KBF/inputs/tag.input'
 import { Task } from '@M/KBF/entity/Task'
 import { without, isEmpty } from 'ramda'
-import { NotFoundByIDError, ErrorCodes2 } from '@/common/errors'
-import { Board } from '@M/KBF/entity/Board'
-import { ApolloError } from 'apollo-server-errors'
+import Errors, { NotFoundByIDError } from '@/common/errors'
+import { getBoard } from '@M/KBF/resolvers/task.resolver'
+import { toDefault } from '@qdev/utils-ts'
 
 @Resolver ()
 export class TagResolver {
@@ -17,31 +17,26 @@ export class TagResolver {
 	@Mutation (returns => Tag)
 	async addTag (@Args ('data') data: TagInput): Promise<Tag> {
 		const { tasksIDs, boardName, name, ...rest } = data
-		const board = await Board.findOne ({ name: boardName })
-		if (!board) {
-			throw new ApolloError (`Board <${boardName}> not found`, ErrorCodes2.NOT_FOUND,
-				{
-					requestedName: boardName
-				})
-		}
+		const board = await getBoard (boardName)
 		
-		const exists = await Tag.find ({ name, board })
-		if (!isEmpty (exists)) {
-			throw new ApolloError (`Tag with the name <${name}> already exists: <${exists[0].id}>`,
-				ErrorCodes2.NOT_UNIQUE,
-				{ existingEntityID: exists[0].id })
-		}
+		toDefault (
+			!await Tag.findOne ({ name, board }),
+			new Errors.NotUnique (`Tag with the name <${name}> already exists on the board: <${boardName}>`,
+				{ boardName, name }))
 		
-		if (tasksIDs) {
-			const tasks = await Task.findByIds (tasksIDs)
-			const notFound = without (tasks.map (t => t.id), tasksIDs)
-			if (!isEmpty (notFound)) {
-				throw NotFoundByIDError ('task', notFound[0])
-			}
-			return Tag.create ({ name, board, tasks, ...rest }).save ()
-		}
+		const tasks = await getTasks (tasksIDs)
 		
-		return Tag.create ({ name, board, ...rest }).save ()
+		return Tag.create ({ name, board, tasks, ...rest }).save ()
 		
 	}
+}
+
+async function getTasks (lookupIDs: string[]) {
+	const tasks = await Task.findByIds (lookupIDs)
+	const notFound = without (tasks.map (t => t.id), lookupIDs)
+	if (!isEmpty (notFound)) {
+		throw NotFoundByIDError ('tasks',
+			notFound.join (', '))
+	}
+	return tasks
 }

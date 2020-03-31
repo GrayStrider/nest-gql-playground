@@ -26,7 +26,7 @@ function makeCustomError (
 	
 }
 
-enum ErrorCodes {
+export enum ErrorCodes {
 	'VALIDATION_ERROR' = 'VALIDATION_ERROR',
 	'NOT_FOUND' = 'NOT_FOUND',
 	'UNATHORIZED' = 'UNATHORIZED',
@@ -58,7 +58,7 @@ enum ErrorCodes2 {
 export const NotFoundByIDError = (name: string, id: string) => new ApolloError (`${capitalize(name)} ${truncate (id, {
 		length: 10
 	})} was not found`,
-	ErrorCodes2.NOT_FOUND, {
+	ErrorCodes.NOT_FOUND, {
 		providedID: id
 	})
 

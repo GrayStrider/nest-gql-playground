@@ -12,7 +12,7 @@ import { NewColorInput } from '@M/KBF/inputs/color.input'
 import { GraphQLError } from 'graphql'
 import { FindBoardInput } from '@M/KBF/inputs/board.input'
 import { Comment } from '@M/KBF/entity/Comment'
-import { ErrorCodes2 } from '@/common/errors'
+import { ErrorCodes } from '@/common/errors'
 import { defaultColumns } from '@M/KBF/entity/TColumn'
 
 let app: INestApplication
@@ -32,7 +32,7 @@ beforeAll (async () => {
 
 export const shouldHaveFailedValidation = ([data, errors]: [any, GraphQLError[]], amount = 1) => {
 	isSE (data, null)
-	isSE (head (errors)?.extensions?.code, ErrorCodes2.VALIDATION_ERROR)
+	isSE (head (errors)?.extensions?.code, ErrorCodes.VALIDATION_ERROR)
 	if (amount)
 		isSE (head (errors)
 			?.extensions?.validationErrors.length, amount)
@@ -163,7 +163,7 @@ describe ('Task', () => {
       }`)
 			isSE (task, null)
 			isSE (head (errors)?.extensions?.code,
-				ErrorCodes2.NOT_FOUND)
+				ErrorCodes.NOT_FOUND)
     })
   })
   it ('should add task min', async () => {
@@ -334,10 +334,7 @@ describe ('Color', () => {
 		isSE (color, null)
 		expect (head (errors)?.message).toBeString ()
 
-
   })
-
-
 })
 
 describe ('Comment', () => {
@@ -377,7 +374,7 @@ describe ('Comment', () => {
       }`)
 			isSE (comment, null)
 			isSE (head (errors)?.extensions?.code,
-				ErrorCodes2.NOT_FOUND)
+				ErrorCodes.NOT_FOUND)
     })
   })
 
