@@ -475,4 +475,20 @@ describe ('User', () => {
 		(ers, ErrorCodes.UNATHORIZED)
 
   })
+	
+	it ('should check email', async () => {
+		expect.assertions (2)
+    const [user, ers] = await post<User>
+    (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+        loginWithEmail(data: $data) {
+            id
+            name
+        }
+    }`, { data: credsBadEmail })
+		console.log(ers)
+		isSE(user, null)
+		shouldHaveErrorCode
+		(ers, ErrorCodes.UNATHORIZED)
+	 
+	})
 })
