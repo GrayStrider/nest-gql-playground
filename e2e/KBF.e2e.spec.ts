@@ -407,9 +407,10 @@ const credsBadEmail = {
 	email: 'foobar23948234@bad.com'
 }
 
-describe ('User', () => {
+
+describe ('Auth', () => {
   describe ('validation', () => {
-    it ('passwords', async () => {
+    it ('should validate complexity of passwords', async () => {
 			const invalidPasswords = [
 				'', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
 				'BBBBBBBBBBBB', '@@@@@@@@@@@@@',
@@ -444,12 +445,9 @@ describe ('User', () => {
       }`, { testUser: user })
 			shouldHaveFailedValidation (res, 0)
     })
-		it ('should keep emails unique', async () => {
-		
-		
-		})
+
   })
-  it ('should create user', async () => {
+  it ('should sign up with email and passsword', async () => {
 		expect.assertions (1)
     const [user, errors] = await post<User>
     (gql`mutation Register($testUser: UserInput!) {
@@ -459,7 +457,20 @@ describe ('User', () => {
     }`, { testUser })
 		expect (user.id).toBeUUID ()
   })
-
+	
+	it ('should keep emails unique', async () => {
+		expect.assertions (1)
+    const res = await post<User>
+    (gql`mutation Register($testUser: UserInput!) {
+        register(data: $testUser) {
+            id
+        }
+    }`, { testUser })
+		shouldHaveErrorCode(res[1],
+			ErrorCodes.NOT_UNIQUE)
+		
+	})
+	
   it ('should check password', async () => {
 		expect.assertions (2)
     const [user, ers] = await post<User>
@@ -469,14 +480,14 @@ describe ('User', () => {
             name
         }
     }`, { data: credsWrongPass })
-	  console.log(ers)
-	  isSE(user, null)
+		console.log(ers)
+		isSE(user, null)
 		shouldHaveErrorCode
 		(ers, ErrorCodes.UNATHORIZED)
 
   })
-	
-	it ('should check email', async () => {
+
+  it ('should check email', async () => {
 		expect.assertions (2)
     const [user, ers] = await post<User>
     (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
@@ -489,6 +500,11 @@ describe ('User', () => {
 		isSE(user, null)
 		shouldHaveErrorCode
 		(ers, ErrorCodes.UNATHORIZED)
-	 
-	})
+
+  })
+})
+
+describe ('User', () => {
+
+
 })
