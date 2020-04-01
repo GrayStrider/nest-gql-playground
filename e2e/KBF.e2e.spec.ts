@@ -18,10 +18,14 @@ import { User } from '@M/KBF/entity/User'
 import { APP_FILTER } from '@nestjs/core'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 import { UserInput } from '@M/KBF/inputs/user.input'
+import { makeRedis } from '@M/redis/redis.provider'
+import { Redis } from 'ioredis'
+
 
 let app: INestApplication
 let post: Post
 let req: Req
+let redis: Redis
 const testBoardName = 'test board'
 
 beforeAll (async () => {
@@ -35,6 +39,9 @@ beforeAll (async () => {
 	app = moduleFixture.createNestApplication ()
 	await app.init ()
 	;({ post, req } = supertest (app.getHttpServer ()))
+	redis = makeRedis ()
+	await redis.flushdb()
+	
 })
 
 const shouldHaveFailedValidation = ([data, errors]: [any, GraphQLError[]], amount = 1) => {
