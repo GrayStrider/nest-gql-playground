@@ -6,12 +6,13 @@ import { TimeoutInterceptor } from '@/common/interceptors/timeout.interceptor'
 import { PORT, HOST, NODE_ENV } from '@config'
 import { sig } from '@qdev/utils-ts'
 import { AppModule } from '@M/app/app.module'
+import { KBFModule } from '@M/KBF/KBF.module'
 
 
 async function bootstrap () {
 	if (!NODE_ENV) sig.error ('process.env is undefined!')
 	else sig.info (`Environment: ${NODE_ENV}`)
-	const app = await NestFactory.create <NestExpressApplication> (AppModule)
+	const app = await NestFactory.create <NestExpressApplication> (KBFModule)
 	await app.listen (PORT)
 	sig.success (`Application is running on: http://${HOST}:${PORT}`)
 }
