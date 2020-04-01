@@ -138,7 +138,6 @@ describe ('Board', () => {
 		isSE (board.swimlanes[0].name, 'Default')
   })
 })
-
 describe ('Task', () => {
   describe ('validation', () => {
     it ('TaskInput', async () => {
@@ -270,7 +269,6 @@ describe ('Task', () => {
 
   })
 })
-
 describe ('Color', () => {
   describe ('validation', () => {
     it ('NewColorInput', async () => {
@@ -354,7 +352,6 @@ describe ('Color', () => {
 
   })
 })
-
 describe ('Comment', () => {
   describe ('validation', () => {
     it ('ID', async () => {
@@ -397,26 +394,24 @@ describe ('Comment', () => {
   })
 
 })
-const testUser: UserInput = {
-	name: 'Ivan',
-	password: 'aG2_ddddddd',
-	email: 'test@test.com',
-	confirmPassword: 'aG2_ddddddd'
-}
-const credsOK = pick
-(['email', 'password'], testUser)
-const credsWrongPass = {
-	...credsOK,
-	password: 'aG2_ddddddd____'
-}
-const credsBadEmail = {
-	...credsOK,
-	email: 'foobar23948234@bad.com'
-}
-
-
 describe ('Auth', () => {
-  describe ('validation', () => {
+	const testUser: UserInput = {
+		name: 'Ivan',
+		password: 'aG2_ddddddd',
+		email: 'test@test.com',
+		confirmPassword: 'aG2_ddddddd'
+	}
+	const credsOK = pick
+	(['email', 'password'], testUser)
+	const credsWrongPass = {
+		...credsOK,
+		password: 'aG2_ddddddd____'
+	}
+	const credsBadEmail = {
+		...credsOK,
+		email: 'foobar23948234@bad.com'
+	}
+	describe ('validation', () => {
     it ('should validate complexity of passwords', async () => {
 			const invalidPasswords = [
 				'', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',

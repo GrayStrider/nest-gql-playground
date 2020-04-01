@@ -2,7 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
 import { Request, Response } from 'express'
-import { formattedMessage } from '@/common/message'
+import { formattedMessage } from '@/common/formatted-message'
 import { sig } from '@qdev/utils-ts'
 import chalk from 'chalk'
 

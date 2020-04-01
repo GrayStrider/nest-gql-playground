@@ -4,8 +4,7 @@ import { TaskResolver } from '@M/KBF/resolvers/task.resolver'
 import { BoardResolver } from '@M/KBF/resolvers/board.resolver'
 import { DBModule } from '@M/db/db.module'
 import { ColorResolver } from '@M/KBF/resolvers/color.resolver'
-import { APP_PIPE, APP_INTERCEPTOR, APP_FILTER, APP_GUARD } from '@nestjs/core'
-import { validatorOptions } from '@M/cats/config/validator'
+import { APP_PIPE, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core'
 import { ApolloError } from 'apollo-server-errors'
 import { prop } from 'ramda'
 import { CommentResolver } from '@M/KBF/resolvers/comment.resolver'
@@ -23,11 +22,7 @@ import { get } from 'config'
 import { TimeoutInterceptor } from '@/common/interceptors/timeout.interceptor'
 import { LoggingInterceptor } from '@/common/interceptors/logging.interceptor'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
-import { GqlAuthGuard } from '@M/auth/guards/gql-auth.guard'
-
-const dataSources = () => ({
-	catFacts: new CatFactsAPI ()
-})
+import { validatorOptions } from '@config'
 
 interface ExpresssCtx {
 	req: Request
