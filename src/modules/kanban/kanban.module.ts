@@ -34,10 +34,6 @@ const GqlValidationPipe = new ValidationPipe ({
 })
 
 @Module ({
-	imports: [
-		GqlModule,
-		DBModule
-	],
 	providers: [
 		BoardResolver,
 		TaskResolver,

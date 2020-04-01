@@ -5,8 +5,10 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import { get } from 'config'
 import { makeRedis } from '@M/redis/redis.provider'
-import ConnectRedis from "connect-redis"
+import ConnectRedis from 'connect-redis'
 import { RedisPubSub } from 'graphql-redis-subscriptions'
+import { GqlModule } from '@M/gql/gql.module'
+import { DBModule } from '@M/db/db.module'
 
 const RedisStore = ConnectRedis (session)
 
@@ -16,7 +18,12 @@ const redisPubSub = new RedisPubSub ({
 })
 
 @Module ({
-	imports: [KanbanModule],
+	imports: [
+		KanbanModule,
+		
+		GqlModule,
+		DBModule
+	],
 	providers: [
 		{ provide: REDIS.SESSION, useValue: makeRedis () },
 		{ provide: REDIS.PUBSUB, useValue: redisPubSub }
