@@ -15,6 +15,8 @@ import { Comment } from '@M/KBF/entity/Comment'
 import { ErrorCodes } from '@/common/errors'
 import { defaultColumns } from '@M/KBF/entity/TColumn'
 import { User } from '@M/KBF/entity/User'
+import { APP_FILTER } from '@nestjs/core'
+import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 
 let app: INestApplication
 let post: Post
@@ -24,7 +26,10 @@ const testBoardName = 'test board'
 beforeAll (async () => {
 	jest.setTimeout (20000)
 	const moduleFixture = await Test.createTestingModule ({
-		imports: [KBFModule]
+		imports: [KBFModule],
+		providers: [
+			{ provide: APP_FILTER, useClass: GqlExceptionFilter }
+		]
 	}).compile ()
 	app = moduleFixture.createNestApplication ()
 	await app.init ()
@@ -384,11 +389,11 @@ describe ('Comment', () => {
 describe ('User', () => {
   describe ('validation', () => {
     it ('passwords', async () => {
-	    const invalidPasswords = [
-		    '', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
-		    'BBBBBBBBBBBB', '@@@@@@@@@@@@@',
-		    '33333333333333333', '_f4Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-	    ]
+			const invalidPasswords = [
+				'', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
+				'BBBBBBBBBBBB', '@@@@@@@@@@@@@',
+				'33333333333333333', '_f4Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+			]
 			expect.assertions
 			(3 * invalidPasswords.length)
       for (const password of invalidPasswords) {
@@ -397,7 +402,7 @@ describe ('User', () => {
             register(data: {
                 name: "Ivan",
                 password: "${password}"
-		            confirmPassword: "${password}"
+                confirmPassword: "${password}"
             }) {
                 name
             }
@@ -406,8 +411,8 @@ describe ('User', () => {
       }
 
     })
-	  it ('should compare passwords', async () => {
-	  	expect.assertions(3)
+    it ('should compare passwords', async () => {
+			expect.assertions (3)
       const res = await post<User>
       (gql`mutation {
           register(data: {
@@ -418,11 +423,10 @@ describe ('User', () => {
               id
           }
       }`)
-		  shouldHaveFailedValidation(res)
-	   
-	   
-	   
-	  })
+			shouldHaveFailedValidation (res)
+
+
+    })
   })
   it ('should create user', async () => {
 		expect.assertions (2)
@@ -433,11 +437,11 @@ describe ('User', () => {
             password: "aG2_ddddddd"
             confirmPassword: "aG2_ddddddd"
         }) {
-		        id
+            id
         }
     }`)
-	  expect (user.id).toBeUUID()
+		expect (user.id).toBeUUID ()
 		expect (user.password)
-			.toHaveLength(60)
+			.toHaveLength (60)
   })
 })
