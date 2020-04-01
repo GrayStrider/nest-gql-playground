@@ -1,4 +1,4 @@
-import { Module, Inject, MiddlewareConsumer } from '@nestjs/common'
+import { Module, Inject, MiddlewareConsumer, ValidationPipe } from '@nestjs/common'
 import { KanbanModule } from '@M/kanban/kanban.module'
 import { REDIS, Redis } from '@/common/constants'
 import cookieParser from 'cookie-parser'
@@ -9,12 +9,25 @@ import ConnectRedis from 'connect-redis'
 import { RedisPubSub } from 'graphql-redis-subscriptions'
 import { GqlModule } from '@M/gql/gql.module'
 import { DBModule } from '@M/db/db.module'
+import { APP_PIPE } from '@nestjs/core'
+import { validatorOptions } from '@config'
+import { ApolloError } from 'apollo-server-errors'
+import { ErrorCodes } from '@/common/errors'
 
 const RedisStore = ConnectRedis (session)
 
 const redisPubSub = new RedisPubSub ({
 	publisher: makeRedis (),
 	subscriber: makeRedis ()
+})
+
+const validationPipe = new ValidationPipe ({
+	...validatorOptions,
+	exceptionFactory (errors) {
+		const validationErrors = errors.map (e => e.constraints)
+		
+		return new ApolloError (`Validation failed with ${errors.length} errors`, ErrorCodes.VALIDATION_ERROR, { validationErrors })
+	}
 })
 
 @Module ({
@@ -26,7 +39,9 @@ const redisPubSub = new RedisPubSub ({
 	],
 	providers: [
 		{ provide: REDIS.SESSION, useValue: makeRedis () },
-		{ provide: REDIS.PUBSUB, useValue: redisPubSub }
+		{ provide: REDIS.PUBSUB, useValue: redisPubSub },
+		
+		{ provide: APP_PIPE, useValue: validationPipe },
 	]
 })
 export class AppModule {
