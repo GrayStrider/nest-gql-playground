@@ -4,19 +4,26 @@ import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
 import Maybe from 'graphql/tsutils/Maybe'
 import { UserInput } from '@M/KBF/inputs/user.input'
 import Errors from '@/common/errors'
+import { hash } from 'bcryptjs'
+
 
 @Resolver ()
 export class UserResolver {
 	@Query (returns => User)
-	async user (@Args () data: SearchByIDInput): Promise<Maybe<User>> {
-		return User.findOne (data)
+	async user (@Args () { id }: SearchByIDInput): Promise<Maybe<User>> {
+		return User.findOne (id, {
+			select: []
+		})
 	}
 	
 	@Mutation (returns => User)
 	async register (@Args ('data') data: UserInput): Promise<User> {
-		const { name, password, confirmPassword } = data
-		if (password !== confirmPassword)
+		const { name, confirmPassword } = data
+		if (data.password !== confirmPassword)
 			throw new Errors.Validation ('Passwords don\'t match')
-		return User.create ()
+		
+		const password = await hash (data.password, 10)
+		
+		return User.create ({ name, password }).save ()
 	}
 }

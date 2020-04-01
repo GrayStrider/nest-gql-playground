@@ -425,7 +425,7 @@ describe ('User', () => {
 	  })
   })
   it ('should create user', async () => {
-		expect.assertions (1)
+		expect.assertions (2)
     const [user, errors] = await post<User>
     (gql`mutation {
         register(data: {
@@ -437,6 +437,7 @@ describe ('User', () => {
         }
     }`)
 	  expect (user.id).toBeUUID()
-
+		expect (user.password)
+			.toHaveLength(60)
   })
 })
