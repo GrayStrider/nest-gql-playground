@@ -3,6 +3,7 @@ import { get } from 'config'
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
 import { CustomLogger } from '@M/db/utils/logger'
 import { TypeOrmModuleOptions } from '@nestjs/typeorm'
+import { ValidationPipeOptions } from '@nestjs/common'
 
 process.env.ALLOW_CONFIG_MUTATIONS = 'true'
 
@@ -20,6 +21,14 @@ const GQL_URL = `http://${HOST}:${PORT}/${process.env.endpoint ?? 'graphql'}`
 const SERVER_URL = `http://${HOST}:${PORT}`
 const APOLLO_ENGINE_API_KEY: string = process.env.ENGINE_API_KEY ?? get ('apollo.engine')
 const JWT_SECRET: string = get('JWT.secret')
+
+export const validatorOptions: ValidationPipeOptions = {
+	skipMissingProperties: false,
+	forbidUnknownValues: true,
+	skipNullProperties: false,
+	skipUndefinedProperties: false,
+}
+
 
 const TypeormConfig: TypeOrmModuleOptions = {
 	name: 'default',
