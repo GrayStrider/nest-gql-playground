@@ -1,6 +1,8 @@
 import { Resolver, Mutation, Context as Ctx } from '@nestjs/graphql'
 import { MyContext } from '@M/gql/gql.module'
+import { NoAuth } from '@M/kanban/resolvers/user.resolver'
 
+@NoAuth
 @Resolver ()
 export class AuthResolver {
 	@Mutation (returns => Boolean)

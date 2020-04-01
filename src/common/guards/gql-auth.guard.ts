@@ -33,8 +33,7 @@ export class GqlAuthGuard implements CanActivate {
 			http.getResponse (),
 			http.getNext ()
 		]
-		const noAuth = this.reflector.get<Boolean>('no-auth', handler)
-		console.log(noAuth)
+		const noAuth = this.reflector.getAllAndOverride<Boolean>('no-auth', [handler, class_])
 		if (noAuth) return true
 		
 		console.log(ctx.user)
