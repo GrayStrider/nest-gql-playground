@@ -12,7 +12,7 @@ export class TagInput {
 	
 	@FieldNullable ([String])
 	@ArrayNotEmpty ()
-	@IsUUID ('all', { each: true })
+	@IsUUID (undefined, { each: true })
 	tasksIDs: string[]
 	
 	@Field ()

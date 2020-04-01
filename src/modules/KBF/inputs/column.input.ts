@@ -11,7 +11,7 @@ export class ColumnInput {
 	name: string
 	
 	@FieldNullable ([String])
-	@IsUUID ('all', { each: true })
+	@IsUUID (undefined, { each: true })
 	tasksIDs?: string[]
 	
 	@FieldNullable ()

@@ -13,7 +13,7 @@ import { SubbtaskInput } from '@M/KBF/inputs/subbtask.input'
 @InputType()
 export class TaskSearchInput {
 	@FieldNullable([String])
-	@ValidString (Board.nameLength, true)
+	@ValidString (Board.nameLength, 1, true)
 	boardNames?: string[]
 }
 
@@ -62,7 +62,7 @@ export class TaskInput {
 	responsibleUserID?: string
 	
 	@FieldNullable ([String])
-	@IsUUID ('all', { each: true })
+	@IsUUID (undefined, { each: true })
 	collaboratorsIDs?: string[]
 	
 	@FieldNullable ([SubbtaskInput])

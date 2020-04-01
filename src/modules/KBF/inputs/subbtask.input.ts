@@ -10,7 +10,7 @@ export class SubbtaskInput {
 	parentTaskID: string
 	
 	@Field (returns => [String])
-	@IsUUID ('all', { each: true })
+	@IsUUID (undefined, { each: true })
 	@ArrayNotEmpty()
 	responsibleUsersIDs: string[]
 	
