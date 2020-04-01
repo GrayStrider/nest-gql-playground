@@ -1,7 +1,7 @@
 import { Module, NestModule, MiddlewareConsumer, Inject, ValidationPipe } from '@nestjs/common'
 import { AuthModule } from '@M/auth/auth.module'
 import { get } from 'config'
-import session, { SessionOptions } from 'express-session'
+import session from 'express-session'
 import ConnectRedis from 'connect-redis'
 import { APP_INTERCEPTOR, APP_FILTER, APP_PIPE } from '@nestjs/core'
 import { LoggingInterceptor } from '@/common/interceptors/logging.interceptor'
@@ -12,7 +12,6 @@ import { HelloModule } from '@M/hello/hello.module'
 import { REDIS, Redis } from '@/common/constants'
 import { makeRedis } from '@M/redis/redis.provider'
 import { RedisPubSub } from 'graphql-redis-subscriptions'
-import { HttpExceptionFilter } from '@/common/filters/http-exception.filter'
 import { TimeoutInterceptor } from '@/common/interceptors/timeout.interceptor'
 import { validatorOptions } from '@M/cats/config/validator'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
@@ -34,8 +33,8 @@ const redisPubSub = new RedisPubSub ({
 	providers: [
 		{ provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
 		{ provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
-		{ provide: APP_PIPE, useValue: new ValidationPipe(validatorOptions) },
-		{provide: APP_FILTER, useClass: GqlExceptionFilter},
+		{ provide: APP_PIPE, useValue: new ValidationPipe (validatorOptions) },
+		{ provide: APP_FILTER, useClass: GqlExceptionFilter },
 		{ provide: REDIS.SESSION, useValue: makeRedis () },
 		{ provide: REDIS.PUBSUB, useValue: redisPubSub }
 	]

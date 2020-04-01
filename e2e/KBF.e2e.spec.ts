@@ -447,61 +447,89 @@ describe ('Auth', () => {
     })
 
   })
-  it ('should sign up with email and passsword', async () => {
-		expect.assertions (1)
-    const [user, errors] = await post<User>
-    (gql`mutation Register($testUser: UserInput!) {
-        register(data: $testUser) {
-            id
-        }
-    }`, { testUser })
-		expect (user.id).toBeUUID ()
-  })
-	
-	it ('should keep emails unique', async () => {
-		expect.assertions (1)
-    const res = await post<User>
-    (gql`mutation Register($testUser: UserInput!) {
-        register(data: $testUser) {
-            id
-        }
-    }`, { testUser })
-		shouldHaveErrorCode(res[1],
-			ErrorCodes.NOT_UNIQUE)
-		
+	describe ('sign up', () => {
+    it ('should sign up with email and passsword', async () => {
+			expect.assertions (1)
+      const [user, errors] = await post<User>
+      (gql`mutation Register($testUser: UserInput!) {
+          register(data: $testUser) {
+              id
+          }
+      }`, { testUser })
+			expect (user.id).toBeUUID ()
+    })
+
+    it ('should keep emails unique', async () => {
+			expect.assertions (1)
+      const res = await post<User>
+      (gql`mutation Register($testUser: UserInput!) {
+          register(data: $testUser) {
+              id
+          }
+      }`, { testUser })
+			shouldHaveErrorCode(res[1],
+				ErrorCodes.NOT_UNIQUE)
+
+    })
+
 	})
-	
-  it ('should check password', async () => {
-		expect.assertions (2)
-    const [user, ers] = await post<User>
-    (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
-        loginWithEmail(data: $data) {
-            id
-            name
-        }
-    }`, { data: credsWrongPass })
-		console.log(ers)
-		isSE(user, null)
-		shouldHaveErrorCode
-		(ers, ErrorCodes.UNATHORIZED)
+	describe ('log in', () => {
 
-  })
+    it ('should check password', async () => {
+			expect.assertions (2)
+      const [user, ers] = await post<User>
+      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+          loginWithEmail(data: $data) {
+              id
+              name
+          }
+      }`, { data: credsWrongPass })
+			isSE(user, null)
+			shouldHaveErrorCode
+			(ers, ErrorCodes.UNATHORIZED)
 
-  it ('should check email', async () => {
-		expect.assertions (2)
-    const [user, ers] = await post<User>
-    (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
-        loginWithEmail(data: $data) {
-            id
-            name
-        }
-    }`, { data: credsBadEmail })
-		console.log(ers)
-		isSE(user, null)
-		shouldHaveErrorCode
-		(ers, ErrorCodes.UNATHORIZED)
+    })
 
-  })
+    it ('should check email', async () => {
+			expect.assertions (2)
+      const [user, ers] = await post<User>
+      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+          loginWithEmail(data: $data) {
+              id
+              name
+          }
+      }`, { data: credsBadEmail })
+			isSE(user, null)
+			shouldHaveErrorCode
+			(ers, ErrorCodes.UNATHORIZED)
+
+    })
+		it ('log in with email-password', async () => {
+			expect.assertions(1)
+      const [user, ers] = await post<User>
+      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+          loginWithEmail(data: $data) {
+              id
+              name
+          }
+      }`, { data: credsOK })
+		  expect (user.id).toBeUUID()
+		})
+	})
+	describe ('access control', () => {
+		it ('boards should be incaccessible', async () => {
+			expect.assertions(1)
+		  const [,errors] = await post <Board[]>
+		  (gql`query {
+				  boards {
+						  id
+				  }
+		  }`)
+		  shouldHaveErrorCode(errors,
+		  ErrorCodes.UNATHORIZED)
+		  
+		})
+	})
 })
 
 describe ('User', () => {
