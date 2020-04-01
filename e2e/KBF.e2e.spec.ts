@@ -447,7 +447,7 @@ describe ('Auth', () => {
     })
 
   })
-	describe ('sign up', () => {
+  describe ('sign up', () => {
     it ('should sign up with email and passsword', async () => {
 			expect.assertions (1)
       const [user, errors] = await post<User>
@@ -467,13 +467,13 @@ describe ('Auth', () => {
               id
           }
       }`, { testUser })
-			shouldHaveErrorCode(res[1],
+			shouldHaveErrorCode (res[1],
 				ErrorCodes.NOT_UNIQUE)
 
     })
 
-	})
-	describe ('log in', () => {
+  })
+  describe ('log in', () => {
 
     it ('should check password', async () => {
 			expect.assertions (2)
@@ -484,7 +484,7 @@ describe ('Auth', () => {
               name
           }
       }`, { data: credsWrongPass })
-			isSE(user, null)
+			isSE (user, null)
 			shouldHaveErrorCode
 			(ers, ErrorCodes.UNATHORIZED)
 
@@ -499,13 +499,13 @@ describe ('Auth', () => {
               name
           }
       }`, { data: credsBadEmail })
-			isSE(user, null)
+			isSE (user, null)
 			shouldHaveErrorCode
 			(ers, ErrorCodes.UNATHORIZED)
 
     })
-		it ('log in with email-password', async () => {
-			expect.assertions(1)
+    it ('log in with email-password', async () => {
+			expect.assertions (1)
       const [user, ers] = await post<User>
       (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
           loginWithEmail(data: $data) {
@@ -513,22 +513,22 @@ describe ('Auth', () => {
               name
           }
       }`, { data: credsOK })
-		  expect (user.id).toBeUUID()
-		})
-	})
-	describe ('access control', () => {
-		it ('boards should be incaccessible', async () => {
-			expect.assertions(1)
-		  const [,errors] = await post <Board[]>
-		  (gql`query {
-				  boards {
-						  id
-				  }
-		  }`)
-		  shouldHaveErrorCode(errors,
-		  ErrorCodes.UNATHORIZED)
-		  
-		})
-	})
+			expect (user.id).toBeUUID ()
+    })
+  })
+  describe ('access control', () => {
+    it ('boards should be incaccessible', async () => {
+			expect.assertions (1)
+      const [, errors] = await post<Board[]>
+      (gql`query {
+          boards {
+              id
+          }
+      }`)
+			shouldHaveErrorCode (errors,
+				ErrorCodes.UNATHORIZED)
+
+    })
+  })
 })
 

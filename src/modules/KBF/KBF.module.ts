@@ -5,18 +5,18 @@ import { CatFactsAPI } from '@M/cat-facts/cat-facts.datasource'
 import { BoardResolver } from '@M/KBF/resolvers/board.resolver'
 import { DBModule } from '@M/db/db.module'
 import { ColorResolver } from '@M/KBF/resolvers/color.resolver'
-import { APP_PIPE, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core'
+import { APP_PIPE, APP_INTERCEPTOR, APP_FILTER, APP_GUARD } from '@nestjs/core'
 import { validatorOptions } from '@M/cats/config/validator'
 import { ApolloError } from 'apollo-server-errors'
-import { prop, keys } from 'ramda'
+import { prop } from 'ramda'
 import { CommentResolver } from '@M/KBF/resolvers/comment.resolver'
 import { UserResolver } from '@M/KBF/resolvers/user.resolver'
 import { TagResolver } from '@M/KBF/resolvers/tag.resolver'
 import { ErrorCodes } from '@/common/errors'
-import {Request, Response} from 'express'
+import { Request, Response } from 'express'
 import { REDIS, Redis } from '@/common/constants'
 import { makeRedis } from '@M/redis/redis.provider'
-import ConnectRedis from "connect-redis"
+import ConnectRedis from 'connect-redis'
 import session from 'express-session'
 import { RedisPubSub } from 'graphql-redis-subscriptions'
 import cookieParser from 'cookie-parser'
@@ -24,6 +24,7 @@ import { get } from 'config'
 import { TimeoutInterceptor } from '@/common/interceptors/timeout.interceptor'
 import { LoggingInterceptor } from '@/common/interceptors/logging.interceptor'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
+import { GqlAuthGuard } from '@M/auth/guards/gql-auth.guard'
 
 const dataSources = () => ({
 	catFacts: new CatFactsAPI ()
@@ -34,7 +35,7 @@ interface ExpresssCtx {
 	res: Response
 }
 
-const context = ({req, res}: ExpresssCtx) => ({
+const context = ({ req, res }: ExpresssCtx) => ({
 	user: req.user,
 	session: req.session
 })
@@ -83,16 +84,18 @@ const redisPubSub = new RedisPubSub ({
 		TagResolver,
 		CommentResolver,
 		ColorResolver,
+		{ provide: APP_GUARD, useClass: GqlAuthGuard },
 		{ provide: APP_PIPE, useValue: GqlValidationPipe },
 		{ provide: REDIS.SESSION, useValue: makeRedis () },
 		{ provide: REDIS.PUBSUB, useValue: redisPubSub },
 		{ provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
 		{ provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
-		{ provide: APP_FILTER, useClass: GqlExceptionFilter },
+		{ provide: APP_FILTER, useClass: GqlExceptionFilter }
 	],
 	controllers: [],
 	exports: []
 })
+
 export class KBFModule implements NestModule {
 	@Inject (REDIS.SESSION)
 	private redis: Redis

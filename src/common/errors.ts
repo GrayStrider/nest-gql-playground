@@ -18,7 +18,7 @@ function makeCustomError (
 		constructor (message?: string, details?: AnyObject | string) {
 			
 			super (message ?? defaultMessage, code)
-			this.details = details ?? defaultDetails
+			this.details = details ?? defaultDetails ?? {}
 			
 		}
 		
