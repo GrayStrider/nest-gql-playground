@@ -1,4 +1,5 @@
 import IORedis from 'ioredis'
+import redis from 'redis'
 import { RedisPubSub as type } from 'graphql-redis-subscriptions'
 
 export enum Tokens {
@@ -12,5 +13,5 @@ export enum REDIS {
 	PUBSUB = 'PUBSUB'
 }
 
-export type Redis = IORedis.Redis
+export type Redis = redis.RedisClient
 export type RedisPubSub = type
