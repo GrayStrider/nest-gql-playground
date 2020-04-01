@@ -412,7 +412,7 @@ describe ('User', () => {
 
     })
     it ('should compare passwords', async () => {
-			expect.assertions (3)
+			expect.assertions (2)
       const res = await post<User>
       (gql`mutation {
           register(data: {
@@ -423,13 +423,13 @@ describe ('User', () => {
               id
           }
       }`)
-			shouldHaveFailedValidation (res)
+			shouldHaveFailedValidation(res, 0)
 
 
     })
   })
   it ('should create user', async () => {
-		expect.assertions (2)
+		expect.assertions (1)
     const [user, errors] = await post<User>
     (gql`mutation {
         register(data: {
@@ -441,7 +441,5 @@ describe ('User', () => {
         }
     }`)
 		expect (user.id).toBeUUID ()
-		expect (user.password)
-			.toHaveLength (60)
   })
 })
