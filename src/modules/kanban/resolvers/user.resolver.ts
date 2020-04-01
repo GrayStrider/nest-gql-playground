@@ -6,8 +6,8 @@ import { UserInput, LoginWithEmailInput } from '@M/kanban/inputs/user.input'
 import Errors from '@/common/errors'
 import { hash, compare } from 'bcryptjs'
 import { toDefault } from '@qdev/utils-ts'
-import { Context } from '@M/kanban/KBF.module'
 import { keys } from 'ramda'
+import { Context } from '@M/gql/gql.module'
 
 
 @Resolver ()

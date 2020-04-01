@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing'
-import { KBFModule } from '@M/kanban/KBF.module'
+import { KanbanModule } from '@M/kanban/kanban.module'
 import { supertest, Post, Req, isSE, chance, shouldHaveErrorCode, shouldHaveFailedValidation } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
 import { Board } from '@M/kanban/entity/Board'
@@ -24,7 +24,7 @@ let req: Req
 beforeAll (async () => {
 	jest.setTimeout (20000)
 	const moduleFixture = await Test.createTestingModule ({
-		imports: [KBFModule],
+		imports: [KanbanModule],
 		providers: [
 			{ provide: APP_FILTER, useClass: GqlExceptionFilter }
 		]

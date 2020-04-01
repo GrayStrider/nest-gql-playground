@@ -1,5 +1,4 @@
 import { Module, ValidationPipe, NestModule, Inject, MiddlewareConsumer } from '@nestjs/common'
-import { GraphQLModule, GqlModuleOptions } from '@nestjs/graphql'
 import { TaskResolver } from '@M/kanban/resolvers/task.resolver'
 import { BoardResolver } from '@M/kanban/resolvers/board.resolver'
 import { DBModule } from '@M/db/db.module'
@@ -35,17 +34,6 @@ const context = ({ req, res }: ExpresssCtx) => ({
 	session: req.session
 })
 
-export type Context = ReturnType<typeof context>
-
-const apolloOptions: GqlModuleOptions = {
-	autoSchemaFile: 'src/graphql/generated/schema.graphql',
-	playground: {
-		settings: {
-			'request.credentials': 'include'
-		}
-	},
-	context
-}
 
 const GqlValidationPipe = new ValidationPipe ({
 	...validatorOptions,
@@ -87,7 +75,7 @@ const redisPubSub = new RedisPubSub ({
 	exports: []
 })
 
-export class KBFModule implements NestModule {
+export class KanbanModule implements NestModule {
 	@Inject (REDIS.SESSION)
 	private redis: Redis
 	
