@@ -14,10 +14,6 @@ export class GqlExceptionFilter implements ExceptionFilter {
 		} else {
 			console.log(exception)
 		}
-		if (exception.extensions?.routine === '_bt_check_unique') {
-			throw new Error('unique constraint violation')
-		} else {
-			throw exception
-		}
+		throw exception
 	}
 }
