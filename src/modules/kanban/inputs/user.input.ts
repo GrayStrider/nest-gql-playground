@@ -4,7 +4,7 @@ import { nameLength } from '@M/kanban/entity/User'
 import { IsEmail } from 'class-validator'
 
 @InputType()
-export class LoginWithEmailInput {
+export class RegisterWIthEmailInput {
 	@Field()
 	@IsEmail()
 	email: string
@@ -15,7 +15,7 @@ export class LoginWithEmailInput {
 }
 
 @InputType ()
-export class UserInput extends LoginWithEmailInput {
+export class UserInput extends RegisterWIthEmailInput {
 	@Field ()
 	@ValidString (nameLength, 4)
 	name: string
@@ -25,3 +25,13 @@ export class UserInput extends LoginWithEmailInput {
 	
 }
 
+@InputType()
+export class LoginWithEmailInput implements RegisterWIthEmailInput {
+	@Field()
+	@IsEmail()
+	email: string
+	
+	@Field ()
+	@ValidString(100)
+	password: string
+}

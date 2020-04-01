@@ -26,14 +26,167 @@ beforeAll (async () => {
 		imports: [AppModule]
 	}).compile ()
 	const app = moduleFixture.createNestApplication ()
-	app.useGlobalFilters(new GqlExceptionFilter())
 	await app.init ()
 	;({ post, req } = supertest (app.getHttpServer ()))
 	await makeRedis ().flushdb ()
-	
 })
 
 const testBoardName = 'test board'
+
+describe ('Auth', () => {
+	const testUser: UserInput = {
+		name: 'Ivan',
+		password: 'aG2_ddddddd',
+		email: 'test@test.com',
+		confirmPassword: 'aG2_ddddddd'
+	}
+	const credsOK = pick
+	(['email', 'password'], testUser)
+	const credsWrongPass = {
+		...credsOK,
+		password: 'aG2_ddddddd____'
+	}
+	const credsBadEmail = {
+		...credsOK,
+		email: 'foobar23948234@bad.com'
+	}
+  describe ('validation', () => {
+    it ('should validate complexity of passwords', async () => {
+			const invalidPasswords = [
+				'', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
+				'BBBBBBBBBBBB', '@@@@@@@@@@@@@',
+				'33333333333333333', '_f4Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+			]
+			expect.assertions
+			(3 * invalidPasswords.length)
+      for (const password of invalidPasswords) {
+				const user = { ...testUser, password }
+        const res = await post<User>
+        (gql`mutation Register($testUser: UserInput!) {
+            register(data: $testUser) {
+                id
+            }
+        }`, { testUser: user })
+				shouldHaveFailedValidation (res)
+      }
+
+    })
+    it ('should compare passwords', async () => {
+			expect.assertions (2)
+			const user: UserInput = {
+				...testUser,
+				password: '34tT_ssssssss',
+				email: chance.email ()
+			}
+      const res = await post<User>
+      (gql`mutation Register($testUser: UserInput!) {
+          register(data: $testUser) {
+              id
+          }
+      }`, { testUser: user })
+			shouldHaveFailedValidation (res, 0)
+    })
+
+  })
+  describe ('sign up', () => {
+    it ('should sign up with email and passsword', async () => {
+			expect.assertions (1)
+      const [user, errors] = await post<User>
+      (gql`mutation Register($testUser: UserInput!) {
+          register(data: $testUser) {
+              id
+          }
+      }`, { testUser })
+			expect (user.id).toBeUUID ()
+    })
+
+    it ('should keep emails unique', async () => {
+			expect.assertions (1)
+      const res = await post<User>
+      (gql`mutation Register($testUser: UserInput!) {
+          register(data: $testUser) {
+              id
+          }
+      }`, { testUser })
+			shouldHaveErrorCode (res[1],
+				ErrorCodes.NOT_UNIQUE)
+
+    })
+
+  })
+  describe ('log in', () => {
+
+    it ('should check password', async () => {
+			expect.assertions (2)
+      const [user, ers] = await post<User>
+      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+          loginWithEmail(data: $data) {
+              id
+              name
+          }
+      }`, { data: credsWrongPass })
+			isSE (user, null)
+			shouldHaveErrorCode
+			(ers, ErrorCodes.UNATHORIZED)
+
+    })
+
+    it ('should check email', async () => {
+			expect.assertions (2)
+      const [user, ers] = await post<User>
+      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+          loginWithEmail(data: $data) {
+              id
+              name
+          }
+      }`, { data: credsBadEmail })
+			isSE (user, null)
+			shouldHaveErrorCode
+			(ers, ErrorCodes.UNATHORIZED)
+
+    })
+    it ('log in with email-password', async () => {
+			expect.assertions (1)
+      const {body, header} = await req<User>
+      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+          loginWithEmail(data: $data) {
+              id
+              name
+          }
+      }`, { data: credsOK })
+			expect(body.data.loginWithEmail.id).toBeUUID()
+	    console.log(header)
+    })
+  })
+
+  it ('should log out', async () => {
+		expect.assertions(1)
+    const [ok] = await post<Boolean>
+    (gql`mutation {
+        logout
+    }`)
+		isSE(ok, true)
+
+  })
+
+  describe ('access control', () => {
+    it ('boards should be inaccessible', async () => {
+			expect.assertions (1)
+
+      const [, errors] = await post<Board[]>
+      (gql`query {
+          boards {
+              id
+          }
+      }`)
+			shouldHaveErrorCode (errors,
+				ErrorCodes.UNATHORIZED)
+
+    })
+  })
+})
+
+
 describe ('Board', () => {
   describe ('validation', () => {
     it ('FindBoardInput', async () => {
@@ -371,150 +524,5 @@ describe ('Comment', () => {
     })
   })
 
-})
-describe ('Auth', () => {
-	const testUser: UserInput = {
-		name: 'Ivan',
-		password: 'aG2_ddddddd',
-		email: 'test@test.com',
-		confirmPassword: 'aG2_ddddddd'
-	}
-	const credsOK = pick
-	(['email', 'password'], testUser)
-	const credsWrongPass = {
-		...credsOK,
-		password: 'aG2_ddddddd____'
-	}
-	const credsBadEmail = {
-		...credsOK,
-		email: 'foobar23948234@bad.com'
-	}
-  describe ('validation', () => {
-    it ('should validate complexity of passwords', async () => {
-			const invalidPasswords = [
-				'', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
-				'BBBBBBBBBBBB', '@@@@@@@@@@@@@',
-				'33333333333333333', '_f4Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-			]
-			expect.assertions
-			(3 * invalidPasswords.length)
-      for (const password of invalidPasswords) {
-				const user = { ...testUser, password }
-        const res = await post<User>
-        (gql`mutation Register($testUser: UserInput!) {
-            register(data: $testUser) {
-                id
-            }
-        }`, { testUser: user })
-				shouldHaveFailedValidation (res)
-      }
-
-    })
-    it ('should compare passwords', async () => {
-			expect.assertions (2)
-			const user: UserInput = {
-				...testUser,
-				password: '34tT_ssssssss',
-				email: chance.email ()
-			}
-      const res = await post<User>
-      (gql`mutation Register($testUser: UserInput!) {
-          register(data: $testUser) {
-              id
-          }
-      }`, { testUser: user })
-			shouldHaveFailedValidation (res, 0)
-    })
-
-  })
-  describe ('sign up', () => {
-    it ('should sign up with email and passsword', async () => {
-			expect.assertions (1)
-      const [user, errors] = await post<User>
-      (gql`mutation Register($testUser: UserInput!) {
-          register(data: $testUser) {
-              id
-          }
-      }`, { testUser })
-			expect (user.id).toBeUUID ()
-    })
-
-    it ('should keep emails unique', async () => {
-			expect.assertions (1)
-      const res = await post<User>
-      (gql`mutation Register($testUser: UserInput!) {
-          register(data: $testUser) {
-              id
-          }
-      }`, { testUser })
-			shouldHaveErrorCode (res[1],
-				ErrorCodes.NOT_UNIQUE)
-
-    })
-
-  })
-  describe ('log in', () => {
-
-    it ('should check password', async () => {
-			expect.assertions (2)
-      const [user, ers] = await post<User>
-      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
-          loginWithEmail(data: $data) {
-              id
-              name
-          }
-      }`, { data: credsWrongPass })
-			isSE (user, null)
-			shouldHaveErrorCode
-			(ers, ErrorCodes.UNATHORIZED)
-
-    })
-
-    it ('should check email', async () => {
-			expect.assertions (2)
-      const [user, ers] = await post<User>
-      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
-          loginWithEmail(data: $data) {
-              id
-              name
-          }
-      }`, { data: credsBadEmail })
-			isSE (user, null)
-			shouldHaveErrorCode
-			(ers, ErrorCodes.UNATHORIZED)
-
-    })
-    it ('log in with email-password', async () => {
-			expect.assertions (1)
-      const [user, ers] = await post<User>
-      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
-          loginWithEmail(data: $data) {
-              id
-              name
-          }
-      }`, { data: credsOK })
-			expect (user.id).toBeUUID ()
-    })
-  })
-  describe ('access control', () => {
-    it ('boards should be inaccessible', async () => {
-			expect.assertions (1)
-	    await post <Boolean>
-	    (gql`mutation {
-			  
-	    }`)
-	    
-	    	
-      const [, errors] = await post<Board[]>
-      (gql`query {
-          boards {
-              id
-          }
-      }`)
-			shouldHaveErrorCode (errors,
-				ErrorCodes.UNATHORIZED)
-
-    })
-  })
 })
 

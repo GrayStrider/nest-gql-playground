@@ -2,7 +2,7 @@ import { Resolver, Query, Args, Mutation, Context as Ctx } from '@nestjs/graphql
 import { User } from '@M/kanban/entity/User'
 import { SearchByIDInput } from '@M/kanban/inputs/common/search-by-id.input'
 import Maybe from 'graphql/tsutils/Maybe'
-import { UserInput, LoginWithEmailInput } from '@M/kanban/inputs/user.input'
+import { UserInput, RegisterWIthEmailInput, LoginWithEmailInput } from '@M/kanban/inputs/user.input'
 import Errors from '@/common/errors'
 import { hash, compare } from 'bcryptjs'
 import { toDefault } from '@qdev/utils-ts'
