@@ -18,7 +18,6 @@ import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 		TagResolver,
 		CommentResolver,
 		ColorResolver,
-		{ provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
 		{ provide: APP_FILTER, useClass: GqlExceptionFilter }
 	]
 })
