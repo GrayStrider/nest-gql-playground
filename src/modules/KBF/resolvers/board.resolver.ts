@@ -1,10 +1,11 @@
 import { Resolver, Args, Mutation, Query } from '@nestjs/graphql'
 import { Board } from '@M/KBF/entity/Board'
 import { Color, defaultColors } from '@M/KBF/entity/Color'
-import { Maybe } from 'type-graphql'
 import { TColumn, defaultColumns } from '@M/KBF/entity/TColumn'
 import { Swimlane } from '@M/KBF/entity/Swimlane'
 import { FindBoardInput, AddBoardInput } from '@M/KBF/inputs/board.input'
+import { toDefault } from '@qdev/utils-ts'
+import Errors from '@/common/errors'
 
 @Resolver ()
 export class BoardResolver {
@@ -14,8 +15,11 @@ export class BoardResolver {
 	}
 	
 	@Query (returns => Board)
-	async board (@Args () { name }: FindBoardInput): Promise<Maybe<Board>> {
-		return await Board.findOne ({ name })
+	async board (@Args () { name }: FindBoardInput): Promise<Board> {
+		return toDefault(
+			await Board.findOne ({ name }),
+			new Errors.NotFound(`Board <${name}> was not found`)
+		)
 	}
 	
 	
