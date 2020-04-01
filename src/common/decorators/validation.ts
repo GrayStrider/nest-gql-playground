@@ -37,9 +37,9 @@ export const StrongPassword = composeFieldDecorators (
 		message: `Should contain at least one upper-case letter`
 	}) as FieldDecorator,
 	Matches(/[-!@#$%^&*\/\\_`:{}+=~]/, {
-		message: `Should contain at least one special character: -!@#$%^&*\\/\\\\_\`:{}+=~`
+		message: `Should contain at least one special character: -!@#$%^&*\/\\_\`:{}+=~`
 	}) as FieldDecorator,
 	Matches(/^[a-zA-Z\d-!@#$%^&*\/\\_`:{}+=~]+$/, {
-		message: 'Only alphanumetic characters and special symbols (-!@#$%^&*\\/\\_\`:{}+=~) are allowed'
+		message: 'Only alphanumetic characters and special symbols (-!@#$%^&*\/\\_\`:{}+=~) are allowed'
 	}) as FieldDecorator,
 )
