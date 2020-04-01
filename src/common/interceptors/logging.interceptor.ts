@@ -2,7 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
 import { Request, Response } from 'express'
-import { log } from '@/common/message'
+import { formattedMessage } from '@/common/message'
 import { sig } from '@qdev/utils-ts'
 import chalk from 'chalk'
 
@@ -25,7 +25,7 @@ export class LoggingInterceptor implements NestInterceptor {
 		const response = ctx.getResponse<Response> ()
 		sig.info (`${chalk.underline (`sessionID`)}: ${(request.sessionID) ?? 'none found'}`)
 		
-		const msg = log (
+		const msg = formattedMessage (
 			response.statusCode.toString() ?? 'no status code',
 			request.url ?? 'no url',
 			request.method ?? 'no method',
