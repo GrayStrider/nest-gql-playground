@@ -8,7 +8,7 @@ import { Handler } from 'express'
  * They are basically express middleware functions.
  */
 @Injectable ()
-export class LoggerMiddleware implements NestMiddleware {
+class LoggerMiddleware implements NestMiddleware {
 	constructor (private someService = {}) {}
 	/**
 	 * Does not inherit types; generic types only used when
