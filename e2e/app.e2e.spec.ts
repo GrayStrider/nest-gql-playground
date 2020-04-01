@@ -16,11 +16,12 @@ import { UserInput } from '@M/kanban/inputs/user.input'
 import { makeRedis } from '@M/redis/redis.provider'
 import { AppModule } from '@M/app/app.module'
 import { ASTNode } from 'graphql'
+import http from 'http'
 
 let post: Post
 let req: Req
-let post2: Post
 let sessionCookie: string[]
+let server: http.Server
 
 beforeAll (async () => {
 	jest.setTimeout (20000)
@@ -29,9 +30,21 @@ beforeAll (async () => {
 	}).compile ()
 	const app = moduleFixture.createNestApplication ()
 	await app.init ()
-	;({ post, req } = supertest (app.getHttpServer ()))
+	server = app.getHttpServer ()
+	;({ post, req } = supertest (server, sessionCookie))
 	await makeRedis ().flushdb ()
 })
+const resourceShouldBeInaccessible = async (yes = true) => {
+  const [, errors] = await post<Board[]>
+  (gql`query {
+      boards {
+          id
+      }
+  }`)
+	yes ? shouldHaveErrorCode (errors,
+		ErrorCodes.UNATHORIZED)
+		: isSE (errors, [])
+}
 
 const testBoardName = 'test board'
 
@@ -52,9 +65,8 @@ describe ('Auth', () => {
 		...credsOK,
 		email: 'foobar23948234@bad.com'
 	}
-
-  it ('should sign up with email and passsword', async () => {
-		expect.assertions (1)
+  it ('register admin user', async () => {
+		expect.assertions (2)
     const [user, errors] = await post<User>
     (gql`mutation Register($testUser: UserInput!) {
         register(data: $testUser) {
@@ -62,9 +74,9 @@ describe ('Auth', () => {
         }
     }`, { testUser })
 		expect (user.id).toBeUUID ()
+		await resourceShouldBeInaccessible ()
   })
-
-  it ('log in with email-password', async () => {
+  it ('log in', async () => {
 		expect.assertions (2)
     const { body, header } = await req<User>
     (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
@@ -75,6 +87,7 @@ describe ('Auth', () => {
     }`, { data: credsOK })
 		expect (body.data.loginWithEmail.id).toBeUUID ()
 		expect (header['set-cookie'][0]).toBeString ()
+		
 		sessionCookie = header['set-cookie'][0]
 
   })
@@ -167,28 +180,16 @@ describe ('Auth', () => {
 
 
     it ('should log out', async () => {
-			expect.assertions (1)
+			expect.assertions (2)
       const [ok] = await post<Boolean>
       (gql`mutation {
           logout
       }`)
 			isSE (ok, true)
+			await resourceShouldBeInaccessible ()
 			sessionCookie = []
     })
 
-    it ('boards should be inaccessible', async () => {
-			expect.assertions (1)
-
-      const [, errors] = await post<Board[]>
-      (gql`query {
-          boards {
-              id
-          }
-      }`)
-			shouldHaveErrorCode (errors,
-				ErrorCodes.UNATHORIZED)
-
-    })
 
     it ('should log in', async () => {
 			expect.assertions (2)
@@ -202,19 +203,17 @@ describe ('Auth', () => {
 			expect (body.data.loginWithEmail.id).toBeUUID ()
 			expect (header['set-cookie'][0]).toBeString ()
 			sessionCookie = header['set-cookie']
-			console.log(sessionCookie)
+			console.log (sessionCookie)
 			post = async (query: ASTNode, variables: any) =>
 				req (query, variables)
 					.set ('Cookie', sessionCookie)
-					.then(res => flattenGQLResponse(res.body))
+					.then (res => flattenGQLResponse (res.body))
 
     })
   })
 
 
 })
-
-
 describe ('Board', () => {
   describe ('validation', () => {
     it ('FindBoardInput', async () => {
@@ -355,7 +354,7 @@ describe ('Task', () => {
             title
         }
     }`, { data: minTask })
-	  isSE (task.title, minTask.title)
+		isSE (task.title, minTask.title)
 
   })
 
