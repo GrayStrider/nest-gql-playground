@@ -33,13 +33,6 @@ const GqlValidationPipe = new ValidationPipe ({
 	}
 })
 
-const RedisStore = ConnectRedis (session)
-
-const redisPubSub = new RedisPubSub ({
-	publisher: makeRedis (),
-	subscriber: makeRedis ()
-})
-
 @Module ({
 	imports: [
 		GqlModule,
@@ -53,37 +46,11 @@ const redisPubSub = new RedisPubSub ({
 		CommentResolver,
 		ColorResolver,
 		{ provide: APP_PIPE, useValue: GqlValidationPipe },
-		{ provide: REDIS.SESSION, useValue: makeRedis () },
-		{ provide: REDIS.PUBSUB, useValue: redisPubSub },
 		{ provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
 		{ provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
 		{ provide: APP_FILTER, useClass: GqlExceptionFilter }
 	]
 })
 
-export class KanbanModule implements NestModule {
-	@Inject (REDIS.SESSION)
-	private redis: Redis
-	
-	public configure (consumer: MiddlewareConsumer): void {
-		consumer.apply ([
-			cookieParser (),
-			session ({
-				name: get ('cookie.name'),
-				secret: get ('session.secret'),
-				resave: false,
-				saveUninitialized: true,
-				unset: 'destroy',
-				cookie: {
-					maxAge: get ('cookie.maxAge'),
-					secure: get ('cookie.secure') // TODO https://github.com/expressjs/session
-				},
-				store: new RedisStore ({
-					client: this.redis,
-					prefix: get ('redis.prefix.session')
-				})
-			})
-		]).forRoutes ('*')
-	}
-}
+export class KanbanModule {}
 
