@@ -1,14 +1,14 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common'
 import Errors from '@/common/errors'
 import { GqlExecutionContext } from '@nestjs/graphql'
-import { Context } from '@M/gql/gql.module'
+import { MyContext } from '@M/gql/gql.module'
 
 export class GqlAuthGuard implements CanActivate {
 	canActivate (context: ExecutionContext) {
 		const eCtx = GqlExecutionContext.create (context)
 		
 		// Apollo context
-		const ctx = eCtx.getContext<Context> ()
+		const ctx = eCtx.getContext<MyContext> ()
 		// Query arguments
 		const args = eCtx.getArgs ()
 		// Query info: operation, field name, path, parent,

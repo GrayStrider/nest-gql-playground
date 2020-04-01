@@ -12,7 +12,7 @@ const context = ({ req, res }: ExpresssCtx) => ({
 	session: req.session
 })
 
-export type Context = ReturnType<typeof context>
+export type MyContext = ReturnType<typeof context>
 
 const apolloOptions: GqlModuleOptions = {
 	autoSchemaFile: 'src/graphql/generated/schema.graphql',

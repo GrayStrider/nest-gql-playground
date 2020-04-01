@@ -6,8 +6,7 @@ import { UserInput, LoginWithEmailInput } from '@M/kanban/inputs/user.input'
 import Errors from '@/common/errors'
 import { hash, compare } from 'bcryptjs'
 import { toDefault } from '@qdev/utils-ts'
-import { keys } from 'ramda'
-import { Context } from '@M/gql/gql.module'
+import { MyContext } from '@M/gql/gql.module'
 
 
 @Resolver ()
@@ -38,9 +37,8 @@ export class UserResolver {
 	@Mutation (returns => User)
 	async loginWithEmail
 	(@Args ('data') data: LoginWithEmailInput,
-	 @Ctx () {dataSources, session, user}: Context): Promise<User> {
+	 @Ctx () { session, user }: MyContext): Promise<User> {
 		const { password, email } = data
-		
 		const invalidCredentialsError = new Errors.InvalidCredentials
 		('Invalid login or password. Try restoring them here: TODO')
 		// TODO
@@ -55,7 +53,12 @@ export class UserResolver {
 		toDefault (
 			await compare (password, hash),
 			invalidCredentialsError)
-		
+
+		user = {
+			id: userData.id,
+			name: userData.name,
+			roles: ['admin']
+		}
 		
 		return userData
 	}

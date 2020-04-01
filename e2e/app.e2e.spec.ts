@@ -15,6 +15,7 @@ import { User } from '@M/kanban/entity/User'
 import { UserInput } from '@M/kanban/inputs/user.input'
 import { makeRedis } from '@M/redis/redis.provider'
 import { AppModule } from '@M/app/app.module'
+import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 
 let post: Post
 let req: Req
@@ -25,6 +26,7 @@ beforeAll (async () => {
 		imports: [AppModule]
 	}).compile ()
 	const app = moduleFixture.createNestApplication ()
+	app.useGlobalFilters(new GqlExceptionFilter())
 	await app.init ()
 	;({ post, req } = supertest (app.getHttpServer ()))
 	await makeRedis ().flushdb ()
@@ -495,8 +497,14 @@ describe ('Auth', () => {
     })
   })
   describe ('access control', () => {
-    it ('boards should be incaccessible', async () => {
+    it ('boards should be inaccessible', async () => {
 			expect.assertions (1)
+	    await post <Boolean>
+	    (gql`mutation {
+			  
+	    }`)
+	    
+	    	
       const [, errors] = await post<Board[]>
       (gql`query {
           boards {

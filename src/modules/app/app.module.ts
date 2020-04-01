@@ -14,6 +14,7 @@ import { validatorOptions } from '@config'
 import { ApolloError } from 'apollo-server-errors'
 import { ErrorCodes } from '@/common/errors'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
+import { AuthModule } from '@M/auth/auth.module'
 
 const RedisStore = ConnectRedis (session)
 
@@ -35,6 +36,7 @@ const validationPipe = new ValidationPipe ({
 	imports: [
 		KanbanModule,
 		
+		AuthModule,
 		GqlModule,
 		DBModule
 	],
