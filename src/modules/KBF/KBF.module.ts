@@ -23,6 +23,7 @@ import { TimeoutInterceptor } from '@/common/interceptors/timeout.interceptor'
 import { LoggingInterceptor } from '@/common/interceptors/logging.interceptor'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 import { validatorOptions } from '@config'
+import { GqlModule } from '@M/gql/gql.module'
 
 interface ExpresssCtx {
 	req: Request
@@ -65,7 +66,7 @@ const redisPubSub = new RedisPubSub ({
 
 @Module ({
 	imports: [
-		GraphQLModule.forRoot (apolloOptions),
+		GqlModule,
 		DBModule
 	],
 	providers: [

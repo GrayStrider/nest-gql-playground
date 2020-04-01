@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing'
-import { INestApplication } from '@nestjs/common'
 import { KBFModule } from '@M/KBF/KBF.module'
 import { supertest, Post, Req, isSE, chance, shouldHaveErrorCode, shouldHaveFailedValidation } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
@@ -18,14 +17,9 @@ import { APP_FILTER } from '@nestjs/core'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 import { UserInput } from '@M/KBF/inputs/user.input'
 import { makeRedis } from '@M/redis/redis.provider'
-import { Redis } from 'ioredis'
 
-
-let app: INestApplication
 let post: Post
 let req: Req
-let redis: Redis
-const testBoardName = 'test board'
 
 beforeAll (async () => {
 	jest.setTimeout (20000)
@@ -35,14 +29,13 @@ beforeAll (async () => {
 			{ provide: APP_FILTER, useClass: GqlExceptionFilter }
 		]
 	}).compile ()
-	app = moduleFixture.createNestApplication ()
+	const app = moduleFixture.createNestApplication ()
 	await app.init ()
 	;({ post, req } = supertest (app.getHttpServer ()))
-	redis = makeRedis ()
-	await redis.flushdb()
+	await makeRedis ().flushdb ()
 	
 })
-
+const testBoardName = 'test board'
 describe ('Board', () => {
   describe ('validation', () => {
     it ('FindBoardInput', async () => {
@@ -398,7 +391,7 @@ describe ('Auth', () => {
 		...credsOK,
 		email: 'foobar23948234@bad.com'
 	}
-	describe ('validation', () => {
+  describe ('validation', () => {
     it ('should validate complexity of passwords', async () => {
 			const invalidPasswords = [
 				'', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
