@@ -7,7 +7,10 @@ import Errors from '@/common/errors'
 import { hash, compare } from 'bcryptjs'
 import { toDefault } from '@qdev/utils-ts'
 import { MyContext } from '@M/gql/gql.module'
+import { SetMetadata } from '@nestjs/common'
 
+
+export const NoAuth = SetMetadata('no-auth', true)
 
 @Resolver ()
 export class UserResolver {
@@ -18,6 +21,7 @@ export class UserResolver {
 		})
 	}
 	
+	@NoAuth
 	@Mutation (returns => User)
 	async register (@Args ('data') data: UserInput): Promise<User> {
 		const { name, confirmPassword, email } = data
@@ -34,6 +38,7 @@ export class UserResolver {
 		return User.create ({ name, password, email }).save ()
 	}
 	
+	@NoAuth
 	@Mutation (returns => User)
 	async loginWithEmail
 	(@Args ('data') data: LoginWithEmailInput,

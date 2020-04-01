@@ -19,6 +19,7 @@ import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 
 let post: Post
 let req: Req
+let sessionCookie: string | undefined
 
 beforeAll (async () => {
 	jest.setTimeout (20000)
@@ -50,6 +51,33 @@ describe ('Auth', () => {
 		...credsOK,
 		email: 'foobar23948234@bad.com'
 	}
+
+  it ('should sign up with email and passsword', async () => {
+		expect.assertions (1)
+    const [user, errors] = await post<User>
+    (gql`mutation Register($testUser: UserInput!) {
+        register(data: $testUser) {
+            id
+        }
+    }`, { testUser })
+		expect (user.id).toBeUUID ()
+  })
+	
+  it ('log in with email-password', async () => {
+		expect.assertions (2)
+    const {body, header} = await req<User>
+    (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+        loginWithEmail(data: $data) {
+            id
+            name
+        }
+    }`, { data: credsOK })
+		expect(body.data.loginWithEmail.id).toBeUUID()
+		expect (header['set-cookie'][0]).toBeString()
+		sessionCookie = header['set-cookie'][0]
+
+  })
+	
   describe ('validation', () => {
     it ('should validate complexity of passwords', async () => {
 			const invalidPasswords = [
@@ -89,16 +117,6 @@ describe ('Auth', () => {
 
   })
   describe ('sign up', () => {
-    it ('should sign up with email and passsword', async () => {
-			expect.assertions (1)
-      const [user, errors] = await post<User>
-      (gql`mutation Register($testUser: UserInput!) {
-          register(data: $testUser) {
-              id
-          }
-      }`, { testUser })
-			expect (user.id).toBeUUID ()
-    })
 
     it ('should keep emails unique', async () => {
 			expect.assertions (1)
@@ -145,33 +163,20 @@ describe ('Auth', () => {
 			(ers, ErrorCodes.UNATHORIZED)
 
     })
-    it ('log in with email-password', async () => {
-			expect.assertions (1)
-      const {body, header} = await req<User>
-      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
-          loginWithEmail(data: $data) {
-              id
-              name
-          }
-      }`, { data: credsOK })
-			expect(body.data.loginWithEmail.id).toBeUUID()
-	    console.log(header)
+
+
+    it ('should log out', async () => {
+		  expect.assertions(1)
+      const [ok] = await post<Boolean>
+      (gql`mutation {
+          logout
+      }`)
+		  isSE(ok, true)
+		  sessionCookie = undefined
     })
-  })
 
-  it ('should log out', async () => {
-		expect.assertions(1)
-    const [ok] = await post<Boolean>
-    (gql`mutation {
-        logout
-    }`)
-		isSE(ok, true)
-
-  })
-
-  describe ('access control', () => {
     it ('boards should be inaccessible', async () => {
-			expect.assertions (1)
+		  expect.assertions (1)
 
       const [, errors] = await post<Board[]>
       (gql`query {
@@ -179,11 +184,28 @@ describe ('Auth', () => {
               id
           }
       }`)
-			shouldHaveErrorCode (errors,
-				ErrorCodes.UNATHORIZED)
+		  shouldHaveErrorCode (errors,
+			  ErrorCodes.UNATHORIZED)
+
+    })
+
+    it ('should log in', async () => {
+	    expect.assertions (2)
+      const {body, header} = await req<User>
+      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+          loginWithEmail(data: $data) {
+              id
+              name
+          }
+      }`, { data: credsOK })
+	    expect(body.data.loginWithEmail.id).toBeUUID()
+	    expect (header['set-cookie'][0]).toBeString()
+	    sessionCookie = header['set-cookie'][0]
 
     })
   })
+
+	
 })
 
 

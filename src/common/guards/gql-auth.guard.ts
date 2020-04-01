@@ -2,8 +2,12 @@ import { CanActivate, ExecutionContext } from '@nestjs/common'
 import Errors from '@/common/errors'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { MyContext } from '@M/gql/gql.module'
+import { toDefault } from '@qdev/utils-ts'
+import { Reflector } from '@nestjs/core'
 
 export class GqlAuthGuard implements CanActivate {
+	constructor (private readonly reflector: Reflector) {}
+	
 	canActivate (context: ExecutionContext) {
 		const eCtx = GqlExecutionContext.create (context)
 		
@@ -29,7 +33,14 @@ export class GqlAuthGuard implements CanActivate {
 			http.getResponse (),
 			http.getNext ()
 		]
-		throw new Errors.Unathorized
+		const noAuth = this.reflector.get<Boolean>('no-auth', handler)
+		console.log(noAuth)
+		if (noAuth) return true
+		
+		console.log(ctx.user)
+		toDefault (ctx.user,
+			new Errors.Unathorized
+		)
 		return true
 	}
 	
