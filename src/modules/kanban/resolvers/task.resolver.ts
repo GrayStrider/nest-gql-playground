@@ -7,7 +7,7 @@ import { BaseEntity } from 'typeorm'
 import { ApolloError } from 'apollo-server-errors'
 import { Board } from '@M/kanban/entity/Board'
 import { find, head, uniq } from 'ramda'
-import { SearchByIDInput } from '@M/kanban/inputs/shared/search-by-id.input'
+import { SearchByIDInput } from '@M/kanban/inputs/common/search-by-id.input'
 import Errors, { ErrorCodes, NotFoundByIDError } from '@/common/errors'
 import { toDefault } from '@qdev/utils-ts'
 

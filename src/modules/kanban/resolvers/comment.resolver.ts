@@ -1,5 +1,5 @@
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
-import { SearchByIDInput } from '@M/kanban/inputs/shared/search-by-id.input'
+import { SearchByIDInput } from '@M/kanban/inputs/common/search-by-id.input'
 import { Comment } from '@M/kanban/entity/Comment'
 import { CommentInput } from '@M/kanban/inputs/comment.input'
 import { Task } from '@M/kanban/entity/Task'
