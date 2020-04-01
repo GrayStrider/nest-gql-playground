@@ -14,7 +14,7 @@ export default {
 		}
 	},
 	cookie: {
-		name: 'my-cookie',
+		name: 'session-cookie',
 		maxAge: 1000 * 60 * 10,
 		secure: false
 	}
