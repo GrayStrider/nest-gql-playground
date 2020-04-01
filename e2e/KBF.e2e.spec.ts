@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import { KBFModule } from '@M/KBF/KBF.module'
-import { supertest, Post, Req, isSE, chance } from '@qdev/utils-ts'
+import { supertest, Post, Req, isSE, chance, shouldHaveErrorCode, shouldHaveFailedValidation } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
 import { Board } from '@M/KBF/entity/Board'
 import { Task } from '@M/KBF/entity/Task'
@@ -9,7 +9,6 @@ import { TaskInput } from '@M/KBF/inputs/task.input'
 import { zipObj, without, all, head, pick } from 'ramda'
 import { Color, defaultColors } from '@M/KBF/entity/Color'
 import { NewColorInput } from '@M/KBF/inputs/color.input'
-import { GraphQLError } from 'graphql'
 import { FindBoardInput } from '@M/KBF/inputs/board.input'
 import { Comment } from '@M/KBF/entity/Comment'
 import { ErrorCodes } from '@/common/errors'
@@ -43,18 +42,6 @@ beforeAll (async () => {
 	await redis.flushdb()
 	
 })
-
-const shouldHaveFailedValidation = ([data, errors]: [any, GraphQLError[]], amount = 1) => {
-	isSE (data, null)
-	isSE (head (errors)?.extensions?.code, ErrorCodes.VALIDATION_ERROR)
-	if (amount)
-		isSE (head (errors)
-			?.extensions?.validationErrors.length, amount)
-}
-
-const shouldHaveErrorCode = (errors: GraphQLError[], code: ErrorCodes) => {
-	isSE (head (errors)?.extensions?.code, code)
-}
 
 describe ('Board', () => {
   describe ('validation', () => {
