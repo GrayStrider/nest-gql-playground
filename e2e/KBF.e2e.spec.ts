@@ -37,12 +37,16 @@ beforeAll (async () => {
 	;({ post, req } = supertest (app.getHttpServer ()))
 })
 
-export const shouldHaveFailedValidation = ([data, errors]: [any, GraphQLError[]], amount = 1) => {
+const shouldHaveFailedValidation = ([data, errors]: [any, GraphQLError[]], amount = 1) => {
 	isSE (data, null)
 	isSE (head (errors)?.extensions?.code, ErrorCodes.VALIDATION_ERROR)
 	if (amount)
 		isSE (head (errors)
 			?.extensions?.validationErrors.length, amount)
+}
+
+const shouldHaveErrorCode = (errors: GraphQLError[], code: ErrorCodes) => {
+	isSE (head (errors)?.extensions?.code, code)
 }
 
 describe ('Board', () => {
@@ -392,9 +396,16 @@ const testUser: UserInput = {
 	email: 'test@test.com',
 	confirmPassword: 'aG2_ddddddd'
 }
-
-const credentials = pick
+const credsOK = pick
 (['email', 'password'], testUser)
+const credsWrongPass = {
+	...credsOK,
+	password: 'aG2_ddddddd____'
+}
+const credsBadEmail = {
+	...credsOK,
+	email: 'foobar23948234@bad.com'
+}
 
 describe ('User', () => {
   describe ('validation', () => {
@@ -450,15 +461,18 @@ describe ('User', () => {
   })
 
   it ('should check password', async () => {
-		expect.assertions (1)
-    const [user] = await post<User>
+		expect.assertions (2)
+    const [user, ers] = await post<User>
     (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
         loginWithEmail(data: $data) {
             id
             name
         }
-    }`)
-
+    }`, { data: credsWrongPass })
+	  console.log(ers)
+	  isSE(user, null)
+		shouldHaveErrorCode
+		(ers, ErrorCodes.UNATHORIZED)
 
   })
 })

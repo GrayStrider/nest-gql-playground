@@ -4,7 +4,8 @@ import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
 import Maybe from 'graphql/tsutils/Maybe'
 import { UserInput, LoginWithEmailInput } from '@M/KBF/inputs/user.input'
 import Errors from '@/common/errors'
-import { hash } from 'bcryptjs'
+import { hash, compare } from 'bcryptjs'
+import { toDefault } from '@qdev/utils-ts'
 
 
 @Resolver ()
@@ -38,7 +39,21 @@ export class UserResolver {
 	async loginWithEmail
 	(@Args ('data') data: LoginWithEmailInput): Promise<User> {
 		const { password, email } = data
-		const user = await User.findOne ({ email })
-		return User.findOne ({})
+		const invalidCredentialsError = new Errors.InvalidCredentials
+		('Invalid login or password. Try restoring them here: TODO')
+		// TODO
+		const user = toDefault (
+			await User.findOne ({ email }),
+			invalidCredentialsError)
+		
+		const hash = toDefault (
+			user.password,
+			new Errors.NotFound ('This user does not have a password set. Log in using the provider you\'ve signed up with'))
+
+		toDefault (
+			await compare (password, hash),
+			invalidCredentialsError)
+		
+		return user
 	}
 }
