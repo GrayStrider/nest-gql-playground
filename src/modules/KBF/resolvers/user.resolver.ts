@@ -1,4 +1,4 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql'
+import { Resolver, Query, Args, Mutation, Context as Ctx } from '@nestjs/graphql'
 import { User } from '@M/KBF/entity/User'
 import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
 import Maybe from 'graphql/tsutils/Maybe'
@@ -6,6 +6,8 @@ import { UserInput, LoginWithEmailInput } from '@M/KBF/inputs/user.input'
 import Errors from '@/common/errors'
 import { hash, compare } from 'bcryptjs'
 import { toDefault } from '@qdev/utils-ts'
+import { Context } from '@M/KBF/KBF.module'
+import { keys } from 'ramda'
 
 
 @Resolver ()
@@ -20,7 +22,6 @@ export class UserResolver {
 	@Mutation (returns => User)
 	async register (@Args ('data') data: UserInput): Promise<User> {
 		const { name, confirmPassword, email } = data
-		console.log (data.password, confirmPassword)
 		if (data.password !== confirmPassword)
 			throw new Errors.Validation
 			('Passwords don\'t match')
@@ -29,7 +30,6 @@ export class UserResolver {
 			throw new Errors.NotUnique
 			('User with this email already exists. Try restoring password here: TODO') //TODO
 		
-		console.log ('went through', data.password)
 		const password = await hash (data.password, 10)
 		
 		return User.create ({ name, password, email }).save ()
@@ -37,23 +37,26 @@ export class UserResolver {
 	
 	@Mutation (returns => User)
 	async loginWithEmail
-	(@Args ('data') data: LoginWithEmailInput): Promise<User> {
+	(@Args ('data') data: LoginWithEmailInput,
+	 @Ctx () {dataSources, session, user}: Context): Promise<User> {
 		const { password, email } = data
+		
 		const invalidCredentialsError = new Errors.InvalidCredentials
 		('Invalid login or password. Try restoring them here: TODO')
 		// TODO
-		const user = toDefault (
+		const userData = toDefault (
 			await User.findOne ({ email }),
 			invalidCredentialsError)
 		
 		const hash = toDefault (
-			user.password,
+			userData.password,
 			new Errors.NotFound ('This user does not have a password set. Log in using the provider you\'ve signed up with'))
-
+		
 		toDefault (
 			await compare (password, hash),
 			invalidCredentialsError)
 		
-		return user
+		
+		return userData
 	}
 }
