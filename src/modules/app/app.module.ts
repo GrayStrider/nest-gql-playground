@@ -1,4 +1,4 @@
-import { Module, Inject, MiddlewareConsumer, ValidationPipe } from '@nestjs/common'
+import { Module, Inject, MiddlewareConsumer, ValidationPipe, OnModuleInit } from '@nestjs/common'
 import { KanbanModule } from '@M/kanban/kanban.module'
 import { REDIS, Redis } from '@/common/constants'
 import cookieParser from 'cookie-parser'
@@ -47,10 +47,10 @@ const validationPipe = new ValidationPipe ({
 		
 		{ provide: APP_PIPE, useValue: validationPipe },
 		{ provide: APP_FILTER, useClass: GqlExceptionFilter },
-		{provide: APP_GUARD, useValue: new GqlAuthGuard(new Reflector())}
+		{ provide: APP_GUARD, useValue: new GqlAuthGuard (new Reflector ()) }
 	]
 })
-export class AppModule {
+export class AppModule implements OnModuleInit {
 	@Inject (REDIS.SESSION)
 	private redis: Redis
 	
@@ -73,5 +73,9 @@ export class AppModule {
 				})
 			})
 		]).forRoutes ('*')
+	}
+	
+	async onModuleInit () {
+		await makeRedis ().flushdb ()
 	}
 }

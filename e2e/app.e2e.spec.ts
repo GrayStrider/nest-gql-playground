@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing'
-import { supertest, Post, Req, isSE, chance, shouldHaveErrorCode, shouldHaveFailedValidation } from '@qdev/utils-ts'
+import { supertest, Post, Req, isSE, chance, shouldHaveErrorCode, shouldHaveFailedValidation, flattenGQLResponse } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
 import { Board } from '@M/kanban/entity/Board'
 import { Task } from '@M/kanban/entity/Task'
@@ -15,11 +15,12 @@ import { User } from '@M/kanban/entity/User'
 import { UserInput } from '@M/kanban/inputs/user.input'
 import { makeRedis } from '@M/redis/redis.provider'
 import { AppModule } from '@M/app/app.module'
-import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
+import { ASTNode } from 'graphql'
 
 let post: Post
 let req: Req
-let sessionCookie: string | undefined
+let post2: Post
+let sessionCookie: string[]
 
 beforeAll (async () => {
 	jest.setTimeout (20000)
@@ -62,22 +63,22 @@ describe ('Auth', () => {
     }`, { testUser })
 		expect (user.id).toBeUUID ()
   })
-	
+
   it ('log in with email-password', async () => {
 		expect.assertions (2)
-    const {body, header} = await req<User>
+    const { body, header } = await req<User>
     (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
         loginWithEmail(data: $data) {
             id
             name
         }
     }`, { data: credsOK })
-		expect(body.data.loginWithEmail.id).toBeUUID()
-		expect (header['set-cookie'][0]).toBeString()
+		expect (body.data.loginWithEmail.id).toBeUUID ()
+		expect (header['set-cookie'][0]).toBeString ()
 		sessionCookie = header['set-cookie'][0]
 
   })
-	
+
   describe ('validation', () => {
     it ('should validate complexity of passwords', async () => {
 			const invalidPasswords = [
@@ -166,17 +167,17 @@ describe ('Auth', () => {
 
 
     it ('should log out', async () => {
-		  expect.assertions(1)
+			expect.assertions (1)
       const [ok] = await post<Boolean>
       (gql`mutation {
           logout
       }`)
-		  isSE(ok, true)
-		  sessionCookie = undefined
+			isSE (ok, true)
+			sessionCookie = []
     })
 
     it ('boards should be inaccessible', async () => {
-		  expect.assertions (1)
+			expect.assertions (1)
 
       const [, errors] = await post<Board[]>
       (gql`query {
@@ -184,28 +185,33 @@ describe ('Auth', () => {
               id
           }
       }`)
-		  shouldHaveErrorCode (errors,
-			  ErrorCodes.UNATHORIZED)
+			shouldHaveErrorCode (errors,
+				ErrorCodes.UNATHORIZED)
 
     })
 
     it ('should log in', async () => {
-	    expect.assertions (2)
-      const {body, header} = await req<User>
+			expect.assertions (2)
+      const { body, header } = await req<User>
       (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
           loginWithEmail(data: $data) {
               id
               name
           }
       }`, { data: credsOK })
-	    expect(body.data.loginWithEmail.id).toBeUUID()
-	    expect (header['set-cookie'][0]).toBeString()
-	    sessionCookie = header['set-cookie'][0]
+			expect (body.data.loginWithEmail.id).toBeUUID ()
+			expect (header['set-cookie'][0]).toBeString ()
+			sessionCookie = header['set-cookie']
+			console.log(sessionCookie)
+			post = async (query: ASTNode, variables: any) =>
+				req (query, variables)
+					.set ('Cookie', sessionCookie)
+					.then(res => flattenGQLResponse(res.body))
 
     })
   })
 
-	
+
 })
 
 
@@ -343,14 +349,13 @@ describe ('Task', () => {
 			title: 'min task'
 		}
 
-    const [task] = await post<Task>
+    const [task, errors] = await post<Task>
     (gql`mutation newTask ($data: TaskInput!) {
         addTask(data: $data) {
             title
         }
     }`, { data: minTask })
-		isSE (task.title, minTask.title)
-
+	  isSE (task.title, minTask.title)
 
   })
 

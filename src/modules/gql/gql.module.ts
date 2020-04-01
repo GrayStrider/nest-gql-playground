@@ -7,9 +7,9 @@ interface ExpresssCtx {
 	res: Response
 }
 
-const context = ({ req, res }: ExpresssCtx) => ({
-	user: req.user,
-	session: req.session
+const context = ({ req }: ExpresssCtx) => ({
+	user: req.session?.user,
+	session: req.session!,
 })
 
 export type MyContext = ReturnType<typeof context>

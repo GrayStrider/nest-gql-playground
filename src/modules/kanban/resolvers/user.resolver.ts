@@ -59,7 +59,7 @@ export class UserResolver {
 			await compare (password, hash),
 			invalidCredentialsError)
 
-		user = {
+		session.user = {
 			id: userData.id,
 			name: userData.name,
 			roles: ['admin']
