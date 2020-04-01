@@ -532,7 +532,3 @@ describe ('Auth', () => {
 	})
 })
 
-describe ('User', () => {
-
-
-})
