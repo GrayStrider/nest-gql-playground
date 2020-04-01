@@ -18,6 +18,10 @@ export class User extends Base {
 		// Could have logged on via other service
 	password?: string
 	
+	@Column ({ unique: true })
+	@Field ()
+	email: string
+	
 	@Field (returns => [Comment])
 	@OneToMany (type => Comment, comm => comm.user)
 	comments: Comment[]

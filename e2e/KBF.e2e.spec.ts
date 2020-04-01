@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 import { Board } from '@M/KBF/entity/Board'
 import { Task } from '@M/KBF/entity/Task'
 import { TaskInput } from '@M/KBF/inputs/task.input'
-import { zipObj, without, all, head } from 'ramda'
+import { zipObj, without, all, head, pick } from 'ramda'
 import { Color, defaultColors } from '@M/KBF/entity/Color'
 import { NewColorInput } from '@M/KBF/inputs/color.input'
 import { GraphQLError } from 'graphql'
@@ -17,6 +17,7 @@ import { defaultColumns } from '@M/KBF/entity/TColumn'
 import { User } from '@M/KBF/entity/User'
 import { APP_FILTER } from '@nestjs/core'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
+import { UserInput } from '@M/KBF/inputs/user.input'
 
 let app: INestApplication
 let post: Post
@@ -385,6 +386,15 @@ describe ('Comment', () => {
   })
 
 })
+const testUser: UserInput = {
+	name: 'Ivan',
+	password: 'aG2_ddddddd',
+	email: 'test@test.com',
+	confirmPassword: 'aG2_ddddddd'
+}
+
+const credentials = pick
+(['email', 'password'], testUser)
 
 describe ('User', () => {
   describe ('validation', () => {
@@ -397,49 +407,58 @@ describe ('User', () => {
 			expect.assertions
 			(3 * invalidPasswords.length)
       for (const password of invalidPasswords) {
+				const user = { ...testUser, password }
         const res = await post<User>
-        (gql`mutation {
-            register(data: {
-                name: "Ivan",
-                password: "${password}"
-                confirmPassword: "${password}"
-            }) {
-                name
+        (gql`mutation Register($testUser: UserInput!) {
+            register(data: $testUser) {
+                id
             }
-        }`)
+        }`, { testUser: user })
 				shouldHaveFailedValidation (res)
       }
 
     })
     it ('should compare passwords', async () => {
 			expect.assertions (2)
+			const user: UserInput = {
+				...testUser,
+				password: '34tT_ssssssss',
+				email: chance.email ()
+			}
       const res = await post<User>
-      (gql`mutation {
-          register(data: {
-              name: "Ivan"
-              password: "aG2_ddddddd"
-              confirmPassword: "aG2_dddddd"
-          }) {
+      (gql`mutation Register($testUser: UserInput!) {
+          register(data: $testUser) {
               id
           }
-      }`)
-			shouldHaveFailedValidation(res, 0)
-
-
+      }`, { testUser: user })
+			shouldHaveFailedValidation (res, 0)
     })
+		it ('should keep emails unique', async () => {
+		
+		
+		})
   })
   it ('should create user', async () => {
 		expect.assertions (1)
     const [user, errors] = await post<User>
-    (gql`mutation {
-        register(data: {
-            name: "Ivan"
-            password: "aG2_ddddddd"
-            confirmPassword: "aG2_ddddddd"
-        }) {
+    (gql`mutation Register($testUser: UserInput!) {
+        register(data: $testUser) {
             id
         }
-    }`)
+    }`, { testUser })
 		expect (user.id).toBeUUID ()
+  })
+
+  it ('should check password', async () => {
+		expect.assertions (1)
+    const [user] = await post<User>
+    (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+        loginWithEmail(data: $data) {
+            id
+            name
+        }
+    }`)
+
+
   })
 })
