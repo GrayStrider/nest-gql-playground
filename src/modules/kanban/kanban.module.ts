@@ -7,7 +7,6 @@ import { CommentResolver } from '@M/kanban/resolvers/comment.resolver'
 import { UserResolver } from '@M/kanban/resolvers/user.resolver'
 import { TagResolver } from '@M/kanban/resolvers/tag.resolver'
 import { TimeoutInterceptor } from '@/common/interceptors/timeout.interceptor'
-import { LoggingInterceptor } from '@/common/interceptors/logging.interceptor'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 
 
@@ -20,7 +19,6 @@ import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 		CommentResolver,
 		ColorResolver,
 		{ provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
-		{ provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
 		{ provide: APP_FILTER, useClass: GqlExceptionFilter }
 	]
 })

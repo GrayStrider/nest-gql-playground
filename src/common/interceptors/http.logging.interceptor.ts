@@ -11,7 +11,7 @@ import chalk from 'chalk'
  * before and after the route handler is called.
  */
 @Injectable ()
-export class LoggingInterceptor implements NestInterceptor {
+export class HTTPLoggingInterceptor implements NestInterceptor {
 	intercept (context: ExecutionContext, next: CallHandler): Observable<any> {
 		if (!(context.getType () === 'http')) return next.handle ()
 		
