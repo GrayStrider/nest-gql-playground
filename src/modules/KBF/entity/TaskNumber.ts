@@ -2,7 +2,7 @@ import { Field } from '@nestjs/graphql'
 import { OneToOne, Column, Check } from 'typeorm'
 import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
-import { EntityObject } from '@/common/decorators'
+import { EntityObject } from '@/common/decorators/entity-object.decorator'
 
 
 @EntityObject

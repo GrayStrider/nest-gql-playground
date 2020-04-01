@@ -3,7 +3,7 @@ import { Field } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
 import { User } from '@M/KBF/entity/User'
 import { Base } from '@M/KBF/entity/_Base'
-import { EntityObject } from '@/common/decorators'
+import { EntityObject } from '@/common/decorators/entity-object.decorator'
 
 export const textLength = 5000
 

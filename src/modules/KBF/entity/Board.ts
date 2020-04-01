@@ -5,7 +5,7 @@ import { Color } from '@M/KBF/entity/Color'
 import { TColumn } from '@M/KBF/entity/TColumn'
 import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
-import { EntityObject } from '@/common/decorators'
+import { EntityObject } from '@/common/decorators/entity-object.decorator'
 import { Tag } from '@M/KBF/entity/Tag'
 
 export const nameLength = 50

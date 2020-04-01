@@ -2,7 +2,7 @@ import { Column, ManyToMany, ManyToOne, Unique } from 'typeorm'
 import { Field } from '@nestjs/graphql'
 import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
-import { EntityObject } from '@/common/decorators'
+import { EntityObject } from '@/common/decorators/entity-object.decorator'
 import { Board } from '@M/KBF/entity/Board'
 
 export const nameLength = 20

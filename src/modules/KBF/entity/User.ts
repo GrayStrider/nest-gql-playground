@@ -4,7 +4,7 @@ import { Task } from '@M/KBF/entity/Task'
 import { Subtask } from '@M/KBF/entity/Subtask'
 import { Comment } from '@M/KBF/entity/Comment'
 import { Base } from '@M/KBF/entity/_Base'
-import { EntityObject } from '@/common/decorators'
+import { EntityObject } from '@/common/decorators/entity-object.decorator'
 
 export const nameLength = 50
 

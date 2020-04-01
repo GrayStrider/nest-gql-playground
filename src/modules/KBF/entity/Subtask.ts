@@ -3,7 +3,7 @@ import { Column, ManyToMany, ManyToOne, JoinTable } from 'typeorm'
 import { User } from '@M/KBF/entity/User'
 import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
-import { EntityObject } from '@/common/decorators'
+import { EntityObject } from '@/common/decorators/entity-object.decorator'
 
 export const contentLength = 500
 

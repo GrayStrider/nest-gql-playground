@@ -11,7 +11,7 @@ import { Tag } from '@M/KBF/entity/Tag'
 import { Comment } from '@M/KBF/entity/Comment'
 import { Board } from '@M/KBF/entity/Board'
 import { Base } from '@M/KBF/entity/_Base'
-import { EntityObject } from '@/common/decorators'
+import { EntityObject } from '@/common/decorators/entity-object.decorator'
 
 export const titleLength = 100
 export const descriptionLength = 5000

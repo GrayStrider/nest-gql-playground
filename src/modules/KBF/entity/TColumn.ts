@@ -3,7 +3,7 @@ import { Field } from '@nestjs/graphql'
 import { Board } from '@M/KBF/entity/Board'
 import { Task } from '@M/KBF/entity/Task'
 import { Base } from '@M/KBF/entity/_Base'
-import { EntityObject } from '@/common/decorators'
+import { EntityObject } from '@/common/decorators/entity-object.decorator'
 
 export const nameLength = 20
 export const maxOrder = 5000
