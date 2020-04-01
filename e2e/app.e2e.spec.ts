@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing'
-import { KanbanModule } from '@M/kanban/kanban.module'
 import { supertest, Post, Req, isSE, chance, shouldHaveErrorCode, shouldHaveFailedValidation } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
 import { Board } from '@M/kanban/entity/Board'
@@ -13,8 +12,6 @@ import { Comment } from '@M/kanban/entity/Comment'
 import { ErrorCodes } from '@/common/errors'
 import { defaultColumns } from '@M/kanban/entity/TColumn'
 import { User } from '@M/kanban/entity/User'
-import { APP_FILTER } from '@nestjs/core'
-import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 import { UserInput } from '@M/kanban/inputs/user.input'
 import { makeRedis } from '@M/redis/redis.provider'
 import { AppModule } from '@M/app/app.module'
@@ -25,10 +22,7 @@ let req: Req
 beforeAll (async () => {
 	jest.setTimeout (20000)
 	const moduleFixture = await Test.createTestingModule ({
-		imports: [AppModule],
-		providers: [
-			{ provide: APP_FILTER, useClass: GqlExceptionFilter }
-		]
+		imports: [AppModule]
 	}).compile ()
 	const app = moduleFixture.createNestApplication ()
 	await app.init ()
@@ -36,6 +30,7 @@ beforeAll (async () => {
 	await makeRedis ().flushdb ()
 	
 })
+
 const testBoardName = 'test board'
 describe ('Board', () => {
   describe ('validation', () => {
