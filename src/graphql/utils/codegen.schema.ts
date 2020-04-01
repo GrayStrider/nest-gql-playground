@@ -8,6 +8,9 @@ const { readdir, readFile } = promises
 
 const PATH = 'src/graphql/generated/'
 
+/**
+ * Generates stub schema for graphql-codegen
+ */
 async function main (): Promise<GraphQLSchema> {
 	
 	const files = await readdir (PATH)
