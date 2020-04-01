@@ -17,6 +17,7 @@ import { APP_FILTER } from '@nestjs/core'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 import { UserInput } from '@M/kanban/inputs/user.input'
 import { makeRedis } from '@M/redis/redis.provider'
+import { AppModule } from '@M/app/app.module'
 
 let post: Post
 let req: Req
@@ -24,7 +25,7 @@ let req: Req
 beforeAll (async () => {
 	jest.setTimeout (20000)
 	const moduleFixture = await Test.createTestingModule ({
-		imports: [KanbanModule],
+		imports: [AppModule],
 		providers: [
 			{ provide: APP_FILTER, useClass: GqlExceptionFilter }
 		]

@@ -10,7 +10,6 @@ import { CommentResolver } from '@M/kanban/resolvers/comment.resolver'
 import { UserResolver } from '@M/kanban/resolvers/user.resolver'
 import { TagResolver } from '@M/kanban/resolvers/tag.resolver'
 import { ErrorCodes } from '@/common/errors'
-import { Request, Response } from 'express'
 import { REDIS, Redis } from '@/common/constants'
 import { makeRedis } from '@M/redis/redis.provider'
 import ConnectRedis from 'connect-redis'
@@ -23,17 +22,6 @@ import { LoggingInterceptor } from '@/common/interceptors/logging.interceptor'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 import { validatorOptions } from '@config'
 import { GqlModule } from '@M/gql/gql.module'
-
-interface ExpresssCtx {
-	req: Request
-	res: Response
-}
-
-const context = ({ req, res }: ExpresssCtx) => ({
-	user: req.user,
-	session: req.session
-})
-
 
 const GqlValidationPipe = new ValidationPipe ({
 	...validatorOptions,
@@ -70,9 +58,7 @@ const redisPubSub = new RedisPubSub ({
 		{ provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
 		{ provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
 		{ provide: APP_FILTER, useClass: GqlExceptionFilter }
-	],
-	controllers: [],
-	exports: []
+	]
 })
 
 export class KanbanModule implements NestModule {
