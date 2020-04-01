@@ -1,7 +1,6 @@
 import { Module, ValidationPipe, NestModule, Inject, MiddlewareConsumer } from '@nestjs/common'
 import { GraphQLModule, GqlModuleOptions } from '@nestjs/graphql'
 import { TaskResolver } from '@M/KBF/resolvers/task.resolver'
-import { CatFactsAPI } from '@M/cat-facts/cat-facts.datasource'
 import { BoardResolver } from '@M/KBF/resolvers/board.resolver'
 import { DBModule } from '@M/db/db.module'
 import { ColorResolver } from '@M/KBF/resolvers/color.resolver'
@@ -40,13 +39,10 @@ const context = ({ req, res }: ExpresssCtx) => ({
 	session: req.session
 })
 
-export type Context = ReturnType<typeof context> & {
-	dataSources?: ReturnType<typeof dataSources>
-}
+export type Context = ReturnType<typeof context>
 
 const apolloOptions: GqlModuleOptions = {
 	autoSchemaFile: 'src/graphql/generated/schema.graphql',
-	dataSources,
 	playground: {
 		settings: {
 			'request.credentials': 'include'
