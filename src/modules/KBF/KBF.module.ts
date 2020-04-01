@@ -84,7 +84,6 @@ const redisPubSub = new RedisPubSub ({
 		TagResolver,
 		CommentResolver,
 		ColorResolver,
-		{ provide: APP_GUARD, useClass: GqlAuthGuard },
 		{ provide: APP_PIPE, useValue: GqlValidationPipe },
 		{ provide: REDIS.SESSION, useValue: makeRedis () },
 		{ provide: REDIS.PUBSUB, useValue: redisPubSub },
