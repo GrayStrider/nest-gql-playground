@@ -48,13 +48,6 @@ const userNotFoundError = (id: string) =>
 
 export default Errors
 
-enum ErrorCodes2 {
-	LIMIT_REACHED = 'LIMIT_REACHED',
-	NOT_FOUND = 'NOT_FOUND',
-	VALIDATION_ERROR = 'VALIDATION_ERROR',
-	NOT_UNIQUE = 'NOT_UNIQUE'
-}
-
 export const NotFoundByIDError = (name: string, id: string) => new ApolloError (`${capitalize(name)} ${truncate (id, {
 		length: 10
 	})} was not found`,
@@ -62,4 +55,4 @@ export const NotFoundByIDError = (name: string, id: string) => new ApolloError (
 		providedID: id
 	})
 
-export { ErrorCodes2, userNotFoundError, makeCustomError, IExpectedError }
+export {  userNotFoundError, makeCustomError, IExpectedError }
