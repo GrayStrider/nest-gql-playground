@@ -7,7 +7,7 @@ import { isNonEmpty } from 'fp-ts/lib/Array'
 /**
  * Has built-in implementation
  */
-export class ValidationPipe_ implements PipeTransform<any> {
+class ValidationPipe_ implements PipeTransform<any> {
 	async transform (value: any, { metatype }: ArgumentMetadata) {
 		if (!metatype || !this.toValidate (metatype)) {
 			return value

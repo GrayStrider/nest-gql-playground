@@ -4,7 +4,7 @@ import { BadRequestException, PipeTransform, Injectable, ArgumentMetadata } from
  * Has built-in implementation
  */
 @Injectable ()
-export class ParseIntPipe_ implements PipeTransform<string> {
+class ParseIntPipe_ implements PipeTransform<string> {
 	async transform (value: string, metadata: ArgumentMetadata) {
 		const val = parseInt (value, 10)
 		if (isNaN (val)) {
