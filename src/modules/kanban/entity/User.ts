@@ -1,9 +1,9 @@
 import { ManyToMany, OneToMany, Column } from 'typeorm'
 import { Field } from '@nestjs/graphql'
-import { Task } from '@M/KBF/entity/Task'
-import { Subtask } from '@M/KBF/entity/Subtask'
-import { Comment } from '@M/KBF/entity/Comment'
-import { Base } from '@M/KBF/entity/_Base'
+import { Task } from '@M/kanban/entity/Task'
+import { Subtask } from '@M/kanban/entity/Subtask'
+import { Comment } from '@M/kanban/entity/Comment'
+import { Base } from '@M/kanban/entity/_Base'
 import { EntityObject } from '@/common/decorators/entity-object.decorator'
 
 export const nameLength = 50

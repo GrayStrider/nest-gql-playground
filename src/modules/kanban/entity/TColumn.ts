@@ -1,8 +1,8 @@
 import { OneToMany, ManyToOne, Column, Check } from 'typeorm'
 import { Field } from '@nestjs/graphql'
-import { Board } from '@M/KBF/entity/Board'
-import { Task } from '@M/KBF/entity/Task'
-import { Base } from '@M/KBF/entity/_Base'
+import { Board } from '@M/kanban/entity/Board'
+import { Task } from '@M/kanban/entity/Task'
+import { Base } from '@M/kanban/entity/_Base'
 import { EntityObject } from '@/common/decorators/entity-object.decorator'
 
 export const nameLength = 20

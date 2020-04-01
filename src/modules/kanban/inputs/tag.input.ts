@@ -1,8 +1,8 @@
 import { InputType, Field } from '@nestjs/graphql'
 import { FieldNullable, ValidString } from '@/common/decorators/validation'
 import { IsUUID, IsBoolean, ArrayNotEmpty } from 'class-validator'
-import { nameLength, descriptionLength } from '@M/KBF/entity/Tag'
-import * as Board from '@M/KBF/entity/Board'
+import { nameLength, descriptionLength } from '@M/kanban/entity/Tag'
+import * as Board from '@M/kanban/entity/Board'
 
 @InputType ()
 export class TagInput {

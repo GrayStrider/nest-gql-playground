@@ -1,12 +1,12 @@
 import { OneToMany, Column } from 'typeorm'
 import { Field } from '@nestjs/graphql'
-import { Swimlane } from '@M/KBF/entity/Swimlane'
-import { Color } from '@M/KBF/entity/Color'
-import { TColumn } from '@M/KBF/entity/TColumn'
-import { Task } from '@M/KBF/entity/Task'
-import { Base } from '@M/KBF/entity/_Base'
+import { Swimlane } from '@M/kanban/entity/Swimlane'
+import { Color } from '@M/kanban/entity/Color'
+import { TColumn } from '@M/kanban/entity/TColumn'
+import { Task } from '@M/kanban/entity/Task'
+import { Base } from '@M/kanban/entity/_Base'
 import { EntityObject } from '@/common/decorators/entity-object.decorator'
-import { Tag } from '@M/KBF/entity/Tag'
+import { Tag } from '@M/kanban/entity/Tag'
 
 export const nameLength = 50
 

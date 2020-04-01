@@ -1,8 +1,8 @@
 import { Resolver, Args, Mutation } from '@nestjs/graphql'
-import { Color } from '@M/KBF/entity/Color'
-import { NewColorInput } from '@M/KBF/inputs/color.input'
+import { Color } from '@M/kanban/entity/Color'
+import { NewColorInput } from '@M/kanban/inputs/color.input'
 import { find } from 'ramda'
-import { getBoard } from '@M/KBF/resolvers/task.resolver'
+import { getBoard } from '@M/kanban/resolvers/task.resolver'
 import Errors from '@/common/errors'
 
 @Resolver ()

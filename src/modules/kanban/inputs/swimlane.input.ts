@@ -1,7 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql'
 import { FieldNullable, ValidString } from '@/common/decorators/validation'
-import { nameLength, descriptionLength } from '@M/KBF/entity/Swimlane'
-import * as Board from '@M/KBF/entity/Board'
+import { nameLength, descriptionLength } from '@M/kanban/entity/Swimlane'
+import * as Board from '@M/kanban/entity/Board'
 
 
 @InputType ()

@@ -1,6 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql'
 import { ValidString, FieldNullable } from '@/common/decorators/validation'
-import { contentLength } from '@M/KBF/entity/Subtask'
+import { contentLength } from '@M/kanban/entity/Subtask'
 import { IsBoolean, IsDateString, IsUUID, ArrayNotEmpty } from 'class-validator'
 
 @InputType ()

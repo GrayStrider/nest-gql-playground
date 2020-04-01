@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsUUID } from 'class-validator'
 import { ValidString } from '@/common/decorators/validation'
-import { textLength } from '@M/KBF/entity/Comment'
+import { textLength } from '@M/kanban/entity/Comment'
 
 @InputType ()
 export class CommentInput {

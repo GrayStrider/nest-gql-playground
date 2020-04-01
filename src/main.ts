@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core'
 import { PORT, HOST, NODE_ENV } from '@config'
 import { sig, toDefault } from '@qdev/utils-ts'
-import { KBFModule } from '@M/KBF/KBF.module'
+import { KBFModule } from '@M/kanban/KBF.module'
 
 
 async function bootstrap () {

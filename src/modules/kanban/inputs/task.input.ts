@@ -1,14 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { MaxLength, IsNotEmpty, IsBoolean, ArrayNotEmpty, Max, Min, IsUUID, IsDateString } from 'class-validator'
 import { FieldNullable, ValidString, ValidNumber } from '@/common/decorators/validation'
-import * as Tag from '@M/KBF/entity/Tag'
-import * as Board from '@M/KBF/entity/Board'
-import * as Task from '@M/KBF/entity/Task'
-import { Year, maxOrderTasksInColumn } from '@M/KBF/entity/Task'
-import * as Color from '@M/KBF/entity/Color'
-import * as Swimlane from '@M/KBF/entity/Swimlane'
-import * as Column from '@M/KBF/entity/TColumn'
-import { SubbtaskInput } from '@M/KBF/inputs/subbtask.input'
+import * as Tag from '@M/kanban/entity/Tag'
+import * as Board from '@M/kanban/entity/Board'
+import * as Task from '@M/kanban/entity/Task'
+import { Year, maxOrderTasksInColumn } from '@M/kanban/entity/Task'
+import * as Color from '@M/kanban/entity/Color'
+import * as Swimlane from '@M/kanban/entity/Swimlane'
+import * as Column from '@M/kanban/entity/TColumn'
+import { SubbtaskInput } from '@M/kanban/inputs/subbtask.input'
 
 @InputType()
 export class TaskSearchInput {

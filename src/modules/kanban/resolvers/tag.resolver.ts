@@ -1,10 +1,10 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql'
-import { Tag } from '@M/KBF/entity/Tag'
-import { TagInput } from '@M/KBF/inputs/tag.input'
-import { Task } from '@M/KBF/entity/Task'
+import { Tag } from '@M/kanban/entity/Tag'
+import { TagInput } from '@M/kanban/inputs/tag.input'
+import { Task } from '@M/kanban/entity/Task'
 import { without, isEmpty } from 'ramda'
 import Errors, { NotFoundByIDError } from '@/common/errors'
-import { getBoard } from '@M/KBF/resolvers/task.resolver'
+import { getBoard } from '@M/kanban/resolvers/task.resolver'
 import { toDefault } from '@qdev/utils-ts'
 
 @Resolver ()

@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common'
 import Errors from '@/common/errors'
 import { GqlExecutionContext } from '@nestjs/graphql'
-import { Context } from '@M/KBF/KBF.module'
+import { Context } from '@M/kanban/KBF.module'
 
 export class GqlAuthGuard implements CanActivate {
 	canActivate (context: ExecutionContext) {

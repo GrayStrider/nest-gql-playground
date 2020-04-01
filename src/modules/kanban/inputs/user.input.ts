@@ -1,6 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql'
 import { ValidString, StrongPassword } from '@/common/decorators/validation'
-import { nameLength } from '@M/KBF/entity/User'
+import { nameLength } from '@M/kanban/entity/User'
 import { IsEmail } from 'class-validator'
 
 @InputType()

@@ -1,12 +1,12 @@
 import { Resolver, Query, Args, Mutation, Context as Ctx } from '@nestjs/graphql'
-import { User } from '@M/KBF/entity/User'
-import { SearchByIDInput } from '@M/KBF/inputs/shared/search-by-id.input'
+import { User } from '@M/kanban/entity/User'
+import { SearchByIDInput } from '@M/kanban/inputs/shared/search-by-id.input'
 import Maybe from 'graphql/tsutils/Maybe'
-import { UserInput, LoginWithEmailInput } from '@M/KBF/inputs/user.input'
+import { UserInput, LoginWithEmailInput } from '@M/kanban/inputs/user.input'
 import Errors from '@/common/errors'
 import { hash, compare } from 'bcryptjs'
 import { toDefault } from '@qdev/utils-ts'
-import { Context } from '@M/KBF/KBF.module'
+import { Context } from '@M/kanban/KBF.module'
 import { keys } from 'ramda'
 
 

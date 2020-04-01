@@ -1,9 +1,9 @@
 import { ArgsType, Field, InputType } from '@nestjs/graphql'
 import { IsNotEmpty, MaxLength, ArrayNotEmpty } from 'class-validator'
-import { ColumnInput } from '@M/KBF/inputs/column.input'
+import { ColumnInput } from '@M/kanban/inputs/column.input'
 import { FieldNullable, ValidString } from '@/common/decorators/validation'
-import { nameLength } from '@M/KBF/entity/Board'
-import { nameLength as SnameLength } from '@M/KBF/entity/Swimlane'
+import { nameLength } from '@M/kanban/entity/Board'
+import { nameLength as SnameLength } from '@M/kanban/entity/Swimlane'
 
 @ArgsType ()
 export class FindBoardInput {

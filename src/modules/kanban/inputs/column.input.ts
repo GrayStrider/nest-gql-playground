@@ -1,7 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql'
 import { FieldNullable, ValidString, ValidNumber } from '@/common/decorators/validation'
-import { nameLength, maxOrder, taskLimit } from '@M/KBF/entity/TColumn'
-import * as Board from '@M/KBF/entity/Board'
+import { nameLength, maxOrder, taskLimit } from '@M/kanban/entity/TColumn'
+import * as Board from '@M/kanban/entity/Board'
 import { IsUUID } from 'class-validator'
 
 @InputType ()
