@@ -30,7 +30,7 @@ export class BoardResolver {
 		const colors = defaultColors.map
 		(([name, value, def]) => Color.create
 		({ name, value, default: def }))
-
+		// TODO verify order of swimlanes/columns
 		const columns = columnsParams
 			? columnsParams.map (coll => TColumn.create(coll))
 			// columnsParams.map (TColumn.create) does NOT work, probaly because of this scoping or whatnot

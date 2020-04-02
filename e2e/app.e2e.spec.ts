@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing'
-import { supertest, Post, Req, isSE, chance, shouldHaveErrorCode, shouldHaveFailedValidation, flattenGQLResponse } from '@qdev/utils-ts'
+import { supertest, Post, Req, isSE, chance, shouldHaveErrorCode, shouldHaveFailedValidation, flattenGQLResponse, sig } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
 import { Board } from '@M/kanban/entity/Board'
 import { Task } from '@M/kanban/entity/Task'
@@ -17,6 +17,7 @@ import { makeRedis } from '@M/redis/redis.provider'
 import { AppModule } from '@M/app/app.module'
 import { ASTNode } from 'graphql'
 import http from 'http'
+import { Swimlane } from '@M/kanban/entity/Swimlane'
 
 let post: Post
 let req: Req
@@ -240,7 +241,7 @@ describe ('Create/Read', () => {
     }`)
 		shouldHaveFailedValidation (res)
   })
-  test.skip ('board/min', async () => {
+  test ('board/min', async () => {
 		expect.assertions (4)
     const [board] = await post<Board>
     (gql`mutation {
@@ -250,6 +251,7 @@ describe ('Create/Read', () => {
     }
     ${fragmentFullBoard}
 		`)
+	  sig.info(board)
 		isSE (board.colors, defaultColors.map
 		(zipObj (['name', 'value', 'default'])))
 		isSE (board.columns, defaultColumns.map
@@ -285,6 +287,7 @@ describe ('Create/Read', () => {
         }) {...res}
     }
     ${fragmentFullBoard}`)
+	  sig.info(board)
 	  expect (board.id).toBeUUID()
 	  const [board2] = await post <Board>
 	  (gql`query {
@@ -293,10 +296,24 @@ describe ('Create/Read', () => {
 	  }
 	  ${fragmentFullBoard}`)
 	  isSE(board, board2)
-	  
 
   })
-	
+	test ('swimlane', async () => {
+		expect.assertions(1)
+	  const [swim] = await post <Swimlane>
+	  (gql`mutation {
+			addSwimlane(data: {
+					name: "new swimlane"
+					description: "tasks here"
+					boardName: ${testBoardName}
+			}) {
+					id
+			}
+	  }`)
+	  
+	  
+	  
+	})
 })
 
 describe.skip ('Task', () => {

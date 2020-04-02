@@ -1,4 +1,4 @@
-import { OneToMany, ManyToOne, Column } from 'typeorm'
+import { OneToMany, ManyToOne, Column, Check } from 'typeorm'
 import { Field } from '@nestjs/graphql'
 import { Task } from '@M/kanban/entity/Task'
 import { Board } from '@M/kanban/entity/Board'
@@ -9,6 +9,8 @@ export const nameLength = 20
 export const descriptionLength = 500
 // TODO unique name per board (to use name as id)
 @EntityObject
+@Check (`"order" < ${10000}`)
+@Check (`"order" >= 0`)
 export class Swimlane extends Base {
 	@Column ({ length: nameLength })
 	@Field ()
@@ -20,6 +22,10 @@ export class Swimlane extends Base {
 	})
 	@Field ({ nullable: true })
 	description?: string
+	
+	@Field ()
+	@Column ({ type: 'int', default: 0 })
+	order: number
 	
 	@OneToMany (type => Task, task => task.swimlane)
 	tasks: Task[]
