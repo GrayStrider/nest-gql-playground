@@ -343,8 +343,22 @@ describe ('Create/Read', () => {
 			  }
 	  }`)
 	  expect (swls).toHaveLength(2)
-
   })
+	test ('complex query', async () => {
+		expect.assertions(1)
+	  const [lanes] = await post <Array<Swimlane>>
+	  (gql`query {
+			  swimlanes(data: {
+					  boardName: "${testBoardName}"
+					  name: "new swimlane"
+			  }) {
+					  name
+			  }
+	  }`)
+	  expect (lanes).toHaveLength(1)
+	  
+	  
+	})
 })
 
 describe.skip ('Task', () => {
