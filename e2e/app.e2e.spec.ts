@@ -137,7 +137,7 @@ describe ('Auth', () => {
 			ErrorCodes.NOT_UNIQUE)
 
   })
-	it ('compare passwords', async () => {
+	it ('confirm password', async () => {
 		expect.assertions (2)
 		const user: UserInput = {
 			...testUser,
@@ -152,7 +152,7 @@ describe ('Auth', () => {
     }`, { testUser: user })
 		shouldHaveFailedValidation (res, 0)
   })
-	it ('check password', async () => {
+	it ('valid password', async () => {
 		expect.assertions (2)
     const [user, ers] = await post<User>
     (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
@@ -166,7 +166,7 @@ describe ('Auth', () => {
 		(ers, ErrorCodes.UNATHORIZED)
 
   })
-	it ('check email', async () => {
+	it ('valid email', async () => {
 		expect.assertions (2)
     const [user, ers] = await post<User>
     (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
@@ -192,8 +192,7 @@ describe ('Auth', () => {
 		expect (body.data.loginWithEmail.id).toBeUUID ()
 		expect (header['set-cookie'][0]).toBeString ()
 		sessionCookie = header['set-cookie']
-		console.log (sessionCookie)
-		post = async (query: ASTNode, variables: any) =>
+	  post = async (query: ASTNode, variables: any) =>
 			req (query, variables)
 				.set ('Cookie', sessionCookie)
 				.then (res => flattenGQLResponse (res.body))
