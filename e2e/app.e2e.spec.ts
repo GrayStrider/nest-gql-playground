@@ -299,7 +299,7 @@ describe ('Create/Read', () => {
 
   })
   test ('swimlane', async () => {
-		expect.assertions (2)
+		expect.assertions (3)
     const [swim] = await post<Swimlane>
     (gql`mutation {
         addSwimlane(data: {
@@ -334,8 +334,15 @@ describe ('Create/Read', () => {
 	  }`)
 	  isSE(swim2.id, swim.id)
 	  
-	  
-
+	  const [swls] = await post <Swimlane[]>
+	  (gql`query {
+			  swimlanes(data: {
+					  boardName: "${testBoardName}"
+			  }) {
+					  name
+			  }
+	  }`)
+	  expect (swls).toHaveLength(2)
 
   })
 })

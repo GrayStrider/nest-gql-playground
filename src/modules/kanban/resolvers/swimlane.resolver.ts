@@ -9,12 +9,17 @@ import { getBoard } from '@M/kanban/resolvers/task.resolver'
 export class SwimlaneResolver {
 	@Query (returns => [Swimlane])
 	async swimlanes (@Args ('data') { id, name, boardName, description }: FindSwimlaneInput): Promise<Swimlane[]> {
-		return Swimlane.find ()
+		const promise = await Swimlane.createQueryBuilder ('swim')
+			.leftJoinAndSelect ('swim.board', 'board')
+			.where (`board.name = :boardName`, { boardName })
+			.getMany ()
+		console.log (promise)
+		return promise
 	}
 	
 	@Query (returns => Swimlane)
 	async swimlane (@Args ('data') { id, name, boardName, description }: FindSwimlaneInput): Promise<Swimlane> {
-		const board = await getBoard(boardName)
+		const board = await getBoard (boardName)
 		return toDefault (
 			await Swimlane.findOne ({ name }),
 			new Errors.NotFound (`Swimlane <${name}> was not found`)
@@ -28,6 +33,6 @@ export class SwimlaneResolver {
 		const order_ = toDefault (order,
 			await Swimlane.count ())
 		return Swimlane.create ({ board, description, name, order: order_ })
-			.save()
+			.save ()
 	}
 }
