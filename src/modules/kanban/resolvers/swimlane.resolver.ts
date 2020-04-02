@@ -14,10 +14,15 @@ export class SwimlaneResolver {
 			.leftJoinAndSelect ('swim.board', 'board')
 			.where (`board.name = :boardName`, { boardName })
 		keys (rest).forEach ((param) => {
+			const isString = typeof rest[param] === 'string'
 			query = query.andWhere
-			(`swim.${param} ${typeof rest[param] === 'string' ? `LIKE` : '='} :value`, { value: rest[param] })
+			(`swim.${param} ${
+				isString ? `LIKE` : '='
+			} :value`, {
+				value: isString
+					? `%${rest[param]}%` : rest[param]
+			})
 		})
-		console.log(query.getQuery())
 		return query.getMany ()
 	}
 	
@@ -33,13 +38,13 @@ export class SwimlaneResolver {
 	
 	@Mutation (returns => Swimlane)
 	async addSwimlane (@Args ('data') { boardName, description, name, order }: SwimlaneInput): Promise<Swimlane> {
-		let query = Swimlane.createQueryBuilder ('swim')
+		let swlsOnBoard = Swimlane.createQueryBuilder ('swim')
 			.leftJoinAndSelect ('swim.board', 'board')
 			.where (`board.name = :boardName`, { boardName })
 		
 		const board = await getBoard (boardName)
 		const order_ = toDefault (order,
-			await query.getCount())
+			await swlsOnBoard.getCount ())
 		return Swimlane.create ({ board, description, name, order: order_ })
 			.save ()
 	}

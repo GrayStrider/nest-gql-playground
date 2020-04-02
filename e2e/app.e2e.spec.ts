@@ -350,7 +350,7 @@ describe ('Create/Read', () => {
 	  (gql`query {
 			  swimlanes(data: {
 					  boardName: "${testBoardName}"
-					  name: "new swimlane"
+					  name: "w swi"
 			  }) {
 					  name
 			  }
