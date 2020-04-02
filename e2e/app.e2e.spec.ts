@@ -218,7 +218,7 @@ describe ('Create/Read', () => {
               taskLimit
           }
       }`
-	test ('AddBoardInput', async () => {
+  test ('AddBoardInput', async () => {
 		expect.assertions (3)
     const res = await post<Board>
     (gql`mutation {
@@ -251,7 +251,7 @@ describe ('Create/Read', () => {
     }
     ${fragmentFullBoard}
 		`)
-	  sig.info(board)
+		sig.info (board)
 		isSE (board.colors, defaultColors.map
 		(zipObj (['name', 'value', 'default'])))
 		isSE (board.columns, defaultColumns.map
@@ -275,45 +275,69 @@ describe ('Create/Read', () => {
             name: "${testBoardName + '-max'}"
             columnsParams: [
                 {
-		                name: "TODO",
+                    name: "TODO",
                     taskLimit: 5,
                     order: 0,
                 }
             ]
-		        swimlaneNames: [
-				        "default",
-				        "project B"
-		        ]
+            swimlaneNames: [
+                "default",
+                "project B"
+            ]
         }) {...res}
     }
-    ${fragmentFullBoard}`)
-	  sig.info(board)
-	  expect (board.id).toBeUUID()
-	  const [board2] = await post <Board>
-	  (gql`query {
-			  board(name: "${testBoardName + '-max'}")
-			  {...res}
-	  }
-	  ${fragmentFullBoard}`)
-	  isSE(board, board2)
+		${fragmentFullBoard}`)
+		sig.info (board)
+		expect (board.id).toBeUUID ()
+    const [board2] = await post<Board>
+    (gql`query {
+        board(name: "${testBoardName + '-max'}")
+        {...res}
+    }
+		${fragmentFullBoard}`)
+		isSE (board, board2)
 
   })
-	test ('swimlane', async () => {
-		expect.assertions(1)
-	  const [swim] = await post <Swimlane>
-	  (gql`mutation {
-			addSwimlane(data: {
-					name: "new swimlane"
-					description: "tasks here"
-					boardName: ${testBoardName}
-			}) {
-					id
-			}
+  test ('swimlane', async () => {
+		expect.assertions (2)
+    const [swim] = await post<Swimlane>
+    (gql`mutation {
+        addSwimlane(data: {
+            name: "new swimlane"
+            description: "tasks here"
+            boardName: "${testBoardName}"
+        }) {
+            id
+		        name
+        }
+    }`)
+    const [board] = await post<Board>
+    (gql`query {
+        board(name: "${testBoardName}") {
+            swimlanes {
+                name
+            }
+        }
+    }`)
+	  console.log(board.swimlanes)
+		isSE (board.swimlanes[1]!.name,
+			swim.name
+		)
+	  const [swim2] = await post <Swimlane>
+	  (gql`query {
+			  swimlane(data: {
+					  boardName: "${testBoardName}"
+					  name: "new swimlane"
+			  }) {
+					  id
+			  }
 	  }`)
+	  isSE(swim2.id, swim.id)
 	  
 	  
-	  
-	})
+
+
+  })
 })
 
 describe.skip ('Task', () => {
