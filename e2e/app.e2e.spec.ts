@@ -198,110 +198,107 @@ describe ('Auth', () => {
 })
 
 describe ('Create/Read', () => {
-  test ('board/min', async () => {
+  const fragmentFullBoard = gql`
+      fragment res on Board {
+          id
+          name
+          swimlanes {
+              name
+              description
+          }
+          colors {
+              name
+              value
+              default
+          }
+          columns {
+              name
+              order
+              taskLimit
+          }
+      }`
+	test ('AddBoardInput', async () => {
+		expect.assertions (3)
+    const res = await post<Board>
+    (gql`mutation {
+        addBoard(data: {
+            name: "",
+            swimlaneNames: [""]
+        }) {
+            name
+        }
+    }`)
+		shouldHaveFailedValidation (res, 2)
+  })
+  test ('FindBoardInput', async () => {
+		expect.assertions (3)
+    const res = await post<Board>
+    (gql`query {
+        board(name: "") {
+            name
+        }
+    }`)
+		shouldHaveFailedValidation (res)
+  })
+  test.skip ('board/min', async () => {
 		expect.assertions (4)
-	  const fullBoardRes = gql`
-	  fragment res on Board {
-        id
-        name
-        swimlanes {
-            name
-            description
-        }
-        colors {
-            name
-            value
-            default
-        }
-        columns {
-            name
-            order
-		        taskLimit
-        }
-	  }`
     const [board] = await post<Board>
     (gql`mutation {
         addBoard(data: {
             name: "${testBoardName}"
         }) {...res}
     }
-    ${fullBoardRes}
-    `)
-	  isSE (board.colors, defaultColors.map
-	  (zipObj (['name', 'value', 'default'])))
-	  isSE (board.columns, defaultColumns.map
-	  (zipObj (['name', 'order', 'taskLimit'])))
-	  isSE (board.swimlanes[0].name, 'Default')
-	  const [board2] = await post <Board>
-	  (gql`query {
-			  board(name: "${testBoardName}"){
-					  ...res
-			  }
-	  }
-	  ${fullBoardRes}`)
-	  isSE(board, board2)
-	  
-  })
-})
-
-describe.skip ('Board', () => {
-  describe.skip ('validation', () => {
-    it.skip ('FindBoardInput', async () => {
-			expect.assertions (3)
-      const res = await post<Board>
-      (gql`query {
-          board(name: "") {
-              name
-          }
-      }`)
-			shouldHaveFailedValidation (res)
-    })
-    it.skip ('AddBoardInput', async () => {
-			expect.assertions (3)
-      const res = await post<Board>
-      (gql`mutation {
-          addBoard(data: {
-              name: "",
-              swimlaneNames: [""]
-          }) {
-              name
-          }
-      }`)
-			shouldHaveFailedValidation (res, 2)
-    })
-
-  })
-
-  it.skip ('should have default data', async () => {
-		expect.assertions (3)
-    const [board] = await post<Board>
-    (gql`query {
-        board (name: "${testBoardName}") {
-            colors {
-                name
-                value
-                default
-            }
-            columns {
-                name
-                order
-                taskLimit
-            }
-            swimlanes {
-                name
-            }
-        }
-    }`)
-		
+    ${fragmentFullBoard}
+		`)
 		isSE (board.colors, defaultColors.map
 		(zipObj (['name', 'value', 'default'])))
-		
 		isSE (board.columns, defaultColumns.map
 		(zipObj (['name', 'order', 'taskLimit'])))
-		
 		isSE (board.swimlanes[0].name, 'Default')
+    const [board2] = await post<Board>
+    (gql`query {
+        board(name: "${testBoardName}"){
+            ...res
+        }
+    }
+		${fragmentFullBoard}`)
+		isSE (board, board2)
+
   })
+  test ('board/max', async () => {
+		expect.assertions (2)
+    const [board, errors] = await post<Board>
+    (gql`mutation {
+        addBoard(data: {
+            name: "${testBoardName + '-max'}"
+            columnsParams: [
+                {
+		                name: "TODO",
+                    taskLimit: 5,
+                    order: 0,
+                }
+            ]
+		        swimlaneNames: [
+				        "default",
+				        "project B"
+		        ]
+        }) {...res}
+    }
+    ${fragmentFullBoard}`)
+	  expect (board.id).toBeUUID()
+	  const [board2] = await post <Board>
+	  (gql`query {
+			  board(name: "${testBoardName + '-max'}")
+			  {...res}
+	  }
+	  ${fragmentFullBoard}`)
+	  isSE(board, board2)
+	  
+
+  })
+	
 })
+
 describe.skip ('Task', () => {
   describe.skip ('validation', () => {
     it.skip ('TaskInput', async () => {

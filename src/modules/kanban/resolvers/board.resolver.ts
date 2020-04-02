@@ -26,13 +26,14 @@ export class BoardResolver {
 	@Mutation (returns => Board)
 	async addBoard (@Args ('data') data: AddBoardInput): Promise<Board> {
 		const { name, columnsParams, swimlaneNames } = data
-		
+
 		const colors = defaultColors.map
 		(([name, value, def]) => Color.create
 		({ name, value, default: def }))
-		
+
 		const columns = columnsParams
-			? columnsParams.map (TColumn.create)
+			? columnsParams.map (coll => TColumn.create(coll))
+			// columnsParams.map (TColumn.create) does NOT work, probaly because of this scoping or whatnot
 			: defaultColumns.map
 			(([name, order, taskLimit]) => TColumn.create
 			({ name, order, taskLimit }))
@@ -40,7 +41,6 @@ export class BoardResolver {
 		const swimlanes = swimlaneNames
 			? swimlaneNames.map (name => Swimlane.create ({ name }))
 			: [Swimlane.create ({ name: 'Default' })]
-		
 		return await Board.create
 		({ name, colors, columns, swimlanes }).save ()
 		
