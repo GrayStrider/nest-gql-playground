@@ -47,24 +47,25 @@ const resourceShouldBeInaccessible = async (yes = true) => {
 }
 
 const testBoardName = 'test board'
+const testUser: UserInput = {
+	name: 'Ivan',
+	password: 'aG2_ddddddd',
+	email: 'test@test.com',
+	confirmPassword: 'aG2_ddddddd'
+}
+const credsOK = pick
+(['email', 'password'], testUser)
+const credsWrongPass = {
+	...credsOK,
+	password: 'aG2_ddddddd____'
+}
+const credsBadEmail = {
+	...credsOK,
+	email: 'foobar23948234@bad.com'
+}
 
 describe ('Auth', () => {
-	const testUser: UserInput = {
-		name: 'Ivan',
-		password: 'aG2_ddddddd',
-		email: 'test@test.com',
-		confirmPassword: 'aG2_ddddddd'
-	}
-	const credsOK = pick
-	(['email', 'password'], testUser)
-	const credsWrongPass = {
-		...credsOK,
-		password: 'aG2_ddddddd____'
-	}
-	const credsBadEmail = {
-		...credsOK,
-		email: 'foobar23948234@bad.com'
-	}
+	
   it ('register admin user', async () => {
 		expect.assertions (2)
     const [user, errors] = await post<User>
@@ -75,6 +76,109 @@ describe ('Auth', () => {
     }`, { testUser })
 		expect (user.id).toBeUUID ()
 		await resourceShouldBeInaccessible ()
+  })
+	
+  it ('log in', async () => {
+		expect.assertions (3)
+    const { body, header } = await req<User>
+    (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+        loginWithEmail(data: $data) {
+            id
+            name
+        }
+    }`, { data: credsOK })
+		expect (body.data.loginWithEmail.id).toBeUUID ()
+		expect (header['set-cookie'][0]).toBeString ()
+		
+		sessionCookie = header['set-cookie'][0]
+		await resourceShouldBeInaccessible (true)
+  })
+
+  it ('log out', async () => {
+		expect.assertions (2)
+    const [ok] = await post<Boolean>
+    (gql`mutation {
+        logout
+    }`)
+		isSE (ok, true)
+		await resourceShouldBeInaccessible ()
+		sessionCookie = []
+  })
+	
+	it ('password complexity', async () => {
+		const invalidPasswords = [
+			'', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
+			'BBBBBBBBBBBB', '@@@@@@@@@@@@@',
+			'33333333333333333', '_f4Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+		]
+		expect.assertions
+		(3 * invalidPasswords.length)
+    for (const password of invalidPasswords) {
+			const user = { ...testUser, password }
+      const res = await post<User>
+      (gql`mutation Register($testUser: UserInput!) {
+          register(data: $testUser) {
+              id
+          }
+      }`, { testUser: user })
+			shouldHaveFailedValidation (res)
+    }
+
+  })
+  it ('unique email', async () => {
+		expect.assertions (1)
+    const res = await post<User>
+    (gql`mutation Register($testUser: UserInput!) {
+        register(data: $testUser) {
+            id
+        }
+    }`, { testUser })
+		shouldHaveErrorCode (res[1],
+			ErrorCodes.NOT_UNIQUE)
+
+  })
+	it ('compare passwords', async () => {
+		expect.assertions (2)
+		const user: UserInput = {
+			...testUser,
+			password: '34tT_ssssssss',
+			email: chance.email ()
+		}
+    const res = await post<User>
+    (gql`mutation Register($testUser: UserInput!) {
+        register(data: $testUser) {
+            id
+        }
+    }`, { testUser: user })
+		shouldHaveFailedValidation (res, 0)
+  })
+	it ('check password', async () => {
+		expect.assertions (2)
+    const [user, ers] = await post<User>
+    (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+        loginWithEmail(data: $data) {
+            id
+            name
+        }
+    }`, { data: credsWrongPass })
+		isSE (user, null)
+		shouldHaveErrorCode
+		(ers, ErrorCodes.UNATHORIZED)
+
+  })
+	it ('check email', async () => {
+		expect.assertions (2)
+    const [user, ers] = await post<User>
+    (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
+        loginWithEmail(data: $data) {
+            id
+            name
+        }
+    }`, { data: credsBadEmail })
+		isSE (user, null)
+		shouldHaveErrorCode
+		(ers, ErrorCodes.UNATHORIZED)
+
   })
   it ('log in', async () => {
 		expect.assertions (2)
@@ -87,132 +191,14 @@ describe ('Auth', () => {
     }`, { data: credsOK })
 		expect (body.data.loginWithEmail.id).toBeUUID ()
 		expect (header['set-cookie'][0]).toBeString ()
-		
-		sessionCookie = header['set-cookie'][0]
+		sessionCookie = header['set-cookie']
+		console.log (sessionCookie)
+		post = async (query: ASTNode, variables: any) =>
+			req (query, variables)
+				.set ('Cookie', sessionCookie)
+				.then (res => flattenGQLResponse (res.body))
 
   })
-
-  describe ('validation', () => {
-    it ('should validate complexity of passwords', async () => {
-			const invalidPasswords = [
-				'', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
-				'BBBBBBBBBBBB', '@@@@@@@@@@@@@',
-				'33333333333333333', '_f4Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-			]
-			expect.assertions
-			(3 * invalidPasswords.length)
-      for (const password of invalidPasswords) {
-				const user = { ...testUser, password }
-        const res = await post<User>
-        (gql`mutation Register($testUser: UserInput!) {
-            register(data: $testUser) {
-                id
-            }
-        }`, { testUser: user })
-				shouldHaveFailedValidation (res)
-      }
-
-    })
-    it ('should compare passwords', async () => {
-			expect.assertions (2)
-			const user: UserInput = {
-				...testUser,
-				password: '34tT_ssssssss',
-				email: chance.email ()
-			}
-      const res = await post<User>
-      (gql`mutation Register($testUser: UserInput!) {
-          register(data: $testUser) {
-              id
-          }
-      }`, { testUser: user })
-			shouldHaveFailedValidation (res, 0)
-    })
-
-  })
-  describe ('sign up', () => {
-
-    it ('should keep emails unique', async () => {
-			expect.assertions (1)
-      const res = await post<User>
-      (gql`mutation Register($testUser: UserInput!) {
-          register(data: $testUser) {
-              id
-          }
-      }`, { testUser })
-			shouldHaveErrorCode (res[1],
-				ErrorCodes.NOT_UNIQUE)
-
-    })
-
-  })
-  describe ('log in', () => {
-
-    it ('should check password', async () => {
-			expect.assertions (2)
-      const [user, ers] = await post<User>
-      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
-          loginWithEmail(data: $data) {
-              id
-              name
-          }
-      }`, { data: credsWrongPass })
-			isSE (user, null)
-			shouldHaveErrorCode
-			(ers, ErrorCodes.UNATHORIZED)
-
-    })
-
-    it ('should check email', async () => {
-			expect.assertions (2)
-      const [user, ers] = await post<User>
-      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
-          loginWithEmail(data: $data) {
-              id
-              name
-          }
-      }`, { data: credsBadEmail })
-			isSE (user, null)
-			shouldHaveErrorCode
-			(ers, ErrorCodes.UNATHORIZED)
-
-    })
-
-
-    it ('should log out', async () => {
-			expect.assertions (2)
-      const [ok] = await post<Boolean>
-      (gql`mutation {
-          logout
-      }`)
-			isSE (ok, true)
-			await resourceShouldBeInaccessible ()
-			sessionCookie = []
-    })
-
-
-    it ('should log in', async () => {
-			expect.assertions (2)
-      const { body, header } = await req<User>
-      (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
-          loginWithEmail(data: $data) {
-              id
-              name
-          }
-      }`, { data: credsOK })
-			expect (body.data.loginWithEmail.id).toBeUUID ()
-			expect (header['set-cookie'][0]).toBeString ()
-			sessionCookie = header['set-cookie']
-			console.log (sessionCookie)
-			post = async (query: ASTNode, variables: any) =>
-				req (query, variables)
-					.set ('Cookie', sessionCookie)
-					.then (res => flattenGQLResponse (res.body))
-
-    })
-  })
-
-
 })
 describe ('Board', () => {
   describe ('validation', () => {
