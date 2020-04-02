@@ -65,7 +65,6 @@ const credsBadEmail = {
 }
 
 describe ('Auth', () => {
-	
   it ('register admin user', async () => {
 		expect.assertions (2)
     const [user, errors] = await post<User>
@@ -77,7 +76,6 @@ describe ('Auth', () => {
 		expect (user.id).toBeUUID ()
 		await resourceShouldBeInaccessible ()
   })
-	
   it ('log in', async () => {
 		expect.assertions (3)
     const { body, header } = await req<User>
@@ -93,7 +91,6 @@ describe ('Auth', () => {
 		sessionCookie = header['set-cookie'][0]
 		await resourceShouldBeInaccessible (true)
   })
-
   it ('log out', async () => {
 		expect.assertions (2)
     const [ok] = await post<Boolean>
@@ -104,8 +101,7 @@ describe ('Auth', () => {
 		await resourceShouldBeInaccessible ()
 		sessionCookie = []
   })
-	
-	it ('password complexity', async () => {
+  it ('password complexity', async () => {
 		const invalidPasswords = [
 			'', '@Na3', '                  ', 'aaaaaaaaaaaaaaa', '3_fFaaaa aaaa',
 			'BBBBBBBBBBBB', '@@@@@@@@@@@@@',
@@ -137,7 +133,7 @@ describe ('Auth', () => {
 			ErrorCodes.NOT_UNIQUE)
 
   })
-	it ('confirm password', async () => {
+  it ('confirm password', async () => {
 		expect.assertions (2)
 		const user: UserInput = {
 			...testUser,
@@ -152,7 +148,7 @@ describe ('Auth', () => {
     }`, { testUser: user })
 		shouldHaveFailedValidation (res, 0)
   })
-	it ('valid password', async () => {
+  it ('valid password', async () => {
 		expect.assertions (2)
     const [user, ers] = await post<User>
     (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
@@ -166,7 +162,7 @@ describe ('Auth', () => {
 		(ers, ErrorCodes.UNATHORIZED)
 
   })
-	it ('valid email', async () => {
+  it ('valid email', async () => {
 		expect.assertions (2)
     const [user, ers] = await post<User>
     (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
@@ -181,7 +177,7 @@ describe ('Auth', () => {
 
   })
   it ('log in', async () => {
-		expect.assertions (2)
+		expect.assertions (3)
     const { body, header } = await req<User>
     (gql`mutation LoginWIthEmail ($data: LoginWithEmailInput!) {
         loginWithEmail(data: $data) {
@@ -192,16 +188,63 @@ describe ('Auth', () => {
 		expect (body.data.loginWithEmail.id).toBeUUID ()
 		expect (header['set-cookie'][0]).toBeString ()
 		sessionCookie = header['set-cookie']
-	  post = async (query: ASTNode, variables: any) =>
+		post = async (query: ASTNode, variables: any) =>
 			req (query, variables)
 				.set ('Cookie', sessionCookie)
 				.then (res => flattenGQLResponse (res.body))
+		await resourceShouldBeInaccessible (false)
 
   })
 })
-describe ('Board', () => {
-  describe ('validation', () => {
-    it ('FindBoardInput', async () => {
+
+describe ('Create/Read', () => {
+  test ('board/min', async () => {
+		expect.assertions (2)
+	  const fullBoardRes = gql`
+	  fragment res on Board {
+        id
+        name
+        swimlanes {
+            id
+            name
+            description
+        }
+        colors {
+            id
+            name
+            value
+            default
+        }
+        columns {
+            id
+            name
+            order
+        }
+	  }`
+    const [board] = await post<Board>
+    (gql`mutation {
+        addBoard(data: {
+            name: "${testBoardName}"
+        }) {...res}
+    }
+    ${fullBoardRes}
+    `)
+	  expect (board).toBeDefined()
+	  const [board2] = await post <Board>
+	  (gql`query {
+			  board(name: "${testBoardName}"){
+					  ...res
+			  }
+	  }
+	  ${fullBoardRes}`)
+	  isSE(board, board2)
+	  
+  })
+})
+
+describe.skip ('Board', () => {
+  describe.skip ('validation', () => {
+    it.skip ('FindBoardInput', async () => {
 			expect.assertions (3)
       const res = await post<Board>
       (gql`query {
@@ -211,7 +254,7 @@ describe ('Board', () => {
       }`)
 			shouldHaveFailedValidation (res)
     })
-    it ('AddBoardInput', async () => {
+    it.skip ('AddBoardInput', async () => {
 			expect.assertions (3)
       const res = await post<Board>
       (gql`mutation {
@@ -227,20 +270,7 @@ describe ('Board', () => {
 
   })
 
-  it ('should post new', async () => {
-		expect.assertions (1)
-    const [board] = await post<Board>
-    (gql`mutation {
-        addBoard(data: {
-            name: "${testBoardName}"
-        }) {
-            name
-        }
-    }`)
-		isSE (board.name, testBoardName)
-  })
-
-  it ('should be created', async () => {
+  it.skip ('should be created', async () => {
 		expect.assertions (1)
     const [board] = await post<Board[]>
     (gql`query {
@@ -251,7 +281,7 @@ describe ('Board', () => {
 		isSE (board[0].name, testBoardName)
   })
 
-  it ('should have default data', async () => {
+  it.skip ('should have default data', async () => {
 		expect.assertions (3)
     const [board] = await post<Board>
     (gql`query {
@@ -281,9 +311,9 @@ describe ('Board', () => {
 		isSE (board.swimlanes[0].name, 'Default')
   })
 })
-describe ('Task', () => {
-  describe ('validation', () => {
-    it ('TaskInput', async () => {
+describe.skip ('Task', () => {
+  describe.skip ('validation', () => {
+    it.skip ('TaskInput', async () => {
 			expect.assertions (3)
       const res = await post<Task>
       (gql`mutation {
@@ -302,7 +332,7 @@ describe ('Task', () => {
 			shouldHaveFailedValidation (res, 7)
 
     })
-    it ('TaskSearchInputByID', async () => {
+    it.skip ('TaskSearchInputByID', async () => {
 			expect.assertions (3)
       const res = await post<Task>
       (gql`query {
@@ -313,7 +343,7 @@ describe ('Task', () => {
 			shouldHaveFailedValidation (res)
 
     })
-    it ('should handle not found', async () => {
+    it.skip ('should handle not found', async () => {
 			expect.assertions (2)
       const [task, errors] = await post<Task>
       (gql`query {
@@ -326,7 +356,7 @@ describe ('Task', () => {
 				ErrorCodes.NOT_FOUND)
     })
   })
-  it ('should add task min', async () => {
+  it.skip ('should add task min', async () => {
 		expect.assertions (1)
 		const minTask: TaskInput = {
 			boardName: testBoardName,
@@ -343,7 +373,7 @@ describe ('Task', () => {
 
   })
 
-  it ('should create task max', async () => {
+  it.skip ('should create task max', async () => {
 		expect.assertions (1)
 		const taskMax: TaskInput = {
 			title: 'max',
@@ -411,9 +441,9 @@ describe ('Task', () => {
 
   })
 })
-describe ('Color', () => {
-  describe ('validation', () => {
-    it ('NewColorInput', async () => {
+describe.skip ('Color', () => {
+  describe.skip ('validation', () => {
+    it.skip ('NewColorInput', async () => {
 			expect.assertions (3)
       const res = await post<Color>
       (gql`mutation {
@@ -429,7 +459,7 @@ describe ('Color', () => {
 			shouldHaveFailedValidation (res, 4)
     })
   })
-  it ('should create new color', async () => {
+  it.skip ('should create new color', async () => {
 		expect.assertions (1)
 		const newColor: NewColorInput = {
 			name: 'Black',
@@ -459,7 +489,7 @@ describe ('Color', () => {
 
 
   })
-  it ('should reset default from the rest of the colors', async () => {
+  it.skip ('should reset default from the rest of the colors', async () => {
 		expect.assertions (2)
     const [{ colors }] = await post<Board>
     (gql`query {
@@ -477,7 +507,7 @@ describe ('Color', () => {
 
 
   })
-  it ('should prevent dupes', async () => {
+  it.skip ('should prevent dupes', async () => {
 		expect.assertions (2)
     const [color, errors] = await post<Color>
     (gql`mutation {
@@ -494,9 +524,9 @@ describe ('Color', () => {
 
   })
 })
-describe ('Comment', () => {
-  describe ('validation', () => {
-    it ('ID', async () => {
+describe.skip ('Comment', () => {
+  describe.skip ('validation', () => {
+    it.skip ('ID', async () => {
 			expect.assertions (3)
       const res = await post<Comment>
       (gql`query {
@@ -506,7 +536,7 @@ describe ('Comment', () => {
       }`)
 			shouldHaveFailedValidation (res)
     })
-    it ('CommentInput', async () => {
+    it.skip ('CommentInput', async () => {
 			expect.assertions (3)
       const res = await post<Comment[]>
       (gql`query {
@@ -521,7 +551,7 @@ describe ('Comment', () => {
 			shouldHaveFailedValidation (res, 3)
     })
 
-    it ('should handle not found', async () => {
+    it.skip ('should handle not found', async () => {
 			expect.assertions (2)
       const [comment, errors] = await post<Comment>
       (gql`query {
