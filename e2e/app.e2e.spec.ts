@@ -199,26 +199,24 @@ describe ('Auth', () => {
 
 describe ('Create/Read', () => {
   test ('board/min', async () => {
-		expect.assertions (2)
+		expect.assertions (4)
 	  const fullBoardRes = gql`
 	  fragment res on Board {
         id
         name
         swimlanes {
-            id
             name
             description
         }
         colors {
-            id
             name
             value
             default
         }
         columns {
-            id
             name
             order
+		        taskLimit
         }
 	  }`
     const [board] = await post<Board>
@@ -229,7 +227,11 @@ describe ('Create/Read', () => {
     }
     ${fullBoardRes}
     `)
-	  expect (board).toBeDefined()
+	  isSE (board.colors, defaultColors.map
+	  (zipObj (['name', 'value', 'default'])))
+	  isSE (board.columns, defaultColumns.map
+	  (zipObj (['name', 'order', 'taskLimit'])))
+	  isSE (board.swimlanes[0].name, 'Default')
 	  const [board2] = await post <Board>
 	  (gql`query {
 			  board(name: "${testBoardName}"){
@@ -268,17 +270,6 @@ describe.skip ('Board', () => {
 			shouldHaveFailedValidation (res, 2)
     })
 
-  })
-
-  it.skip ('should be created', async () => {
-		expect.assertions (1)
-    const [board] = await post<Board[]>
-    (gql`query {
-        boards {
-            name
-        }
-    }`)
-		isSE (board[0].name, testBoardName)
   })
 
   it.skip ('should have default data', async () => {
