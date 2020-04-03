@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule, GqlModuleOptions } from '@nestjs/graphql'
 import { Request, Response } from 'express'
+import depthLimit from 'graphql-depth-limit'
 
 interface ExpresssCtx {
 	req: Request
@@ -21,7 +22,8 @@ const apolloOptions: GqlModuleOptions = {
 			'request.credentials': 'include'
 		}
 	},
-	context
+	context,
+	validationRules: [depthLimit(10)]
 }
 @Module ({
 	imports: [GraphQLModule.forRoot (apolloOptions)]
