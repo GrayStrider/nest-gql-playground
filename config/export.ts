@@ -38,7 +38,7 @@ const TypeormConfig: TypeOrmModuleOptions = {
 	username: POSTRGRES_USERNAME,
 	password: POSTRGRES_PASSWORD,
 	database: POSTRGRES_DATABASE,
-	logger: new CustomLogger (),
+	logger: 'advanced-console',
 	logging: ['query', 'error'],
 	entities: ['src/**/entity/**/!(*.spec.*|*.test.*)'],
 	retryAttempts: 5
