@@ -1,6 +1,6 @@
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { SearchByIDInput } from '@M/kanban/inputs/common/search-by-id.input'
-import { Comment } from '@M/kanban/entity/Comment'
+import { TaskComment } from '@M/kanban/entity/TaskComment'
 import { CommentInput } from '@M/kanban/inputs/comment.input'
 import { Task } from '@M/kanban/entity/Task'
 import { User } from '@M/kanban/entity/User'
@@ -10,14 +10,14 @@ import { Like } from 'typeorm'
 
 @Resolver ()
 export class CommentResolver {
-	@Query (returns => Comment)
-	async comment (@Args () { id }: SearchByIDInput): Promise<Comment> {
+	@Query (returns => TaskComment)
+	async comment (@Args () { id }: SearchByIDInput): Promise<TaskComment> {
 		return toDefault (
-			await Comment.findOne (id),
+			await TaskComment.findOne (id),
 			NotFoundByIDError ('comment', id))
 	}
 	
-	@Query (returns => [Comment])
+	@Query (returns => [TaskComment])
 	async comments (@Args ('data') {
 		userID, taskID, text
 	}: CommentInput) {
@@ -29,7 +29,7 @@ export class CommentResolver {
 		if (!task) throw NotFoundByIDError ('task', taskID)
 		if (!user) throw NotFoundByIDError ('user', userID)
 		
-		return Comment.find ({
+		return TaskComment.find ({
 			where: {
 				task,
 				user,
@@ -38,7 +38,7 @@ export class CommentResolver {
 		})
 	}
 	
-	@Mutation (returns => Comment)
+	@Mutation (returns => TaskComment)
 	async addComment (@Args ('data') {
 		userID, taskID, text
 	}: CommentInput) {
@@ -50,6 +50,6 @@ export class CommentResolver {
 		if (!task) throw NotFoundByIDError ('task', taskID)
 		if (!user) throw NotFoundByIDError ('user', userID)
 		
-		return Comment.create ({ text, task, user }).save ()
+		return TaskComment.create ({ text, task, user }).save ()
 	}
 }

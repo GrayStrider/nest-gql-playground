@@ -1,5 +1,5 @@
 import { Resolver, Args, Mutation, Query } from '@nestjs/graphql'
-import { Task } from '@M/kanban/entity/Task'
+import { Task, Board_Task } from '@M/kanban/entity/Task'
 import { TaskInput, TaskSearchInput } from '@M/kanban/inputs/task.input'
 import { Promise as bb } from 'bluebird'
 import { Tag } from '@M/kanban/entity/Tag'
@@ -15,10 +15,8 @@ export const MAX_TASK_NUMBER = 3
 
 @Resolver ()
 export class TaskResolver {
-	@Query (returns => [Task])
-	async tasks (@Args ('searchBy', { nullable: true })
-		             { boardNames }: TaskSearchInput) {
-		
+	@Query (returns => [Board_Task])
+	async tasks (@Args ('searchBy') {boardName}: TaskSearchInput) {
 		
 		return Task.find ()
 	}

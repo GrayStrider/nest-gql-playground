@@ -2,7 +2,7 @@ import { ManyToMany, OneToMany, Column } from 'typeorm'
 import { Field } from '@nestjs/graphql'
 import { Task } from '@M/kanban/entity/Task'
 import { Subtask } from '@M/kanban/entity/Subtask'
-import { Comment } from '@M/kanban/entity/Comment'
+import { TaskComment } from '@M/kanban/entity/TaskComment'
 import { Base } from '@M/kanban/entity/_Base'
 import { EntityObject } from '@/common/decorators/entity-object.decorator'
 
@@ -22,9 +22,9 @@ export class User extends Base {
 	@Field ()
 	email: string
 	
-	@Field (returns => [Comment])
-	@OneToMany (type => Comment, comm => comm.user)
-	comments: Comment[]
+	@Field (returns => [TaskComment])
+	@OneToMany (type => TaskComment, comm => comm.user)
+	comments: TaskComment[]
 	
 	@Field (returns => [Task])
 	@ManyToMany (type => Task,

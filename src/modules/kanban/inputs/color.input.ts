@@ -1,7 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql'
 import { IsNotEmpty, IsBoolean, IsHexColor } from 'class-validator'
 import { FieldNullable, ValidString } from '@/common/decorators/validation'
-import { nameLength, descriptionLength } from '@M/kanban/entity/Color'
+import { nameLength, descriptionLength } from '@M/kanban/entity/TaskColor'
 import * as Board from '@M/kanban/entity/Board'
 
 

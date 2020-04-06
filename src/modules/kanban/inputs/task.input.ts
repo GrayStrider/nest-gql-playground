@@ -5,16 +5,16 @@ import * as Tag from '@M/kanban/entity/Tag'
 import * as Board from '@M/kanban/entity/Board'
 import * as Task from '@M/kanban/entity/Task'
 import { Year, maxOrderTasksInColumn } from '@M/kanban/entity/Task'
-import * as Color from '@M/kanban/entity/Color'
+import * as Color from '@M/kanban/entity/TaskColor'
 import * as Swimlane from '@M/kanban/entity/Swimlane'
 import * as Column from '@M/kanban/entity/TColumn'
 import { SubbtaskInput } from '@M/kanban/inputs/subbtask.input'
 
 @InputType()
 export class TaskSearchInput {
-	@FieldNullable([String])
-	@ValidString (Board.nameLength, 1, true)
-	boardNames?: string[]
+	@Field()
+	@ValidString (Board.nameLength, 1)
+	boardName: string
 }
 
 @InputType ()

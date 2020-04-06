@@ -1,6 +1,6 @@
 import { Resolver, Args, Mutation, Query } from '@nestjs/graphql'
 import { Board } from '@M/kanban/entity/Board'
-import { Color, defaultColors } from '@M/kanban/entity/Color'
+import { TaskColor, defaultColors } from '@M/kanban/entity/TaskColor'
 import { TColumn, defaultColumns } from '@M/kanban/entity/TColumn'
 import { Swimlane } from '@M/kanban/entity/Swimlane'
 import { FindBoardInput, AddBoardInput } from '@M/kanban/inputs/board.input'
@@ -18,7 +18,7 @@ export class BoardResolver {
 	async board (@Args () { name }: FindBoardInput): Promise<Board> {
 		return toDefault(
 			await Board.findOne ({ name }),
-			new Errors.NotFound(`Board <${name}> was not found`)
+			new Errors.NotFound (`Board <${name}> was not found`)
 		)
 	}
 	
@@ -26,13 +26,13 @@ export class BoardResolver {
 	@Mutation (returns => Board)
 	async addBoard (@Args ('data') data: AddBoardInput): Promise<Board> {
 		const { name, columnsParams, swimlaneNames } = data
-
+		
 		const colors = defaultColors.map
-		(([name, value, def]) => Color.create
+		(([name, value, def]) => TaskColor.create
 		({ name, value, default: def }))
 		// TODO verify order of swimlanes/columns
 		const columns = columnsParams
-			? columnsParams.map (coll => TColumn.create(coll))
+			? columnsParams.map (coll => TColumn.create (coll))
 			// columnsParams.map (TColumn.create) does NOT work, probaly because of this scoping or whatnot
 			: defaultColumns.map
 			(([name, order, taskLimit]) => TColumn.create

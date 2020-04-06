@@ -8,7 +8,7 @@ import { EntityObject } from '@/common/decorators/entity-object.decorator'
 export const textLength = 5000
 
 @EntityObject
-export class Comment extends Base {
+export class TaskComment extends Base {
 	@Field ()
 	@Column ({ length: textLength })
 	text: string
