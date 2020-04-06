@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@e2e/*": ["e2e/*"],
       "@M/*": ["src/modules/*"],
       "@/*": ["src/*"],
       "@config": ["config/export"]
