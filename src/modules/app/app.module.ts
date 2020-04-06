@@ -9,13 +9,12 @@ import ConnectRedis from 'connect-redis'
 import { RedisPubSub } from 'graphql-redis-subscriptions'
 import { GqlModule } from '@M/gql/gql.module'
 import { DBModule } from '@M/db/db.module'
-import { APP_PIPE, APP_FILTER, APP_GUARD, Reflector } from '@nestjs/core'
+import { APP_PIPE, APP_FILTER } from '@nestjs/core'
 import { validatorOptions } from '@config'
 import { ApolloError } from 'apollo-server-errors'
 import { ErrorCodes } from '@/common/errors'
 import { GqlExceptionFilter } from '@/common/filters/gql-exception.filter'
 import { AuthModule } from '@M/auth/auth.module'
-import { GqlAuthGuard } from '@/common/guards/gql-auth.guard'
 
 const RedisStore = ConnectRedis (session)
 
@@ -47,7 +46,6 @@ const validationPipe = new ValidationPipe ({
 		
 		{ provide: APP_PIPE, useValue: validationPipe },
 		{ provide: APP_FILTER, useClass: GqlExceptionFilter },
-		{ provide: APP_GUARD, useValue: new GqlAuthGuard (new Reflector ()) }
 	]
 })
 export class AppModule implements OnModuleInit {
