@@ -1,5 +1,6 @@
-import { ClassType, Field, Int, ObjectType } from 'type-graphql'
 import { AnyConstructor } from 'tsdef'
+import { ObjectType, Field, Int } from '@nestjs/graphql'
+import { ClassType } from 'class-transformer/ClassTransformer'
 
 function PaginatedResponse<TItem> (itemClass: ClassType<TItem>) {
 	
