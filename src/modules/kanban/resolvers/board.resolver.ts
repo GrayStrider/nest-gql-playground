@@ -7,6 +7,8 @@ import { FindBoardInput, AddBoardInput } from '@M/kanban/inputs/board.input'
 import { toDefault } from '@qdev/utils-ts'
 import Errors from '@/common/errors'
 
+export const SearchBy = Args ('searchBy', { nullable: true })
+
 @Resolver ()
 export class BoardResolver {
 	@Query (returns => [Board])
@@ -45,4 +47,5 @@ export class BoardResolver {
 		({ name, colors, columns, swimlanes }).save ()
 		
 	}
+	
 }
