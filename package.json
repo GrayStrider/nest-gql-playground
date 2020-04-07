@@ -119,6 +119,7 @@
     "config": "3.2.5",
 
     "dataloader": "2.0.0",
+    "join-monster": "2.1.1",
 
     "@nestjs/graphql": "7.0.15",
     "graphql": "14.6.0",
