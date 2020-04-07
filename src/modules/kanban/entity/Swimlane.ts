@@ -7,11 +7,16 @@ import { EntityObject } from '@/common/decorators/entity-object.decorator'
 
 export const nameLength = 20
 export const descriptionLength = 500
+
+export class Board_Swimlane extends Base {
+
+}
+
 // TODO unique name per board (to use name as id)
 @EntityObject
 @Check (`"order" < ${10000}`)
 @Check (`"order" >= 0`)
-export class Swimlane extends Base {
+export class Swimlane extends Board_Swimlane {
 	@Column ({ length: nameLength })
 	@Field ()
 	name: string

@@ -1,7 +1,7 @@
 import { OneToMany, Column } from 'typeorm'
 import { Field } from '@nestjs/graphql'
 import { Swimlane } from '@M/kanban/entity/Swimlane'
-import { Color } from '@M/kanban/entity/Color'
+import { TaskColor } from '@M/kanban/entity/TaskColor'
 import { TColumn } from '@M/kanban/entity/TColumn'
 import { Task } from '@M/kanban/entity/Task'
 import { Base } from '@M/kanban/entity/_Base'
@@ -16,19 +16,19 @@ export class Board extends Base {
 	@Column ({ length: nameLength })
 	name: string
 	
-	@Field (returns => [Color],
+	@Field (returns => [TaskColor],
 		{ nullable: true })
-	@OneToMany (type => Color,
+	@OneToMany (type => TaskColor,
 		color => color.board,
 		{ cascade: true, eager: true })
-	colors: Color[]
+	colors: TaskColor[]
 	
 	@Field (returns => [TColumn],
 		{ nullable: true })
 	@OneToMany (type => TColumn,
 		coll => coll.board,
 		{ cascade: true, eager: true })
-	columns: TColumn[]
+	columns: TColumn[] // TODO max per board
 	
 	@Field (returns => [Swimlane],
 		{ nullable: true })
@@ -37,13 +37,15 @@ export class Board extends Base {
 		{ cascade: true, eager: true })
 	swimlanes: Swimlane[]
 	
+	@Field(returns => [Task])
 	@OneToMany (type => Task,
 		task => task.board)
 	tasks: Task[]
 	
+	
+	@Field(returns => [Tag])
 	@OneToMany (type => Tag,
 		tags => tags.board)
 	tags: Tag[]
 	
 }
-

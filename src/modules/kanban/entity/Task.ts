@@ -1,6 +1,6 @@
-import { Field } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { Column, CreateDateColumn, JoinTable, ManyToMany, UpdateDateColumn, ManyToOne, OneToOne, OneToMany, JoinColumn, Check } from 'typeorm'
-import { Color } from '@M/kanban/entity/Color'
+import { TaskColor } from '@M/kanban/entity/TaskColor'
 import { TColumn } from '@M/kanban/entity/TColumn'
 import { Swimlane } from '@M/kanban/entity/Swimlane'
 import { TaskNumber } from '@M/kanban/entity/TaskNumber'
@@ -8,7 +8,7 @@ import { User } from '@M/kanban/entity/User'
 import { TDate } from '@M/kanban/entity/TDate'
 import { Subtask } from '@M/kanban/entity/Subtask'
 import { Tag } from '@M/kanban/entity/Tag'
-import { Comment } from '@M/kanban/entity/Comment'
+import { TaskComment } from '@M/kanban/entity/TaskComment'
 import { Board } from '@M/kanban/entity/Board'
 import { Base } from '@M/kanban/entity/_Base'
 import { EntityObject } from '@/common/decorators/entity-object.decorator'
@@ -19,18 +19,9 @@ export const maxOrderTasksInColumn = 5000
 
 export const Year = 365 * 24 * 60 * 60
 
-@EntityObject
-@Check (`"totalSecondsSpent" < ${Year * 5}`)
-@Check (`"totalSecondsSpent" >= 0`)
-@Check (`"totalSecondsEstimate" < ${Year}`)
-@Check (`"totalSecondsEstimate" >= 0`)
-@Check (`"position" < ${maxOrderTasksInColumn}`)
-@Check (`"position" >= 0`)
-export class Task extends Base {
-	@Field (returns => Board)
-	@ManyToOne (task => Board,
-		board => board.tasks,
-		{ eager: true })
+
+@ObjectType()
+export class Board_Task extends Base {
 	board: Board
 	
 	@Field (returns => TColumn)
@@ -60,10 +51,10 @@ export class Task extends Base {
 	})
 	description?: string
 	
-	@Field (returns => Color)
-	@ManyToOne (type => Color, color => color.tasks,
+	@Field (returns => TaskColor)
+	@ManyToOne (type => TaskColor, color => color.tasks,
 		{ eager: true })
-	color: Color
+	color: TaskColor
 	
 	@Field (returns => [Tag])
 	@ManyToMany (type => Tag, label => label.tasks, {
@@ -132,9 +123,22 @@ export class Task extends Base {
 	@UpdateDateColumn ()
 	updatedAt: Date
 	
-	@Field (returns => Comment)
-	@OneToMany (type => Comment, comment => comment.task)
-	comments: Comment[]
-	
+	@Field (returns => TaskComment)
+	@OneToMany (type => TaskComment, comment => comment.task)
+	comments: TaskComment[]
 }
 
+@EntityObject
+@Check (`"totalSecondsSpent" < ${Year * 5}`)
+@Check (`"totalSecondsSpent" >= 0`)
+@Check (`"totalSecondsEstimate" < ${Year}`)
+@Check (`"totalSecondsEstimate" >= 0`)
+@Check (`"position" < ${maxOrderTasksInColumn}`)
+@Check (`"position" >= 0`)
+export class Task extends Board_Task {
+	@Field (returns => Board)
+	@ManyToOne (task => Board,
+		board => board.tasks,
+		{ eager: true })
+	board: Board
+}
