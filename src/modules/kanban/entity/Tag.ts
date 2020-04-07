@@ -11,25 +11,27 @@ export const descriptionLength = 100
 @EntityObject
 @Unique (['name', 'board'])
 export class Tag extends Base {
+	@Field(returns => Board)
 	@ManyToOne (type => Board,
 		board => board.tags)
 	board: Board
 	
-	@Column ({ length: nameLength })
 	@Field ()
+	@Column ({ length: nameLength })
 	name: string
 	
+	@Field ({ nullable: true })
 	@Column ({
 		length: descriptionLength,
 		nullable: true
 	})
-	@Field ({ nullable: true })
 	description?: string
 	
 	@Field ()
 	@Column ({ type: 'bool', default: false })
 	pinned: boolean
 	
+	@Field(returns => [Task] )
 	@ManyToMany (type => Task, task => task.tags)
 	tasks: Task[]
 }
