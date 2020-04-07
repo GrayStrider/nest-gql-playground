@@ -57,28 +57,28 @@ export class TagResolver {
 			.where ('tag_board.name = :boardName', { boardName })
 		
 		function buildQuery (schema: AnyObject, qb: SelectQueryBuilder<any>, alias = rootParentName) {
-			sig.debug ('schema: ', schema)
-			sig.info ('current alias:', alias)
+			// sig.debug ('schema: ', schema)
+			// sig.info ('current alias:', alias)
 			const key = last (alias.split ('_')) ?? alias
-			sig.info ('current key:', key)
+			// sig.info ('current key:', key)
 			const toTraverse = keys (schema).map (String)
 			
-			sig.debug ('toTraverse:', toTraverse)
-			const relevantFields = intersection (datamodel.fields[key as KeyF], toTraverse)
-			const relevantRelations = intersection (datamodel.relations[key as KeyR], toTraverse)
+			// sig.debug ('toTraverse:', toTraverse)
+			const relevantFields = intersection
+			(datamodel.fields[key as KeyF], toTraverse)
+			const relevantRelations = intersection
+			(datamodel.relations[key as KeyR], toTraverse)
 			
-			// -- add relevantFields to selection
-			sig.info (`adding fields ${relevantFields} for`, key)
-			
+			// sig.info (`adding fields ${relevantFields} for`, key)
 			for (const field of relevantFields)
 				qb = qb.addSelect (dot (alias) (field))
 			
-			sig.debug ('relations', relevantRelations)
+			// sig.debug ('relations', relevantRelations)
 			for (const relation of relevantRelations) {
-				sig.debug ('alias:', relation, '\n')
+				// sig.debug ('alias:', relation, '\n')
 				const new_alias = alias + '_' + relation
-				if (!(relation === 'board' && alias === 'tag')) {
-					sig.debug ('new alias:', new_alias)
+				if (!(relation === 'board' && alias === 'tag')) { // TODO exclude already added initial join
+					// sig.debug ('new alias:', new_alias)
 					qb = qb.leftJoin (dot (alias) (relation), new_alias)
 				}
 				
