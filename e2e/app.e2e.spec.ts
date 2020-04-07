@@ -237,7 +237,7 @@ describe ('Create/Read', () => {
 		(zipObj (['name', 'value', 'default'])))
 		isSE (board.columns, defaultColumns.map
 		(zipObj (['name', 'order', 'taskLimit'])))
-		isSE (board.swimlanes[0].name, 'Default')
+		isSE (head (board.swimlanes)?.name, 'Default')
     const [board2] = await post<Board>
     (gql`query {
         board(name: "${testBoardName}"){
