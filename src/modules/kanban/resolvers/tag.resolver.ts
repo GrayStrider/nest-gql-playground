@@ -7,7 +7,9 @@ import Errors, { NotFoundByIDError } from '@/common/errors'
 import { getBoard } from '@M/kanban/resolvers/task.resolver'
 import { toDefault } from '@qdev/utils-ts'
 
-@Resolver ()
+
+@Resolver (() => Tag)
+
 export class TagResolver {
 	@Query (returns => [Tag])
 	async tags (@Args ('searchBy', { nullable: true }) data: TagInput): Promise<Tag[]> {
@@ -29,6 +31,19 @@ export class TagResolver {
 		return Tag.create ({ name, board, tasks, ...rest }).save ()
 		
 	}
+	
+	@ResolveField (returns => [Task])
+	async tasks (@Parent () { id }: Tag, @Info () info: GraphQLResolveInfo): Promise<Task[]> {
+		return this.tasksLoader(graphqlFields(info)).load (id)
+	}
+	
+	private tasksLoader = (query = {}) => new DataLoader<string, Task[]> (async (ids) => {
+		const tags = await Tag.createQueryBuilder ('tag')
+			.leftJoinAndSelect ('tag.tasks', 'tasks')
+			.where ('tag.id IN (:...ids)', { ids })
+			.getMany ()
+		return tags.map (tag => tag.tasks)
+	})
 }
 
 async function getTasks (lookupIDs: string[]) {
