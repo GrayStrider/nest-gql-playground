@@ -6,9 +6,16 @@ import { CommentResolver } from '@M/kanban/resolvers/comment.resolver'
 import { UserResolver } from '@M/kanban/resolvers/user.resolver'
 import { TagResolver } from '@M/kanban/resolvers/tag.resolver'
 import { SwimlaneResolver } from '@M/kanban/resolvers/swimlane.resolver'
+import { NodeModule } from '@M/node/node.module'
+import { RecipesModule } from '@M/recipes/recipes.module'
 
 
 @Module ({
+	imports: [
+		NodeModule,
+		RecipesModule
+	],
+	
 	providers: [
 		BoardResolver,
 		TaskResolver,

@@ -131,6 +131,8 @@
     "graphql-tools": "4.0.6",
     "graphql-fields": "2.0.3",
     "graphql-depth-limit": "1.1.0",
+    "nestjs-graphql-relay": "0.0.2",
+    "graphql-relay": "0.5.5",
 
     "pg": "7.18.1",
     "ioredis": "4.14.1",
@@ -186,6 +188,8 @@
     "@nestjs/cli": "7.0.2",
     "@nestjs/schematics": "7.0.0",
     "@nestjs/testing": "7.0.5",
+
+    "@types/graphql-relay": "0.4.11",
 
     "typescript": "3.8.3",
     "ts-node": "8.6.2",
