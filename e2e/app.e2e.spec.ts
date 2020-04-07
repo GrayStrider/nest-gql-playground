@@ -1,39 +1,29 @@
-import { Test } from '@nestjs/testing'
-import { supertest, Post, Req, isSE, chance, shouldHaveErrorCode, shouldHaveFailedValidation, flattenGQLResponse, sig } from '@qdev/utils-ts'
+import { Post, Req, isSE, chance, shouldHaveErrorCode, shouldHaveFailedValidation, flattenGQLResponse, sig } from '@qdev/utils-ts'
 import gql from 'graphql-tag'
 import { Board } from '@M/kanban/entity/Board'
 import { Task } from '@M/kanban/entity/Task'
 import { TaskInput } from '@M/kanban/inputs/task.input'
-import { zipObj, without, all, head, pick } from 'ramda'
-import { Color, defaultColors } from '@M/kanban/entity/Color'
+import { zipObj, without, all, head } from 'ramda'
+import { TaskColor, defaultColors } from '@M/kanban/entity/TaskColor'
 import { NewColorInput } from '@M/kanban/inputs/color.input'
 import { FindBoardInput } from '@M/kanban/inputs/board.input'
-import { Comment } from '@M/kanban/entity/Comment'
+import { TaskComment } from '@M/kanban/entity/TaskComment'
 import { ErrorCodes } from '@/common/errors'
 import { defaultColumns } from '@M/kanban/entity/TColumn'
 import { User } from '@M/kanban/entity/User'
 import { UserInput } from '@M/kanban/inputs/user.input'
-import { makeRedis } from '@M/redis/redis.provider'
-import { AppModule } from '@M/app/app.module'
 import { ASTNode } from 'graphql'
-import http from 'http'
 import { Swimlane } from '@M/kanban/entity/Swimlane'
+import { setupTest } from '@e2e/utils/setup'
+import { credsOK, testUser, testBoardName } from '@e2e/utils/credentials'
 
 let post: Post
 let req: Req
 let sessionCookie: string[]
-let server: http.Server
+
 
 beforeAll (async () => {
-	jest.setTimeout (20000)
-	const moduleFixture = await Test.createTestingModule ({
-		imports: [AppModule]
-	}).compile ()
-	const app = moduleFixture.createNestApplication ()
-	await app.init ()
-	server = app.getHttpServer ()
-	;({ post, req } = supertest (server, sessionCookie))
-	await makeRedis ().flushdb ()
+	({ post, req } = await setupTest ())
 })
 const resourceShouldBeInaccessible = async (yes = true) => {
   const [, errors] = await post<Board[]>
@@ -47,15 +37,6 @@ const resourceShouldBeInaccessible = async (yes = true) => {
 		: isSE (errors, [])
 }
 
-const testBoardName = 'test board'
-const testUser: UserInput = {
-	name: 'Ivan',
-	password: 'aG2_ddddddd',
-	email: 'test@test.com',
-	confirmPassword: 'aG2_ddddddd'
-}
-const credsOK = pick
-(['email', 'password'], testUser)
 const credsWrongPass = {
 	...credsOK,
 	password: 'aG2_ddddddd____'
@@ -308,7 +289,7 @@ describe ('Create/Read', () => {
             boardName: "${testBoardName}"
         }) {
             id
-		        name
+            name
         }
     }`)
     const [board] = await post<Board>
@@ -319,46 +300,46 @@ describe ('Create/Read', () => {
             }
         }
     }`)
-	  console.log(board.swimlanes)
+		console.log (board.swimlanes)
 		isSE (board.swimlanes[1]!.name,
 			swim.name
 		)
-	  const [swim2] = await post <Swimlane>
-	  (gql`query {
-			  swimlane(data: {
-					  boardName: "${testBoardName}"
-					  name: "new swimlane"
-			  }) {
-					  id
-			  }
-	  }`)
-	  isSE(swim2.id, swim.id)
-	  
-	  const [swls] = await post <Swimlane[]>
-	  (gql`query {
-			  swimlanes(data: {
-					  boardName: "${testBoardName}"
-			  }) {
-					  name
-			  }
-	  }`)
-	  expect (swls).toHaveLength(2)
+    const [swim2] = await post<Swimlane>
+    (gql`query {
+        swimlane(data: {
+            boardName: "${testBoardName}"
+            name: "new swimlane"
+        }) {
+            id
+        }
+    }`)
+		isSE (swim2.id, swim.id)
+
+    const [swls] = await post<Swimlane[]>
+    (gql`query {
+        swimlanes(data: {
+            boardName: "${testBoardName}"
+        }) {
+            name
+        }
+    }`)
+		expect (swls).toHaveLength (2)
   })
-	test ('complex query', async () => {
-		expect.assertions(1)
-	  const [lanes] = await post <Array<Swimlane>>
-	  (gql`query {
-			  swimlanes(data: {
-					  boardName: "${testBoardName}"
-					  name: "w swi"
-			  }) {
-					  name
-			  }
-	  }`)
-	  expect (lanes).toHaveLength(1)
-	  
-	  
-	})
+  test ('complex query', async () => {
+		expect.assertions (1)
+    const [lanes] = await post<Array<Swimlane>>
+    (gql`query {
+        swimlanes(data: {
+            boardName: "${testBoardName}"
+            name: "w swi"
+        }) {
+            name
+        }
+    }`)
+		expect (lanes).toHaveLength (1)
+
+
+  })
 })
 
 describe.skip ('Task', () => {
@@ -491,11 +472,11 @@ describe.skip ('Task', () => {
 
   })
 })
-describe.skip ('Color', () => {
+describe.skip ('TaskColor', () => {
   describe.skip ('validation', () => {
     it.skip ('NewColorInput', async () => {
 			expect.assertions (3)
-      const res = await post<Color>
+      const res = await post<TaskColor>
       (gql`mutation {
           addColor(data: {
               name: "",
@@ -525,7 +506,7 @@ describe.skip ('Color', () => {
 			'name': 'Black',
 			'value': '000'
 		}
-    const [color] = await post<Color>
+    const [color] = await post<TaskColor>
     (gql`mutation addColor($data: NewColorInput!) {
         addColor(data: $data) {
             id
@@ -559,7 +540,7 @@ describe.skip ('Color', () => {
   })
   it.skip ('should prevent dupes', async () => {
 		expect.assertions (2)
-    const [color, errors] = await post<Color>
+    const [color, errors] = await post<TaskColor>
     (gql`mutation {
         addColor(data: {
             name: "Black",
@@ -574,11 +555,11 @@ describe.skip ('Color', () => {
 
   })
 })
-describe.skip ('Comment', () => {
+describe.skip ('TaskComment', () => {
   describe.skip ('validation', () => {
     it.skip ('ID', async () => {
 			expect.assertions (3)
-      const res = await post<Comment>
+      const res = await post<TaskComment>
       (gql`query {
           comment(id: "") {
               text
@@ -588,7 +569,7 @@ describe.skip ('Comment', () => {
     })
     it.skip ('CommentInput', async () => {
 			expect.assertions (3)
-      const res = await post<Comment[]>
+      const res = await post<TaskComment[]>
       (gql`query {
           comments(data: {
               taskID: "",
@@ -603,7 +584,7 @@ describe.skip ('Comment', () => {
 
     it.skip ('should handle not found', async () => {
 			expect.assertions (2)
-      const [comment, errors] = await post<Comment>
+      const [comment, errors] = await post<TaskComment>
       (gql`query {
           comment(id: "${chance.guid()}") {
               id
