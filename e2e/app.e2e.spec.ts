@@ -342,8 +342,8 @@ describe ('Create/Read', () => {
   })
 })
 
-describe.skip ('Task', () => {
-  describe.skip ('validation', () => {
+describe ('Task', () => {
+  describe ('validation', () => {
     it.skip ('TaskInput', async () => {
 			expect.assertions (3)
       const res = await post<Task>
@@ -387,7 +387,7 @@ describe.skip ('Task', () => {
 				ErrorCodes.NOT_FOUND)
     })
   })
-  it.skip ('should add task min', async () => {
+  it ('should add task min', async () => {
 		expect.assertions (1)
 		const minTask: TaskInput = {
 			boardName: testBoardName,
@@ -404,7 +404,7 @@ describe.skip ('Task', () => {
 
   })
 
-  it.skip ('should create task max', async () => {
+  it ('should create task max', async () => {
 		expect.assertions (1)
 		const taskMax: TaskInput = {
 			title: 'max',

@@ -65,7 +65,7 @@ export class TaskResolver {
 			async (acc: Tag[], name) => {
 				const tag = toDefault (
 					await Tag.findOne ({ name, board }),
-					Tag.create ({ name, board }))
+					Tag.create ({ name }))
 				return acc.concat (tag)
 			}, [])
 		

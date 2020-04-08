@@ -26,7 +26,7 @@ export class TagResolver {
 		
 		const tasks = await getTasks (tasksIDs)
 		
-		return Tag.create ({ name, board, tasks, ...rest }).save ()
+		return Tag.create ({ name, tasks, ...rest }).save ()
 		
 	}
 }
