@@ -4,6 +4,7 @@ import { Task } from '@M/kanban/entity/Task'
 import { Board } from '@M/kanban/entity/Board'
 import { Base } from '@M/kanban/entity/_Base'
 import { EntityObject } from '@/common/decorators/entity-object.decorator'
+import { BoardMember } from '@M/kanban/entity/_BoardMember'
 
 export const nameLength = 20
 export const descriptionLength = 20
@@ -18,7 +19,7 @@ export const defaultColors: [string, string, boolean][] = [
 
 @Unique (['name', 'board'])
 @EntityObject
-export class TaskColor extends Base {
+export class TaskColor extends BoardMember('colors') {
 	@Field ()
 	@Column ({ length: nameLength })
 	name: string
@@ -41,10 +42,6 @@ export class TaskColor extends Base {
 	@Field ()
 	@Column ({ default: false, type: 'bool' })
 	default: boolean
-	
-	@ManyToOne (type => Board,
-			board => board.colors)
-	board: Board
 	
 }
 

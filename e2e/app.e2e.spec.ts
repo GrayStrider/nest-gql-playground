@@ -419,9 +419,6 @@ describe ('Task', () => {
     const [task] = await post<Task>
     (gql`mutation newTask ($data: TaskInput!) {
         addTask(data: $data) {
-            board {
-                name
-            }
             color {
                 name
             }
@@ -440,9 +437,6 @@ describe ('Task', () => {
         }
     }`, { data: taskMax })
 		const exp = {
-			'board': {
-				'name': 'test board'
-			},
 			'color': {
 				'name': 'Orange'
 			},
