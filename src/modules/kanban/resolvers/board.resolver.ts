@@ -1,4 +1,4 @@
-import { Resolver, Args, Mutation, Query } from '@nestjs/graphql'
+import { Resolver, Args, Mutation, Query, Context } from '@nestjs/graphql'
 import { Board } from '@M/kanban/entity/Board'
 import { TaskColor, defaultColors } from '@M/kanban/entity/TaskColor'
 import { TColumn, defaultColumns } from '@M/kanban/entity/TColumn'
@@ -6,6 +6,7 @@ import { Swimlane } from '@M/kanban/entity/Swimlane'
 import { FindBoardInput, AddBoardInput } from '@M/kanban/inputs/board.input'
 import { toDefault } from '@qdev/utils-ts'
 import Errors from '@/common/errors'
+import { MyContext } from '@M/gql/gql.module'
 
 export const SearchBy = Args ('searchBy', { nullable: true })
 
@@ -18,7 +19,7 @@ export class BoardResolver {
 	
 	@Query (returns => Board)
 	async board (@Args () { name }: FindBoardInput): Promise<Board> {
-		return toDefault(
+		return toDefault (
 			await Board.findOne ({ name }),
 			new Errors.NotFound (`Board <${name}> was not found`)
 		)
@@ -26,7 +27,7 @@ export class BoardResolver {
 	
 	
 	@Mutation (returns => Board)
-	async addBoard (@Args ('data') data: AddBoardInput): Promise<Board> {
+	async addBoard (@Args ('data') data: AddBoardInput, @Context () ctx: MyContext): Promise<Board> {
 		const { name, columnsParams, swimlaneNames } = data
 		
 		const colors = defaultColors.map
@@ -44,7 +45,11 @@ export class BoardResolver {
 			? swimlaneNames.map (name => Swimlane.create ({ name }))
 			: [Swimlane.create ({ name: 'Default' })]
 		return await Board.create
-		({ name, colors, columns, swimlanes }).save ()
+		({
+			name, colors, columns, swimlanes, owner: {
+				id: ctx.user.id
+			}
+		}).save ()
 		
 	}
 	

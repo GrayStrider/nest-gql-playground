@@ -67,6 +67,7 @@ describe ('Auth', () => {
             name
         }
     }`, { data: credsOK })
+	  console.log(body)
 		expect (body.data.loginWithEmail.id).toBeUUID ()
 		expect (header['set-cookie'][0]).toBeString ()
 		
