@@ -98,12 +98,18 @@ export class Task extends BoardMember('tasks') {
 	
 	@Field (returns => User,
 		{ nullable: true })
-	@ManyToMany (
+	@ManyToOne (
 		type => User,
-		user => user.tasks,
+		user => user.responsibleFor,
 		{ nullable: true, eager: true })
+	responsible: User
+	
+	@Field (returns => [User])
+	@ManyToMany (type => User,
+		user => user.collaboratingAt,
+		{ eager: true })
 	@JoinTable ()
-	user: User // TODO responsibleUser
+	collaborators: User[]
 	
 	@Field (returns => [TDate],
 		{ nullable: true })
@@ -112,13 +118,6 @@ export class Task extends BoardMember('tasks') {
 		{ nullable: true, eager: true })
 	@JoinTable ()
 	dates?: TDate[]
-	
-	@Field (returns => [User])
-	@ManyToMany (type => User,
-		user => user.collaboratingAt,
-		{ eager: true })
-	@JoinTable ()
-	collaborators: User[]
 	
 	@Field (returns => Date)
 	@CreateDateColumn ()

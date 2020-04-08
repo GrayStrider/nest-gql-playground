@@ -30,19 +30,22 @@ export class User extends Base {
 	boards: Board[]
 	
 	@Field (returns => [Task])
+	@OneToMany (type => Task,
+		task => task.responsible)
+	responsibleFor: Task[]
+	
+	@Field(returns => [Task])
 	@ManyToMany (type => Task,
-		task => task.user)
-	tasks: Task[]
+			task => task.collaborators)
+	collaboratingAt: Task[]
 	
 	@Field (returns => [TaskComment])
-	@OneToMany (type => TaskComment, comm => comm.user)
+	@OneToMany (type => TaskComment,
+			comm => comm.user)
 	comments: TaskComment[]
 	
 	@Field (returns => [Subtask])
 	@ManyToMany (type => Subtask,
 		subtask => subtask.user)
 	subtasks: Subtask[]
-	
-	@ManyToMany (type => Task, task => task.collaborators)
-	collaboratingAt: Task[]
 }
