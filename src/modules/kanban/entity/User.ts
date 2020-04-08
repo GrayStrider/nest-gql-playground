@@ -32,20 +32,25 @@ export class User extends Base {
 	@Field (returns => [Task])
 	@OneToMany (type => Task,
 		task => task.responsible)
-	responsibleFor: Task[]
+	responsibleForTasks: Task[]
 	
 	@Field(returns => [Task])
 	@ManyToMany (type => Task,
 			task => task.collaborators)
-	collaboratingAt: Task[]
+	collaboratingAtTasks: Task[]
 	
-	@Field (returns => [TaskComment])
-	@OneToMany (type => TaskComment,
-			comm => comm.user)
-	comments: TaskComment[]
+	@Field(returns => [Subtask])
+	@OneToMany (type => Subtask,
+		subtask => subtask.responsible)
+	responsibleForSubtasks: Task[]
 	
 	@Field (returns => [Subtask])
 	@ManyToMany (type => Subtask,
-		subtask => subtask.user)
-	subtasks: Subtask[]
+		subtask => subtask.collaborators)
+	collaboratingAtSubtasks: Subtask[]
+	
+	@Field (returns => [TaskComment])
+	@OneToMany (type => TaskComment,
+		comment => comment.user)
+	comments: TaskComment[]
 }

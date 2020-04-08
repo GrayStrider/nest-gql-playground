@@ -100,13 +100,13 @@ export class Task extends BoardMember('tasks') {
 		{ nullable: true })
 	@ManyToOne (
 		type => User,
-		user => user.responsibleFor,
+		user => user.responsibleForTasks,
 		{ nullable: true, eager: true })
 	responsible: User
 	
 	@Field (returns => [User])
 	@ManyToMany (type => User,
-		user => user.collaboratingAt,
+		user => user.collaboratingAtTasks,
 		{ eager: true })
 	@JoinTable ()
 	collaborators: User[]
