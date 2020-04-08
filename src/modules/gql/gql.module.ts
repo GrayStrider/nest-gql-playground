@@ -8,8 +8,14 @@ interface ExpresssCtx {
 	res: Response
 }
 
+export interface CtxUser {
+	id: string
+	name: string
+	roles: string[]
+}
+
 const context = ({ req }: ExpresssCtx) => ({
-	user: req.session?.user,
+	user: req.session?.user as CtxUser,
 	session: req.session!,
 })
 
