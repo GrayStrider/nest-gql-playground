@@ -12,6 +12,7 @@ import { TaskComment } from '@M/kanban/entity/TaskComment'
 import { Board } from '@M/kanban/entity/Board'
 import { Base } from '@M/kanban/entity/_Base'
 import { EntityObject } from '@/common/decorators/entity-object.decorator'
+import { BoardMember } from '@M/kanban/entity/_BoardMember'
 
 export const titleLength = 100
 export const descriptionLength = 5000
@@ -20,10 +21,14 @@ export const maxOrderTasksInColumn = 5000
 export const Year = 365 * 24 * 60 * 60
 
 
-@ObjectType()
-export class Board_Task extends Base {
-	board: Board
-	
+@EntityObject
+@Check (`"totalSecondsSpent" < ${Year * 5}`)
+@Check (`"totalSecondsSpent" >= 0`)
+@Check (`"totalSecondsEstimate" < ${Year}`)
+@Check (`"totalSecondsEstimate" >= 0`)
+@Check (`"position" < ${maxOrderTasksInColumn}`)
+@Check (`"position" >= 0`)
+export class Task extends BoardMember('tasks') {
 	@Field (returns => TColumn)
 	@ManyToOne (type => TColumn,
 		column => column.tasks,
@@ -93,12 +98,18 @@ export class Board_Task extends Base {
 	
 	@Field (returns => User,
 		{ nullable: true })
-	@ManyToMany (
+	@ManyToOne (
 		type => User,
-		user => user.tasks,
+		user => user.responsibleForTasks,
 		{ nullable: true, eager: true })
+	responsible: User
+	
+	@Field (returns => [User])
+	@ManyToMany (type => User,
+		user => user.collaboratingAtTasks,
+		{ eager: true })
 	@JoinTable ()
-	user: User // TODO responsibleUser
+	collaborators: User[]
 	
 	@Field (returns => [TDate],
 		{ nullable: true })
@@ -107,13 +118,6 @@ export class Board_Task extends Base {
 		{ nullable: true, eager: true })
 	@JoinTable ()
 	dates?: TDate[]
-	
-	@Field (returns => [User])
-	@ManyToMany (type => User,
-		user => user.collaboratingAt,
-		{ eager: true })
-	@JoinTable ()
-	collaborators: User[]
 	
 	@Field (returns => Date)
 	@CreateDateColumn ()
@@ -126,19 +130,4 @@ export class Board_Task extends Base {
 	@Field (returns => TaskComment)
 	@OneToMany (type => TaskComment, comment => comment.task)
 	comments: TaskComment[]
-}
-
-@EntityObject
-@Check (`"totalSecondsSpent" < ${Year * 5}`)
-@Check (`"totalSecondsSpent" >= 0`)
-@Check (`"totalSecondsEstimate" < ${Year}`)
-@Check (`"totalSecondsEstimate" >= 0`)
-@Check (`"position" < ${maxOrderTasksInColumn}`)
-@Check (`"position" >= 0`)
-export class Task extends Board_Task {
-	@Field (returns => Board)
-	@ManyToOne (task => Board,
-		board => board.tasks,
-		{ eager: true })
-	board: Board
 }

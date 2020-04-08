@@ -23,13 +23,23 @@ export class Subtask extends Base {
 	dueDateTimestamp?: string
 	
 	@Field (returns => [User])
-	@ManyToMany (type => User, user => user.subtasks)
+	@ManyToMany (type => User,
+		user => user.collaboratingAtSubtasks)
 	@JoinTable ()
-	user: User[]
+	collaborators: User[]
+	
+	@Field (returns => User,
+		{ nullable: true })
+	@ManyToOne (
+		type => User,
+		user => user.responsibleForSubtasks,
+		{ nullable: true, eager: true })
+	responsible: User
 	
 	@Field (returns => Task)
 	@ManyToOne (type => Task,
-		task => task.subtasks)
+		task => task.subtasks,
+		{ nullable: false })
 	parent: Task
 	
 }

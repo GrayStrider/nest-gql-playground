@@ -2,7 +2,7 @@ import { Resolver, Query, Args, Mutation, Context as Ctx } from '@nestjs/graphql
 import { User } from '@M/kanban/entity/User'
 import { SearchByIDInput } from '@M/kanban/inputs/common/search-by-id.input'
 import Maybe from 'graphql/tsutils/Maybe'
-import { UserInput, RegisterWIthEmailInput, LoginWithEmailInput } from '@M/kanban/inputs/user.input'
+import { UserInput, LoginWithEmailInput } from '@M/kanban/inputs/user.input'
 import Errors from '@/common/errors'
 import { hash, compare } from 'bcryptjs'
 import { toDefault } from '@qdev/utils-ts'
@@ -10,7 +10,7 @@ import { MyContext } from '@M/gql/gql.module'
 import { SetMetadata } from '@nestjs/common'
 
 
-export const NoAuth = SetMetadata('no-auth', true)
+export const NoAuth = SetMetadata ('no-auth', true)
 
 @Resolver ()
 export class UserResolver {
@@ -48,7 +48,7 @@ export class UserResolver {
 		('Invalid login or password. Try restoring them here: TODO')
 		// TODO
 		const userData = toDefault (
-			await User.findOne ({ email }),
+			await User.findOne ({ where: { email }, select: ['password', 'id', 'name'] }),
 			invalidCredentialsError)
 		
 		const hash = toDefault (
@@ -58,7 +58,7 @@ export class UserResolver {
 		toDefault (
 			await compare (password, hash),
 			invalidCredentialsError)
-
+		
 		session.user = {
 			id: userData.id,
 			name: userData.name,

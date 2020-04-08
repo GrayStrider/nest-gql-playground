@@ -67,6 +67,7 @@ describe ('Auth', () => {
             name
         }
     }`, { data: credsOK })
+	  console.log(body)
 		expect (body.data.loginWithEmail.id).toBeUUID ()
 		expect (header['set-cookie'][0]).toBeString ()
 		
@@ -188,7 +189,7 @@ describe ('Create/Read', () => {
               name
               description
           }
-          colors {
+          taskColors {
               name
               value
               default
@@ -233,7 +234,7 @@ describe ('Create/Read', () => {
     ${fragmentFullBoard}
 		`)
 		sig.info (board)
-		isSE (board.colors, defaultColors.map
+		isSE (board.taskColors, defaultColors.map
 		(zipObj (['name', 'value', 'default'])))
 		isSE (board.columns, defaultColumns.map
 		(zipObj (['name', 'order', 'taskLimit'])))
@@ -325,7 +326,7 @@ describe ('Create/Read', () => {
     }`)
 		expect (swls).toHaveLength (2)
   })
-  test ('complex query', async () => {
+  test ('complex search query', async () => {
 		expect.assertions (1)
     const [lanes] = await post<Array<Swimlane>>
     (gql`query {
@@ -342,8 +343,8 @@ describe ('Create/Read', () => {
   })
 })
 
-describe.skip ('Task', () => {
-  describe.skip ('validation', () => {
+describe ('Task', () => {
+  describe ('validation', () => {
     it.skip ('TaskInput', async () => {
 			expect.assertions (3)
       const res = await post<Task>
@@ -387,7 +388,7 @@ describe.skip ('Task', () => {
 				ErrorCodes.NOT_FOUND)
     })
   })
-  it.skip ('should add task min', async () => {
+  it ('should add task min', async () => {
 		expect.assertions (1)
 		const minTask: TaskInput = {
 			boardName: testBoardName,
@@ -404,7 +405,7 @@ describe.skip ('Task', () => {
 
   })
 
-  it.skip ('should create task max', async () => {
+  it ('should create task max', async () => {
 		expect.assertions (1)
 		const taskMax: TaskInput = {
 			title: 'max',
@@ -419,9 +420,6 @@ describe.skip ('Task', () => {
     const [task] = await post<Task>
     (gql`mutation newTask ($data: TaskInput!) {
         addTask(data: $data) {
-            board {
-                name
-            }
             color {
                 name
             }
@@ -440,9 +438,6 @@ describe.skip ('Task', () => {
         }
     }`, { data: taskMax })
 		const exp = {
-			'board': {
-				'name': 'test board'
-			},
 			'color': {
 				'name': 'Orange'
 			},
@@ -522,18 +517,18 @@ describe.skip ('TaskColor', () => {
   })
   it.skip ('should reset default from the rest of the colors', async () => {
 		expect.assertions (2)
-    const [{ colors }] = await post<Board>
+    const [{ taskColors }] = await post<Board>
     (gql`query {
         board(name: "${testBoardName}") {
-            colors {
+            taskColors {
                 name
                 default
             }
         }
     }`)
-		const newColor = colors.find (c => c.name === 'Black')
+		const newColor = taskColors.find (c => c.name === 'Black')
 		isSE (newColor?.default, true)
-		const rest = without ([newColor]) (colors)
+		const rest = without ([newColor]) (taskColors)
 		isSE (all (c => !c?.default, rest), true)
 
 

@@ -4,19 +4,16 @@ import { Task } from '@M/kanban/entity/Task'
 import { Board } from '@M/kanban/entity/Board'
 import { Base } from '@M/kanban/entity/_Base'
 import { EntityObject } from '@/common/decorators/entity-object.decorator'
+import { BoardMember } from '@M/kanban/entity/_BoardMember'
 
 export const nameLength = 20
 export const descriptionLength = 500
-
-export class Board_Swimlane extends Base {
-
-}
 
 // TODO unique name per board (to use name as id)
 @EntityObject
 @Check (`"order" < ${10000}`)
 @Check (`"order" >= 0`)
-export class Swimlane extends Board_Swimlane {
+export class Swimlane extends BoardMember('swimlanes') {
 	@Column ({ length: nameLength })
 	@Field ()
 	name: string
@@ -34,9 +31,6 @@ export class Swimlane extends Board_Swimlane {
 	
 	@OneToMany (type => Task, task => task.swimlane)
 	tasks: Task[]
-	
-	@ManyToOne (type => Board, board => board.swimlanes)
-	board: Board
 	
 }
 

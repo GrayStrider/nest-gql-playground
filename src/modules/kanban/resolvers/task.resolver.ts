@@ -1,5 +1,5 @@
 import { Resolver, Args, Mutation, Query } from '@nestjs/graphql'
-import { Task, Board_Task } from '@M/kanban/entity/Task'
+import { Task } from '@M/kanban/entity/Task'
 import { TaskInput, TaskSearchInput } from '@M/kanban/inputs/task.input'
 import { Promise as bb } from 'bluebird'
 import { Tag } from '@M/kanban/entity/Tag'
@@ -15,7 +15,7 @@ export const MAX_TASK_NUMBER = 3
 
 @Resolver ()
 export class TaskResolver {
-	@Query (returns => [Board_Task])
+	@Query (returns => [Task])
 	async tasks (@Args ('searchBy') {boardName}: TaskSearchInput) {
 		
 		return Task.find ()
@@ -37,10 +37,10 @@ export class TaskResolver {
 		
 		const color = colorName
 			? toDefault (
-				board.colors.find (c => c.name === colorName),
+				board.taskColors.find (c => c.name === colorName),
 				new Errors.NotFound
 				(`Color <${colorName}> doesn't exist on board <${boardName}>`, { colorName, boardName }))
-			: find (c => c.default, board.colors)
+			: find (c => c.default, board.taskColors)
 		
 		const column = columnName
 			? toDefault (
