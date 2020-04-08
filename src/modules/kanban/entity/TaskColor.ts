@@ -19,7 +19,7 @@ export const defaultColors: [string, string, boolean][] = [
 
 @Unique (['name', 'board'])
 @EntityObject
-export class TaskColor extends BoardMember('colors') {
+export class TaskColor extends BoardMember('taskColors') {
 	@Field ()
 	@Column ({ length: nameLength })
 	name: string

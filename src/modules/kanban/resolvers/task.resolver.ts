@@ -37,10 +37,10 @@ export class TaskResolver {
 		
 		const color = colorName
 			? toDefault (
-				board.colors.find (c => c.name === colorName),
+				board.taskColors.find (c => c.name === colorName),
 				new Errors.NotFound
 				(`Color <${colorName}> doesn't exist on board <${boardName}>`, { colorName, boardName }))
-			: find (c => c.default, board.colors)
+			: find (c => c.default, board.taskColors)
 		
 		const column = columnName
 			? toDefault (

@@ -189,7 +189,7 @@ describe ('Create/Read', () => {
               name
               description
           }
-          colors {
+          taskColors {
               name
               value
               default
@@ -234,7 +234,7 @@ describe ('Create/Read', () => {
     ${fragmentFullBoard}
 		`)
 		sig.info (board)
-		isSE (board.colors, defaultColors.map
+		isSE (board.taskColors, defaultColors.map
 		(zipObj (['name', 'value', 'default'])))
 		isSE (board.columns, defaultColumns.map
 		(zipObj (['name', 'order', 'taskLimit'])))
@@ -517,18 +517,18 @@ describe.skip ('TaskColor', () => {
   })
   it.skip ('should reset default from the rest of the colors', async () => {
 		expect.assertions (2)
-    const [{ colors }] = await post<Board>
+    const [{ taskColors }] = await post<Board>
     (gql`query {
         board(name: "${testBoardName}") {
-            colors {
+            taskColors {
                 name
                 default
             }
         }
     }`)
-		const newColor = colors.find (c => c.name === 'Black')
+		const newColor = taskColors.find (c => c.name === 'Black')
 		isSE (newColor?.default, true)
-		const rest = without ([newColor]) (colors)
+		const rest = without ([newColor]) (taskColors)
 		isSE (all (c => !c?.default, rest), true)
 
 

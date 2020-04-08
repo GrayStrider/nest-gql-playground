@@ -31,7 +31,7 @@ export class BoardResolver {
 	async addBoard (@Args ('data') data: AddBoardInput, @SessionUser () { id }: CtxUser): Promise<Board> {
 		const { name, columnsParams, swimlaneNames } = data
 		
-		const colors = defaultColors.map
+		const taskColors = defaultColors.map
 		(([name, value, def]) => TaskColor.create
 		({ name, value, default: def }))
 		// TODO verify order of swimlanes/columns
@@ -46,7 +46,7 @@ export class BoardResolver {
 			? swimlaneNames.map (name => Swimlane.create ({ name }))
 			: [Swimlane.create ({ name: 'Default' })]
 		return await Board.create
-			({ name, colors, columns, swimlanes, owner: { id } })
+			({ name, taskColors, columns, swimlanes, owner: { id } })
 			.save ()
 		
 	}

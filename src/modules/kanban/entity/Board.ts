@@ -36,7 +36,7 @@ export class Board extends Base {
 	@OneToMany (type => TaskColor,
 		color => color.board,
 		{ cascade: true, eager: true, nullable: false })
-	colors: TaskColor[]
+	taskColors: TaskColor[]
 	
 	@Field (returns => [TColumn],
 		{ nullable: true })
