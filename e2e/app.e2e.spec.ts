@@ -325,7 +325,7 @@ describe ('Create/Read', () => {
     }`)
 		expect (swls).toHaveLength (2)
   })
-  test ('complex query', async () => {
+  test ('complex search query', async () => {
 		expect.assertions (1)
     const [lanes] = await post<Array<Swimlane>>
     (gql`query {

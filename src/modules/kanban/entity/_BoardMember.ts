@@ -8,7 +8,7 @@ export function boardMember (reverseKey: keyof Board) {
 	@ObjectType (`Board_${reverseKey}`, { isAbstract: true })
 	abstract class BoardMember extends Base {
 		@ManyToOne (type => Board,
-			board => board[reverseKey])
+			board => board[reverseKey], { nullable: false })
 		board: Board
 	}
 	
