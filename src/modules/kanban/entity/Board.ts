@@ -10,6 +10,7 @@ import { Tag } from '@M/kanban/entity/Tag'
 import { User } from '@M/kanban/entity/User'
 
 export const nameLength = 50
+export const descriptionLength = 500
 
 @EntityObject
 export class Board extends Base {
@@ -17,11 +18,24 @@ export class Board extends Base {
 	@Column ({ length: nameLength })
 	name: string
 	
-	@Field (returns => [TaskColor],
-		{ nullable: true })
+	@Field ({ nullable: true })
+	@Column ({ nullable: true, length: descriptionLength })
+	description?: string
+	
+	@Field (returns => [Task])
+	@OneToMany (type => Task,
+		task => task.board)
+	tasks: Task[]
+	
+	@Field (returns => [Tag])
+	@OneToMany (type => Tag,
+		tags => tags.board)
+	tags: Tag[]
+	
+	@Field (returns => [TaskColor])
 	@OneToMany (type => TaskColor,
 		color => color.board,
-		{ cascade: true, eager: true })
+		{ cascade: true, eager: true, nullable: false })
 	colors: TaskColor[]
 	
 	@Field (returns => [TColumn],
@@ -37,17 +51,6 @@ export class Board extends Base {
 		swimlane => swimlane.board,
 		{ cascade: true, eager: true })
 	swimlanes: Swimlane[]
-	
-	@Field (returns => [Task])
-	@OneToMany (type => Task,
-		task => task.board)
-	tasks: Task[]
-	
-	
-	@Field (returns => [Tag])
-	@OneToMany (type => Tag,
-		tags => tags.board)
-	tags: Tag[]
 	
 	@Field (returns => User)
 	@ManyToOne (type => User,
